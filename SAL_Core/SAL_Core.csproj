@@ -48,7 +48,9 @@
     <Compile Include="Audio.cs" />
     <Compile Include="AForge\Complex.cs" />
     <Compile Include="AForge\FourierTransform.cs" />
+    <Compile Include="AutoScaler.cs" />
     <Compile Include="Effects.cs" />
+    <Compile Include="Music.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AForge\Tools.cs" />
     <Compile Include="UDP.cs" />

@@ -24,6 +24,10 @@ namespace SAL_Core
         private BufferedWaveProvider waveBuffer = null;
         private WaveFormat waveFormat = null;
         private int bytesPerFrame = 1;
+        private readonly ArduinoCollection arduinoCollection;
+
+        public readonly AutoScaler autoScaler;
+        public double Slope = 10.0;
 
         private int _channels = 8;
         private int _minFreq = 50; //Hz
@@ -105,6 +109,14 @@ namespace SAL_Core
             thread.Start();*/
             enumerator = new MMDeviceEnumerator();
             device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+        }
+
+        public Audio(ArduinoCollection arduino)
+        {
+            enumerator = new MMDeviceEnumerator();
+            device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+            arduinoCollection = arduino;
+            autoScaler = new AutoScaler();
         }
 
         public void StartCapture()
@@ -192,8 +204,21 @@ namespace SAL_Core
                     startingPoint++;
                 }
                 octave *= _octaveDist;
-                channelMagnitudes[i] = max;
+                //channelMagnitudes[i] = max;
                 avgPeak += max;
+
+                double x = Convert.ToDouble(max * autoScaler.Scale);
+                //if (x > 1) x = 1;
+                //double res = (1.0 / ((1.1 - x) * slope)) - 0.1;
+                double res = Math.Log10(x) + (Slope / 10);//Math.Log10(x*10) * (10/slope); //Math.Log10(x) + (slope / 10); //(Math.Log(x, 2) + slope) / 10;
+                autoScaler.Sample(res);
+                if (res > 1) res = 1;
+                else if (res < 0) res = 0;
+                channelMagnitudes[i] = res;
+                int index = Convert.ToInt32(Math.Floor(res * Maps.MaxIndex + 0.99));
+                if (index < 0) index = 0;
+                else if (index > Maps.MaxIndex) index = Maps.MaxIndex;
+                arduinoCollection.SetColor(i, Maps.Map[index]);
             }
             avgPeak /= _channels;
 
@@ -202,7 +227,7 @@ namespace SAL_Core
 
     }
 
-    class Maps
+    static class Maps
     {
         private static readonly List<Colors[]> list = new List<Colors[]>()
         {
