@@ -7,7 +7,7 @@ using System.Timers;
 
 namespace SAL_Core
 {
-    class AutoScaler
+    public class AutoScaler
     {
         private readonly Timer timer;
         private bool _enabled = false;

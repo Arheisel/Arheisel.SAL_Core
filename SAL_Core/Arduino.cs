@@ -7,14 +7,15 @@ using System.Threading.Tasks;
 
 namespace SAL_Core
 {
-    class Arduino
+    public class Arduino
     {
         private SerialPort serial;
         private readonly byte[] dataArr = new byte[1];
         private UDPCLient udp = null;
         private static int port = 9050;
         private bool usingUDP = false;
-        public readonly string name;
+        public readonly string Name;
+
 
         /// <summary>
         /// Initializes a Serial Arduino Connection
@@ -22,7 +23,7 @@ namespace SAL_Core
         /// <param name="com">COM Port Name</param>
         public Arduino(string com)
         {
-            name = com;
+            Name = com;
 
             serial = new SerialPort
             {
@@ -48,7 +49,7 @@ namespace SAL_Core
         /// <param name="dstPort">Receiver Port</param>
         public Arduino(string ip, int dstPort)
         {
-            name = ip + ":" + port;
+            Name = ip + ":" + dstPort;
             StartUDPClient(ip, dstPort);
         }
 
@@ -133,7 +134,7 @@ namespace SAL_Core
 
     }
 
-    class ArduinoCollection
+    public class ArduinoCollection
     {
         private readonly List<Arduino> collection = new List<Arduino>();
 
@@ -145,8 +146,18 @@ namespace SAL_Core
             }
         }
 
+        public int FindByName(string name)
+        {
+            for(int i = 0; i < collection.Count; i++)
+            {
+                if (collection[i].Name == name) return i;
+            }
+            return -1;
+        }
+
         public void Add(Arduino arduino)
         {
+            if (FindByName(arduino.Name) != -1) return;
             collection.Add(arduino);
         }
 
@@ -194,7 +205,7 @@ namespace SAL_Core
 
     }
 
-    enum Colors
+    public enum Colors
     {
         NONE = -1,
         OFF = 0,

@@ -8,7 +8,7 @@ using System.Timers;
 
 namespace SAL_Core
 {
-    class Music
+    public class Music
     {
         public delegate void DataAvailableEventHandler(double sample);
         public event DataAvailableEventHandler DataAvailable;

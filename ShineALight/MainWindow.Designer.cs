@@ -29,17 +29,17 @@
         private void InitializeComponent()
         {
             this.Main = new System.Windows.Forms.SplitContainer();
+            this.label2 = new System.Windows.Forms.Label();
+            this.RemoveArduino = new System.Windows.Forms.Button();
+            this.AddArduino = new System.Windows.Forms.Button();
+            this.ArduinoList = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.ModeSelect = new System.Windows.Forms.ComboBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ArduinoList = new System.Windows.Forms.CheckedListBox();
-            this.AddArduino = new System.Windows.Forms.Button();
-            this.RemoveArduino = new System.Windows.Forms.Button();
-            this.label2 = new System.Windows.Forms.Label();
+            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.Main)).BeginInit();
             this.Main.Panel1.SuspendLayout();
             this.Main.SuspendLayout();
@@ -67,6 +67,47 @@
             this.Main.SplitterDistance = 200;
             this.Main.TabIndex = 0;
             // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(15, 48);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(51, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Arduinos:";
+            // 
+            // RemoveArduino
+            // 
+            this.RemoveArduino.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.RemoveArduino.Location = new System.Drawing.Point(102, 380);
+            this.RemoveArduino.Name = "RemoveArduino";
+            this.RemoveArduino.Size = new System.Drawing.Size(75, 23);
+            this.RemoveArduino.TabIndex = 4;
+            this.RemoveArduino.Text = "Remove";
+            this.RemoveArduino.UseVisualStyleBackColor = true;
+            // 
+            // AddArduino
+            // 
+            this.AddArduino.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.AddArduino.Location = new System.Drawing.Point(15, 381);
+            this.AddArduino.Name = "AddArduino";
+            this.AddArduino.Size = new System.Drawing.Size(75, 23);
+            this.AddArduino.TabIndex = 3;
+            this.AddArduino.Text = "Add";
+            this.AddArduino.UseVisualStyleBackColor = true;
+            this.AddArduino.Click += new System.EventHandler(this.AddArduino_Click);
+            // 
+            // ArduinoList
+            // 
+            this.ArduinoList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ArduinoList.FormattingEnabled = true;
+            this.ArduinoList.Location = new System.Drawing.Point(15, 67);
+            this.ArduinoList.Name = "ArduinoList";
+            this.ArduinoList.Size = new System.Drawing.Size(163, 304);
+            this.ArduinoList.TabIndex = 2;
+            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -91,7 +132,7 @@
             this.ModeSelect.Name = "ModeSelect";
             this.ModeSelect.Size = new System.Drawing.Size(123, 21);
             this.ModeSelect.TabIndex = 1;
-            this.ModeSelect.SelectedIndexChanged += new System.EventHandler(this.ComboBox1_SelectedIndexChanged);
+            this.ModeSelect.SelectedIndexChanged += new System.EventHandler(this.ModeSelect_SelectedIndexChanged);
             // 
             // menuStrip1
             // 
@@ -104,20 +145,6 @@
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.aboutToolStripMenuItem});
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "Help";
-            // 
-            // aboutToolStripMenuItem
-            // 
-            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.aboutToolStripMenuItem.Text = "About";
-            // 
             // fileToolStripMenuItem
             // 
             this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -129,48 +156,22 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             // 
-            // ArduinoList
+            // helpToolStripMenuItem
             // 
-            this.ArduinoList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ArduinoList.FormattingEnabled = true;
-            this.ArduinoList.Location = new System.Drawing.Point(15, 67);
-            this.ArduinoList.Name = "ArduinoList";
-            this.ArduinoList.Size = new System.Drawing.Size(163, 304);
-            this.ArduinoList.TabIndex = 2;
+            this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.aboutToolStripMenuItem});
+            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
+            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.helpToolStripMenuItem.Text = "Help";
             // 
-            // AddArduino
+            // aboutToolStripMenuItem
             // 
-            this.AddArduino.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.AddArduino.Location = new System.Drawing.Point(15, 381);
-            this.AddArduino.Name = "AddArduino";
-            this.AddArduino.Size = new System.Drawing.Size(75, 23);
-            this.AddArduino.TabIndex = 3;
-            this.AddArduino.Text = "Add";
-            this.AddArduino.UseVisualStyleBackColor = true;
-            // 
-            // RemoveArduino
-            // 
-            this.RemoveArduino.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.RemoveArduino.Location = new System.Drawing.Point(102, 380);
-            this.RemoveArduino.Name = "RemoveArduino";
-            this.RemoveArduino.Size = new System.Drawing.Size(75, 23);
-            this.RemoveArduino.TabIndex = 4;
-            this.RemoveArduino.Text = "Remove";
-            this.RemoveArduino.UseVisualStyleBackColor = true;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(15, 48);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(51, 13);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Arduinos:";
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(107, 22);
+            this.aboutToolStripMenuItem.Text = "About";
             // 
             // MainWindow
             // 

@@ -9,7 +9,7 @@ using AForge.Math;
 
 namespace SAL_Core
 {
-    class Audio
+    public class Audio
     {
         private const int minLength = 2;
         private const int maxLength = 16384;
@@ -227,7 +227,7 @@ namespace SAL_Core
 
     }
 
-    static class Maps
+    public static class Maps
     {
         private static readonly List<Colors[]> list = new List<Colors[]>()
         {

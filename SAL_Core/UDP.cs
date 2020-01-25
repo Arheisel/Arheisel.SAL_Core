@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace SAL_Core
 {
-    class UDPServer
+    public class UDPServer
     {
         private readonly IPEndPoint ip;
         private readonly UdpClient sock;
@@ -33,7 +33,7 @@ namespace SAL_Core
         }
     }
 
-    class UDPCLient
+    public class UDPCLient
     {
         private readonly IPEndPoint ip;
         private readonly UdpClient sock;

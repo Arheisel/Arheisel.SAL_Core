@@ -7,7 +7,7 @@ using System.Timers;
 
 namespace SAL_Core
 {
-    class Effects
+    public class Effects
     {
         private int _current = 0;
         private Timer timer;

@@ -46,11 +46,23 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EffectsForm.cs">
+    <Compile Include="AddArduino.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="EffectsForm.Designer.cs">
-      <DependentUpon>EffectsForm.cs</DependentUpon>
+    <Compile Include="AddArduino.Designer.cs">
+      <DependentUpon>AddArduino.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AddArduinoSerial.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AddArduinoSerial.Designer.cs">
+      <DependentUpon>AddArduinoSerial.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AddArduinoUDP.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AddArduinoUDP.Designer.cs">
+      <DependentUpon>AddArduinoUDP.cs</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
@@ -60,8 +72,20 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="EffectsForm.resx">
-      <DependentUpon>EffectsForm.cs</DependentUpon>
+    <Compile Include="UCEffects.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UCEffects.Designer.cs">
+      <DependentUpon>UCEffects.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="AddArduino.resx">
+      <DependentUpon>AddArduino.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddArduinoSerial.resx">
+      <DependentUpon>AddArduinoSerial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AddArduinoUDP.resx">
+      <DependentUpon>AddArduinoUDP.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
@@ -75,6 +99,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="UCEffects.resx">
+      <DependentUpon>UCEffects.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -87,6 +114,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SAL_Core\SAL_Core.csproj">
+      <Project>{62f8f430-fc48-484b-aca3-8f26eb34f9c8}</Project>
+      <Name>SAL_Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
