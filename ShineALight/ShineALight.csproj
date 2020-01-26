@@ -64,6 +64,12 @@
     <Compile Include="AddArduinoUDP.Designer.cs">
       <DependentUpon>AddArduinoUDP.cs</DependentUpon>
     </Compile>
+    <Compile Include="AutoscalerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AutoscalerControl.Designer.cs">
+      <DependentUpon>AutoscalerControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -78,6 +84,18 @@
     <Compile Include="UCEffects.Designer.cs">
       <DependentUpon>UCEffects.cs</DependentUpon>
     </Compile>
+    <Compile Include="UCMusic.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UCMusic.Designer.cs">
+      <DependentUpon>UCMusic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="VUMeter.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="VUMeter.Designer.cs">
+      <DependentUpon>VUMeter.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="AddArduino.resx">
       <DependentUpon>AddArduino.cs</DependentUpon>
     </EmbeddedResource>
@@ -86,6 +104,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="AddArduinoUDP.resx">
       <DependentUpon>AddArduinoUDP.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AutoscalerControl.resx">
+      <DependentUpon>AutoscalerControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
@@ -101,6 +122,12 @@
     </Compile>
     <EmbeddedResource Include="UCEffects.resx">
       <DependentUpon>UCEffects.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UCMusic.resx">
+      <DependentUpon>UCMusic.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="VUMeter.resx">
+      <DependentUpon>VUMeter.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

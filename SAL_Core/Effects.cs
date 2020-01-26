@@ -9,13 +9,13 @@ namespace SAL_Core
 {
     public class Effects
     {
-        private int _current = 0;
+        private string _current = "Cycle";
         private Timer timer;
         private ArduinoCollection arduinoCollection;
 
         public int Count = 0;
 
-        public int Current
+        public string Current
         {
             get
             {
@@ -23,7 +23,7 @@ namespace SAL_Core
             }
             set
             {
-                if (value >= 0 && value <= list.Count - 1)
+                if (list.ContainsKey(value))
                 {
                     _current = value;
                     Count = 0;
@@ -33,10 +33,10 @@ namespace SAL_Core
 
         
 
-        private readonly List<Colors[]> list = new List<Colors[]>()
+        public readonly Dictionary<string, Colors[]> list = new Dictionary<string, Colors[]>()
         {
-            new Colors[] { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK },
-            new Colors[]
+            {"Cycle", new Colors[] { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK } },
+            {"Color Flash", new Colors[]
             {
                 Colors.RED,
                 Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,
@@ -50,8 +50,8 @@ namespace SAL_Core
                 Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,
                 Colors.CYAN,
                 Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,
-            },
-            new Colors[] { Colors.WHITE, Colors.OFF, Colors.OFF, Colors.OFF, Colors.OFF }
+            } },
+            {"Flash", new Colors[] { Colors.WHITE, Colors.OFF, Colors.OFF, Colors.OFF, Colors.OFF } }
         };
 
         private int _speed = 0;
@@ -88,7 +88,7 @@ namespace SAL_Core
         {
             timer = new Timer()
             {
-                Enabled = true,
+                Enabled = false,
                 Interval = Time,
                 AutoReset = true
             };

@@ -109,12 +109,13 @@ namespace SAL_Core
             thread.Start();*/
             enumerator = new MMDeviceEnumerator();
             device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+
         }
 
         public Audio(ArduinoCollection arduino)
         {
-            enumerator = new MMDeviceEnumerator();
-            device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+            //enumerator = new MMDeviceEnumerator();
+            //device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
             arduinoCollection = arduino;
             autoScaler = new AutoScaler();
         }

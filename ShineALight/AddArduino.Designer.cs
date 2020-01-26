@@ -1,4 +1,6 @@
-﻿namespace ShineALight
+﻿using System.Windows.Forms;
+
+namespace ShineALight
 {
     partial class AddArduino
     {
@@ -32,7 +34,7 @@
             this.UDPRadio = new System.Windows.Forms.RadioButton();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.OKButton = new System.Windows.Forms.Button();
-            this.CancelButton = new System.Windows.Forms.Button();
+            this.CancelButton1 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // SerialRadio
@@ -86,13 +88,13 @@
             // 
             // CancelButton
             // 
-            this.CancelButton.Location = new System.Drawing.Point(138, 104);
-            this.CancelButton.Name = "CancelButton";
-            this.CancelButton.Size = new System.Drawing.Size(75, 23);
-            this.CancelButton.TabIndex = 4;
-            this.CancelButton.Text = "Cancel";
-            this.CancelButton.UseVisualStyleBackColor = true;
-            this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click);
+            this.CancelButton1.Location = new System.Drawing.Point(138, 104);
+            this.CancelButton1.Name = "CancelButton";
+            this.CancelButton1.Size = new System.Drawing.Size(75, 23);
+            this.CancelButton1.TabIndex = 4;
+            this.CancelButton1.Text = "Cancel";
+            this.CancelButton1.UseVisualStyleBackColor = true;
+            this.CancelButton1.Click += new System.EventHandler(this.CancelButton_Click);
             // 
             // AddArduino
             // 
@@ -101,7 +103,7 @@
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(222, 134);
-            this.Controls.Add(this.CancelButton);
+            this.Controls.Add(this.CancelButton1);
             this.Controls.Add(this.OKButton);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.UDPRadio);
@@ -121,6 +123,8 @@
         private System.Windows.Forms.RadioButton UDPRadio;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button OKButton;
-        private System.Windows.Forms.Button CancelButton;
+        private System.Windows.Forms.Button PopupCancelButton;
+
+        public Button CancelButton1 { get => PopupCancelButton; set => PopupCancelButton = value; }
     }
 }

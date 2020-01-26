@@ -22,15 +22,41 @@ namespace ShineALight
             arduinoCollection = new ArduinoCollection();
 
             ModeSelect.SelectedIndex = 0;
-            var eff = new UCEffects();
-            Main.Panel2.Controls.Add(eff);
-            eff.Dock = DockStyle.Fill;
-            eff.Show();
+
+            FormClosed += MainWindow_FormClosed;
+        }
+
+        private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            Environment.Exit(0);
         }
 
         private void ModeSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
+            if (Main.Panel2.Controls.Count > 0)
+            {
+                CustomUserControl cuc = (CustomUserControl)Main.Panel2.Controls[0];
+                cuc.DisposeDeferred();
+            }
+            Main.Panel2.Controls.Clear();
 
+            Control control;
+            switch (ModeSelect.Text)
+            {
+                case "Effects":
+                    control = new UCEffects(arduinoCollection);
+                    Main.Panel2.Controls.Add(control);
+                    control.Dock = DockStyle.Fill;
+                    control.Show();
+                    break;
+                case "Music":
+                    control = new UCMusic(arduinoCollection);
+                    Main.Panel2.Controls.Clear();
+                    Main.Panel2.Controls.Add(control);
+                    control.Dock = DockStyle.Fill;
+                    control.Show();
+                    break;
+            }
         }
 
         private void AddArduino_Click(object sender, EventArgs e)
@@ -45,5 +71,14 @@ namespace ShineALight
                 }
             }
         }
+    }
+
+    public class CustomUserControl : UserControl
+    {
+        public virtual void DisposeDeferred()
+        {
+            
+        }
+
     }
 }
