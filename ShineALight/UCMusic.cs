@@ -23,7 +23,7 @@ namespace ShineALight
             autoscalerControl1.AutoScaler = music.AutoScaler;
             music.DataAvailable += Music_DataAvailable;
             music.Run();
-
+            curvePlot1.Function = music.Curve;
         }
 
         public override void DisposeDeferred()
@@ -55,6 +55,18 @@ namespace ShineALight
                 vuMeter1.Value = e.Sample;
                 autoscalerControl1.UpdateValues();
             }
+        }
+
+        private void UCMusic_Load(object sender, EventArgs e)
+        {
+
+        }
+
+        private void TrackBar1_Scroll(object sender, EventArgs e)
+        {
+            music.Data.Slope = trackBar1.Value;
+            slopeLabel.Text = trackBar1.Value.ToString();
+            curvePlot1.Refresh();
         }
     }
 }

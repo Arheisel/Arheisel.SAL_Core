@@ -35,6 +35,7 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -69,6 +70,12 @@
     </Compile>
     <Compile Include="AutoscalerControl.Designer.cs">
       <DependentUpon>AutoscalerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CurvePlot.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CurvePlot.Designer.cs">
+      <DependentUpon>CurvePlot.cs</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
@@ -108,6 +115,9 @@
     <EmbeddedResource Include="AutoscalerControl.resx">
       <DependentUpon>AutoscalerControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="CurvePlot.resx">
+      <DependentUpon>CurvePlot.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -125,6 +135,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UCMusic.resx">
       <DependentUpon>UCMusic.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="VUMeter.resx">
       <DependentUpon>VUMeter.cs</DependentUpon>

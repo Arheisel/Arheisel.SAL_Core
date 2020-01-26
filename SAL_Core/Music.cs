@@ -38,6 +38,11 @@ namespace SAL_Core
             thread.Abort();
         }
 
+        public double Curve(double x)
+        {
+            return (1.0 / ((1.1 - x) * Data.Slope)) - 0.1;
+        }
+
         private void ProcessAudioData()
         {
             var audio = new Audio();
