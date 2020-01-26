@@ -34,8 +34,15 @@ namespace ShineALight
                     bitmap = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height);
                     pictureBox1.Image = bitmap;
                     var g = Graphics.FromImage(bitmap);
-                    var h = (float)(pictureBox1.Size.Height * value);
-                    g.FillRectangle(Brushes.Lime, 0, pictureBox1.Size.Height - h, pictureBox1.Size.Width, h);
+                    if (value < 0.9)
+                    {
+                        var h = (float)(pictureBox1.Size.Height * value);
+                        g.FillRectangle(Brushes.Lime, 0, pictureBox1.Size.Height - h, pictureBox1.Size.Width, h);
+                    }
+                    else
+                    {
+                        g.FillRectangle(Brushes.Red, 0, 0, pictureBox1.Size.Width, pictureBox1.Size.Height);
+                    }
                 }
             }
         }

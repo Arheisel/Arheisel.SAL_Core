@@ -20,6 +20,7 @@ namespace ShineALight
         {
             InitializeComponent();
             music = new Music(collection);
+            autoscalerControl1.AutoScaler = music.AutoScaler;
             music.DataAvailable += Music_DataAvailable;
             music.Run();
 
@@ -52,6 +53,7 @@ namespace ShineALight
             else
             {
                 vuMeter1.Value = e.Sample;
+                autoscalerControl1.UpdateValues();
             }
         }
     }
