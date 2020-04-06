@@ -77,10 +77,11 @@ namespace SAL_Core
                     if (res > 1) res = 1;
                     else if (res < 0) res = 0;
 
-                    int index = Convert.ToInt32(Math.Floor(res * Maps.MaxIndex + 0.99));
+                    /*int index = Convert.ToInt32(Math.Floor(res * Maps.MaxIndex + 0.99));
                     if (index < 0) index = 0;
-                    else if (index > Maps.MaxIndex) index = Maps.MaxIndex;
-                    arduinoCollection.SetColor(Maps.Map[index]);
+                    else if (index > Maps.MaxIndex) index = Maps.MaxIndex;*/
+
+                    arduinoCollection.SetColor(Maps.Encode(res));
                     Data.Peak = res;
                     DataAvailable?.Invoke(this, new DataAvailableArgs(res));
 

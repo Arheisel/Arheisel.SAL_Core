@@ -216,10 +216,12 @@ namespace SAL_Core
                 if (res > 1) res = 1;
                 else if (res < 0) res = 0;
                 channelMagnitudes[i] = res;
-                int index = Convert.ToInt32(Math.Floor(res * Maps.MaxIndex + 0.99));
+                /*int index = Convert.ToInt32(Math.Floor(res * Maps.MaxIndex + 0.99));
                 if (index < 0) index = 0;
-                else if (index > Maps.MaxIndex) index = Maps.MaxIndex;
-                arduinoCollection.SetColor(i, Maps.Map[index]);
+                else if (index > Maps.MaxIndex) index = Maps.MaxIndex;*/
+                //arduinoCollection.SetColor(i, Maps.Map[index]);
+
+                if (i == 0) arduinoCollection.SetColor(Maps.Encode(res));
             }
             avgPeak /= _channels;
 
@@ -230,9 +232,9 @@ namespace SAL_Core
 
     public static class Maps
     {
-        private static readonly List<Colors[]> list = new List<Colors[]>()
+        private static readonly List<Color[]> list = new List<Color[]>()
         {
-            new Colors[]
+            new Color[]
             {
                 Colors.OFF,
                 Colors.LYME,
@@ -247,7 +249,7 @@ namespace SAL_Core
                 Colors.ORANGE,
                 Colors.RED
             },
-            new Colors[]
+            new Color[]
             {
                 Colors.OFF,
                 Colors.WHITE
@@ -277,12 +279,52 @@ namespace SAL_Core
         /// </summary>
         public static int MaxIndex { get; private set; } = list[0].Length - 1;
 
-        public static Colors[] Map
+        public static Color[] Map
         {
             get
             {
                 return list[(int)_Current];
             }
+        }
+
+        public static Color Encode(double num)
+        {
+            if (num <= 0) return new Color(0, 0, 0);
+            else if (num >= 1) return new Color(14, 0, 0);
+
+            double y = 0;
+
+            int R;
+            if (num < 0.5) R = 0;
+            else
+            {
+                y = 2.0 * num - 1.0;
+                R = (int)Math.Round(y * 14.0);
+            }
+
+            int G;
+            if(num < 0.2)
+            {
+                y = 5.0 * num;
+            }
+            else
+            {
+                y = -1.81 * num + 1.36;
+            }
+            G = (int)Math.Round(y * 14.0);
+
+            int B;
+            if(num < 0.5)
+            {
+                y = 2.5 * num - 0.25;
+            }
+            else
+            {
+                y = -2.5 * num + 2.25;
+            }
+            B = (int)Math.Round(y * 14.0);
+
+            return new Color(R, G, B);
         }
     }
 }

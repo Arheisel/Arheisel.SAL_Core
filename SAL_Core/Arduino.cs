@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SAL_Core
@@ -53,15 +54,12 @@ namespace SAL_Core
             StartUDPClient(ip, dstPort);
         }
 
-        private Colors _color = 0;
-
-        public void SetColor(Colors color)
+        /*public void SetColor(Colors color)
         {
             if (color != _color && color != Colors.NONE)
             {
                 _color = color;
-                if (usingUDP) udp.Send((byte)color);
-                else Send((byte)color);
+                Send((byte)color);
             }
         }
 
@@ -76,9 +74,36 @@ namespace SAL_Core
                 uint data = (uint)channel + 1;
                 data <<= 4;
                 data += (uint)color;
-                if (usingUDP) udp.Send((byte)data);
-                else Send((byte)data);
+                Send((byte)data);
             }
+        }*/
+
+        public void SetColor(int R, int G, int B)
+        {
+            if (R < 0) R = 0;
+            else if (R > 14) R = 14;
+            if (G < 0) G = 0;
+            else if (G > 14) G = 14;
+            if (B < 0) B = 0;
+            if (B > 14) B = 14;
+
+            byte data = 0xF0; //sync nibble
+            data += (byte)R;
+            Send(data);
+
+            data = (byte)G;
+            data <<= 4;
+            data += (byte)B;
+            Send(data);
+
+        }
+
+        private Color _color = Colors.NONE;
+        public void SetColor(Color color)
+        {
+            if (color == _color) return;
+            _color = color;
+            SetColor(color.R, color.G, color.B);
         }
 
         public void WriteToSerial(byte data)
@@ -96,8 +121,12 @@ namespace SAL_Core
         }
         private void Send(byte data)
         {
-            dataArr[0] = data;
-            serial.Write(dataArr, 0, 1);
+            if (usingUDP) udp.Send(data);
+            else
+            {
+                dataArr[0] = data;
+                serial.Write(dataArr, 0, 1);
+            }
         }
 
         private int Receive()
@@ -169,9 +198,9 @@ namespace SAL_Core
             }
         }
 
-        private Colors _color = 0;
+        private Color _color = Colors.NONE;
 
-        public void SetColor(Colors color)
+        public void SetColor(Color color)
         {
             if (color != _color)
             {
@@ -183,6 +212,14 @@ namespace SAL_Core
             }
         }
 
+        public void SetColor(int R, int G, int B)
+        {
+            foreach (Arduino arduino in collection)
+            {
+                arduino.SetColor(R, G, B);
+            }
+        }
+
         public int ChannelCount
         {
             get
@@ -191,9 +228,9 @@ namespace SAL_Core
             }
         }
 
-        private readonly Colors[] _chColor = new Colors[1024];
+        /*private readonly Color[] _chColor = new Color[1024];
 
-        public void SetColor(int channel, Colors color)
+        public void SetColor(int channel, Color color)
         {
             if (channel >= 0 && channel <= ChannelCount - 1 && (color != _chColor[channel] || _color != Colors.NONE))
             {
@@ -201,11 +238,11 @@ namespace SAL_Core
                 _color = Colors.NONE;
                 collection[Convert.ToInt32(Math.Floor((double)channel / 8))].SetColor(channel % 8, color);
             }
-        }
+        }*/
 
     }
 
-    public enum Colors
+    /*public enum Colors
     {
         NONE = -1,
         OFF = 0,
@@ -222,5 +259,58 @@ namespace SAL_Core
         AQGREEN = 11,
         EBLUE = 12,
         WHITE = 13
+    }*/
+
+    public static class Colors
+    {
+        public static Color NONE { get; } = new Color(-1, -1, -1);
+        public static Color OFF { get; } = new Color(0, 0, 0);
+        public static Color RED { get; } = new Color(14, 0, 0);
+        public static Color GREEN { get; } = new Color(0, 14, 0);
+        public static Color BLUE { get; } = new Color(0, 0, 14);
+        public static Color YELLOW { get; } = new Color(14, 14, 0);
+        public static Color MAGENTA { get; } = new Color(14, 0, 14);
+        public static Color CYAN { get; } = new Color(0, 14, 14);
+        public static Color ORANGE { get; } = new Color(14, 6, 0);
+        public static Color LYME { get; } = new Color(6, 14, 0);
+        public static Color PURPLE { get; } = new Color(6, 0, 14);
+        public static Color PINK { get; } = new Color(14, 0, 6);
+        public static Color AQGREEN { get; } = new Color(0, 14, 6);
+        public static Color EBLUE { get; } = new Color(0, 6, 14);
+        public static Color WHITE { get; } = new Color(14, 14, 14);
+    }
+
+    public struct Color
+    {
+        public readonly int R;
+        public readonly int G;
+        public readonly int B;
+
+        public Color(int R, int G, int B)
+        {
+            this.R = R;
+            this.G = G;
+            this.B = B;
+        }
+
+        public static bool operator == (Color c1, Color c2)
+        {
+            return c1.R == c2.R && c1.G == c2.G && c1.B == c2.B;
+        }
+
+        public static bool operator != (Color c1, Color c2)
+        {
+            return !(c1 == c2);
+        }
+
+        public override int GetHashCode()
+        {
+            return base.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return base.Equals(obj);
+        }
     }
 }

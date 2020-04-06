@@ -33,10 +33,11 @@ namespace SAL_Core
 
         
 
-        public readonly Dictionary<string, Colors[]> list = new Dictionary<string, Colors[]>()
+        public readonly Dictionary<string, Color[]> list = new Dictionary<string, Color[]>()
         {
-            {"Cycle", new Colors[] { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK } },
-            {"Color Flash", new Colors[]
+            {"Cycle", new Color[] { Colors.RED, Colors.GREEN, Colors.BLUE } },
+            {"Extended Cycle", new Color[] { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK } },
+            {"Color Flash", new Color[]
             {
                 Colors.RED,
                 Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,
@@ -51,7 +52,7 @@ namespace SAL_Core
                 Colors.CYAN,
                 Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,
             } },
-            {"Flash", new Colors[] { Colors.WHITE, Colors.OFF, Colors.OFF, Colors.OFF, Colors.OFF } }
+            {"Flash", new Color[] { Colors.WHITE, Colors.OFF, Colors.OFF, Colors.OFF, Colors.OFF } }
         };
 
         private int _speed = 0;
@@ -67,16 +68,16 @@ namespace SAL_Core
                 if (value >= 0 && value <= 100)
                 {
                     _speed = value;
-                    Time = 1515 - value * 15;
+                    Time = 101 - value;
                     timer.Enabled = value != 0;
                     timer.Interval = Time;
                 }
             }
         }
 
-        public int Time { get; private set; } = 1515;
+        public int Time { get; private set; } = 100;
 
-        public Colors[] Effect
+        public Color[] Effect
         {
             get
             {
@@ -96,11 +97,33 @@ namespace SAL_Core
             arduinoCollection = arduino;
         }
 
+        private Color _currentColor = Colors.OFF;
+
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            arduinoCollection.SetColor(Effect[Count]);
-            if (Count == Effect.Length - 1) Count = 0;
-            else Count++;
+            var target = Effect[Count];
+
+            if(target == _currentColor)
+            {
+                if (Count == Effect.Length - 1) Count = 0;
+                else Count++;
+                target = Effect[Count];
+            }
+            var R = _currentColor.R;
+            var G = _currentColor.G;
+            var B = _currentColor.B;
+
+            if (target.R > R) R++;
+            else if (target.R < R) R--;
+            if (target.G > G) G++;
+            else if (target.G < G) G--;
+            if (target.B > B) B++;
+            else if (target.B < B) B--;
+
+            _currentColor = new Color(R, G, B);
+
+            arduinoCollection.SetColor(_currentColor);
+            
         }
     }
 }
