@@ -28,9 +28,13 @@ namespace ShineALight
 
             set
             {
-                if(value > 0 && value < 1)
+                if(value <= 0)
                 {
-                    _val = value;
+                    pictureBox1.Image = null;
+                    _val = 0;
+                }
+                else
+                {
                     bitmap = new Bitmap(pictureBox1.Size.Width, pictureBox1.Size.Height);
                     pictureBox1.Image = bitmap;
                     var g = Graphics.FromImage(bitmap);
@@ -42,6 +46,7 @@ namespace ShineALight
                     else
                     {
                         g.FillRectangle(Brushes.Red, 0, 0, pictureBox1.Size.Width, pictureBox1.Size.Height);
+                        _val = 1;
                     }
                 }
             }

@@ -26,7 +26,7 @@ namespace SAL_Core
         private readonly ArduinoCollection arduinoCollection;
 
         public readonly AutoScaler autoScaler;
-        public double Slope = 10.0;
+        public double Slope = 20.0;
 
         private int _channels = 8;
         private int _minFreq = 50; //Hz
@@ -146,7 +146,7 @@ namespace SAL_Core
 
         public double Curve(double x)
         {
-            return Math.Log10(x) + (Slope / 10); //Math.Log10(x*10) * (10/slope); //Math.Log10(x) + (slope / 10); //(Math.Log(x, 2) + slope) / 10;
+            return Math.Log10(x) + (Slope / 10);//Math.Log10(x) + (Slope / 10); //Math.Log10(x*10) * (10/slope); //Math.Log10(x) + (slope / 10); //(Math.Log(x, 2) + slope) / 10;
         }
 
         private void Capture_DataAvailable(object sender, WaveInEventArgs e)

@@ -35,7 +35,6 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.slopeLabel = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
-            this.curvePlot1 = new ShineALight.CurvePlot();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
@@ -97,35 +96,24 @@
             this.slopeLabel.Name = "slopeLabel";
             this.slopeLabel.Size = new System.Drawing.Size(19, 13);
             this.slopeLabel.TabIndex = 5;
-            this.slopeLabel.Text = "10";
+            this.slopeLabel.Text = "20";
             // 
             // trackBar1
             // 
             this.trackBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.trackBar1.Location = new System.Drawing.Point(27, 28);
-            this.trackBar1.Maximum = 40;
+            this.trackBar1.Maximum = 50;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.Size = new System.Drawing.Size(248, 45);
             this.trackBar1.TabIndex = 4;
-            this.trackBar1.Value = 10;
+            this.trackBar1.Value = 20;
             this.trackBar1.Scroll += new System.EventHandler(this.TrackBar1_Scroll);
-            // 
-            // curvePlot1
-            // 
-            this.curvePlot1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.curvePlot1.Function = null;
-            this.curvePlot1.Location = new System.Drawing.Point(141, 4);
-            this.curvePlot1.Name = "curvePlot1";
-            this.curvePlot1.Size = new System.Drawing.Size(281, 177);
-            this.curvePlot1.TabIndex = 7;
             // 
             // UCRGBVisualizer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.curvePlot1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.autoscalerControl);
             this.Controls.Add(this.vuMeterG);
@@ -149,6 +137,5 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label slopeLabel;
         private System.Windows.Forms.TrackBar trackBar1;
-        private CurvePlot curvePlot1;
     }
 }

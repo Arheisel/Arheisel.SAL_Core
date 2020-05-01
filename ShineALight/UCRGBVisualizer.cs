@@ -25,7 +25,7 @@ namespace ShineALight
             autoscalerControl.AutoScaler = audio.autoScaler;
             audio.DataAvailable += Audio_DataAvailable;
             audio.StartCapture();
-            curvePlot1.Function = audio.Curve;
+            //curvePlot1.Function = audio.Curve;
             this.collection = collection;
         }
 
@@ -69,7 +69,7 @@ namespace ShineALight
         {
             audio.Slope = trackBar1.Value;
             slopeLabel.Text = trackBar1.Value.ToString();
-            curvePlot1.Refresh();
+            //curvePlot1.Refresh();
         }
     }
 }
