@@ -73,11 +73,11 @@ namespace SAL_Core
         {
             get
             {
-                return _maxFreq * 2;
+                return _maxFreq * capture.WaveFormat.Channels;
             }
             set
             {
-                value = value / 2; //I don't know why this works and I'm too afraid to ask
+                value = value / capture.WaveFormat.Channels; //I don't know why this works and I'm too afraid to ask
                 if (value > _minFreq && waveFormat != null && value <= waveFormat.SampleRate / 2)
                 {
                     _maxFreq = value;

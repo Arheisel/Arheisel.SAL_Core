@@ -27,6 +27,8 @@ namespace ShineALight
             audio.StartCapture();
             //curvePlot1.Function = audio.Curve;
             this.collection = collection;
+            chLabel.Text = audio.Channels.ToString();
+            audio.MaxFreq = 2050;
         }
 
         public override void DisposeDeferred()
@@ -67,9 +69,21 @@ namespace ShineALight
 
         private void TrackBar1_Scroll(object sender, EventArgs e)
         {
-            audio.Slope = trackBar1.Value;
-            slopeLabel.Text = trackBar1.Value.ToString();
+            audio.Slope = slopeTrackbar.Value;
+            slopeLabel.Text = slopeTrackbar.Value.ToString();
             //curvePlot1.Refresh();
+        }
+
+        private void MinFreqTrackbar_Scroll(object sender, EventArgs e)
+        {
+            audio.MinFreq = minFreqTrackbar.Value;
+            minFreqLabel.Text = minFreqTrackbar.Value.ToString();
+        }
+
+        private void TrackBar2_Scroll(object sender, EventArgs e)
+        {
+            audio.MaxFreq = maxFreqTrackbar.Value;
+            maxFreqLabel.Text = maxFreqTrackbar.Value.ToString();
         }
     }
 }
