@@ -10,7 +10,7 @@ namespace SAL_Core
     public class Music
     {
         //public delegate void DataAvailableEventHandler(double sample);
-        public event EventHandler<DataAvailableArgs> DataAvailable;
+        public event EventHandler<MusicDataAvailableArgs> DataAvailable;
 
         public readonly AutoScaler AutoScaler;
         public readonly MusicData Data;
@@ -72,7 +72,7 @@ namespace SAL_Core
                     }
                     double x = Convert.ToDouble(avg * AutoScaler.Scale);
                     if (x > 1.09) x = 1.09;
-                    double res = (1.0 / ((1.1 - x) * Data.Slope)) - 0.1;
+                    double res = Curve(x);
                     AutoScaler.Sample(res);
                     if (res > 1) res = 1;
                     else if (res < 0) res = 0;
@@ -81,9 +81,9 @@ namespace SAL_Core
                     if (index < 0) index = 0;
                     else if (index > Maps.MaxIndex) index = Maps.MaxIndex;*/
 
-                    arduinoCollection.SetColor(Maps.Encode(res));
+                    arduinoCollection.SetColor(Maps.EncodeRGB(res));
                     Data.Peak = res;
-                    DataAvailable?.Invoke(this, new DataAvailableArgs(res));
+                    DataAvailable?.Invoke(this, new MusicDataAvailableArgs(res));
 
                     values.Clear();
                     timer.Restart();
@@ -93,9 +93,9 @@ namespace SAL_Core
 
     }
 
-    public class DataAvailableArgs : EventArgs
+    public class MusicDataAvailableArgs : EventArgs
     {
-        public DataAvailableArgs(double sample)
+        public MusicDataAvailableArgs(double sample)
         {
             Sample = sample;
         }

@@ -14,7 +14,7 @@ namespace ShineALight
     public partial class UCMusic : CustomUserControl
     {
         private readonly Music music;
-        private delegate void UpdateDelegate(DataAvailableArgs e);
+        private delegate void UpdateDelegate(MusicDataAvailableArgs e);
 
         public UCMusic(ArduinoCollection collection)
         {
@@ -33,13 +33,13 @@ namespace ShineALight
             Dispose();
         }
 
-        private void Music_DataAvailable(object sender, DataAvailableArgs e)
+        private void Music_DataAvailable(object sender, MusicDataAvailableArgs e)
         {
             //volumeBar.Value = (int)e.Sample * 100; //This is not working at all
             UIUpdate(e);
         }
 
-        private void UIUpdate(DataAvailableArgs e)
+        private void UIUpdate(MusicDataAvailableArgs e)
         {
             if (InvokeRequired)
             {

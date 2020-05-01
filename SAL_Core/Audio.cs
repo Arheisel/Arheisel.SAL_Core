@@ -14,8 +14,7 @@ namespace SAL_Core
         private const int minLength = 2;
         private const int maxLength = 16384;
 
-        public delegate void DataAvailableEventHandler(double avgPeak, double[] channelMagnitudes);
-        public event DataAvailableEventHandler DataAvailable;
+        public event EventHandler<AudioDataAvailableArgs> DataAvailable;
 
         private readonly MMDeviceEnumerator enumerator;
         private readonly MMDevice device;
@@ -145,6 +144,11 @@ namespace SAL_Core
             capture = null;
         }
 
+        public double Curve(double x)
+        {
+            return Math.Log10(x) + (Slope / 10); //Math.Log10(x*10) * (10/slope); //Math.Log10(x) + (slope / 10); //(Math.Log(x, 2) + slope) / 10;
+        }
+
         private void Capture_DataAvailable(object sender, WaveInEventArgs e)
         {
             waveBuffer.AddSamples(e.Buffer, 0, e.BytesRecorded);
@@ -211,7 +215,7 @@ namespace SAL_Core
                 double x = Convert.ToDouble(max * autoScaler.Scale);
                 //if (x > 1) x = 1;
                 //double res = (1.0 / ((1.1 - x) * slope)) - 0.1;
-                double res = Math.Log10(x) + (Slope / 10);//Math.Log10(x*10) * (10/slope); //Math.Log10(x) + (slope / 10); //(Math.Log(x, 2) + slope) / 10;
+                double res = Curve(x);
                 autoScaler.Sample(res);
                 if (res > 1) res = 1;
                 else if (res < 0) res = 0;
@@ -221,11 +225,11 @@ namespace SAL_Core
                 else if (index > Maps.MaxIndex) index = Maps.MaxIndex;*/
                 //arduinoCollection.SetColor(i, Maps.Map[index]);
 
-                if (i == 0) arduinoCollection.SetColor(Maps.Encode(res));
+                //if (i == 0) arduinoCollection.SetColor(Maps.EncodeRGB(res));
             }
             avgPeak /= _channels;
 
-            DataAvailable?.Invoke(avgPeak, channelMagnitudes);
+            DataAvailable?.Invoke(this, new AudioDataAvailableArgs(avgPeak, channelMagnitudes));
         }
 
     }
@@ -287,7 +291,7 @@ namespace SAL_Core
             }
         }
 
-        public static Color Encode(double num)
+        public static Color EncodeRGB(double num)
         {
             if (num <= 0) return new Color(0, 0, 0);
             else if (num >= 1) return new Color(14, 0, 0);
@@ -326,5 +330,17 @@ namespace SAL_Core
 
             return new Color(R, G, B);
         }
+    }
+
+    public class AudioDataAvailableArgs : EventArgs
+    {
+        public AudioDataAvailableArgs(double avgPeak, double[] channelMagnitudes)
+        {
+            AvgPeak = avgPeak;
+            ChannelMagnitudes = channelMagnitudes;
+        }
+
+        public double AvgPeak { get; }
+        public double[] ChannelMagnitudes { get; }
     }
 }
