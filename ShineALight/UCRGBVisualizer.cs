@@ -64,5 +64,12 @@ namespace ShineALight
                 autoscalerControl.UpdateValues();
             }
         }
+
+        private void TrackBar1_Scroll(object sender, EventArgs e)
+        {
+            audio.Slope = trackBar1.Value;
+            slopeLabel.Text = trackBar1.Value.ToString();
+            curvePlot1.Refresh();
+        }
     }
 }

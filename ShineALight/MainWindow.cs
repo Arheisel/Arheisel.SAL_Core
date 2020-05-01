@@ -51,7 +51,12 @@ namespace ShineALight
                     break;
                 case "Music":
                     control = new UCMusic(arduinoCollection);
-                    Main.Panel2.Controls.Clear();
+                    Main.Panel2.Controls.Add(control);
+                    control.Dock = DockStyle.Fill;
+                    control.Show();
+                    break;
+                case "RGB Visualizer":
+                    control = new UCRGBVisualizer(arduinoCollection);
                     Main.Panel2.Controls.Add(control);
                     control.Dock = DockStyle.Fill;
                     control.Show();

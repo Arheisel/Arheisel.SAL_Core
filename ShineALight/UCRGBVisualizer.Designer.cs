@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(UCRGBVisualizer));
             this.vuMeterR = new ShineALight.VUMeter();
             this.vuMeterB = new ShineALight.VUMeter();
             this.vuMeterG = new ShineALight.VUMeter();
@@ -110,12 +109,13 @@
             this.trackBar1.Size = new System.Drawing.Size(248, 45);
             this.trackBar1.TabIndex = 4;
             this.trackBar1.Value = 10;
+            this.trackBar1.Scroll += new System.EventHandler(this.TrackBar1_Scroll);
             // 
             // curvePlot1
             // 
             this.curvePlot1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.curvePlot1.Function = ((System.Func<double, double>)(resources.GetObject("curvePlot1.Function")));
+            this.curvePlot1.Function = null;
             this.curvePlot1.Location = new System.Drawing.Point(141, 4);
             this.curvePlot1.Name = "curvePlot1";
             this.curvePlot1.Size = new System.Drawing.Size(281, 177);

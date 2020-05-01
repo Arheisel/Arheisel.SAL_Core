@@ -126,7 +126,7 @@
             this.ModeSelect.Items.AddRange(new object[] {
             "Effects",
             "Music",
-            "Visualizer",
+            "RGB Visualizer",
             "Receiver"});
             this.ModeSelect.Location = new System.Drawing.Point(55, 12);
             this.ModeSelect.Name = "ModeSelect";
