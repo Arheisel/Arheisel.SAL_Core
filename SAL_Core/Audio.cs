@@ -151,6 +151,11 @@ namespace SAL_Core
 
         private void Capture_DataAvailable(object sender, WaveInEventArgs e)
         {
+            Task.Run(() => ProcessAudioData(e));
+        }
+
+        private void ProcessAudioData(WaveInEventArgs e)
+        {
             waveBuffer.AddSamples(e.Buffer, 0, e.BytesRecorded);
             ISampleProvider samples = waveBuffer.ToSampleProvider();
 

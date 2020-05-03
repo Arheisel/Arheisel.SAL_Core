@@ -33,21 +33,21 @@
             this.vuMeterG = new ShineALight.VUMeter();
             this.autoscalerControl = new ShineALight.AutoscalerControl();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.minFreqLabel = new System.Windows.Forms.Label();
+            this.maxFreqLabel = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.minFreqTrackbar = new System.Windows.Forms.TrackBar();
+            this.maxFreqTrackbar = new System.Windows.Forms.TrackBar();
+            this.label2 = new System.Windows.Forms.Label();
+            this.chLabel = new System.Windows.Forms.Label();
             this.slopeLabel = new System.Windows.Forms.Label();
             this.slopeTrackbar = new System.Windows.Forms.TrackBar();
-            this.chLabel = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.maxFreqTrackbar = new System.Windows.Forms.TrackBar();
-            this.minFreqTrackbar = new System.Windows.Forms.TrackBar();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.maxFreqLabel = new System.Windows.Forms.Label();
-            this.minFreqLabel = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.slopeTrackbar)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.maxFreqTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.minFreqTrackbar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.maxFreqTrackbar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.slopeTrackbar)).BeginInit();
             this.SuspendLayout();
             // 
             // vuMeterR
@@ -109,6 +109,99 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
             // 
+            // minFreqLabel
+            // 
+            this.minFreqLabel.AutoSize = true;
+            this.minFreqLabel.Location = new System.Drawing.Point(6, 92);
+            this.minFreqLabel.Name = "minFreqLabel";
+            this.minFreqLabel.Size = new System.Drawing.Size(19, 13);
+            this.minFreqLabel.TabIndex = 14;
+            this.minFreqLabel.Text = "50";
+            // 
+            // maxFreqLabel
+            // 
+            this.maxFreqLabel.AutoSize = true;
+            this.maxFreqLabel.Location = new System.Drawing.Point(6, 156);
+            this.maxFreqLabel.Name = "maxFreqLabel";
+            this.maxFreqLabel.Size = new System.Drawing.Size(31, 13);
+            this.maxFreqLabel.TabIndex = 13;
+            this.maxFreqLabel.Text = "4100";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(3, 58);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(99, 13);
+            this.label4.TabIndex = 12;
+            this.label4.Text = "Min Frequency (Hz)";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(3, 196);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(34, 13);
+            this.label3.TabIndex = 11;
+            this.label3.Text = "Slope";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 123);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(102, 13);
+            this.label1.TabIndex = 10;
+            this.label1.Text = "Max Frequency (Hz)";
+            // 
+            // minFreqTrackbar
+            // 
+            this.minFreqTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.minFreqTrackbar.LargeChange = 10;
+            this.minFreqTrackbar.Location = new System.Drawing.Point(27, 74);
+            this.minFreqTrackbar.Maximum = 1000;
+            this.minFreqTrackbar.Minimum = 1;
+            this.minFreqTrackbar.Name = "minFreqTrackbar";
+            this.minFreqTrackbar.Size = new System.Drawing.Size(248, 45);
+            this.minFreqTrackbar.SmallChange = 5;
+            this.minFreqTrackbar.TabIndex = 9;
+            this.minFreqTrackbar.Value = 50;
+            this.minFreqTrackbar.Scroll += new System.EventHandler(this.MinFreqTrackbar_Scroll);
+            // 
+            // maxFreqTrackbar
+            // 
+            this.maxFreqTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.maxFreqTrackbar.LargeChange = 100;
+            this.maxFreqTrackbar.Location = new System.Drawing.Point(27, 139);
+            this.maxFreqTrackbar.Maximum = 10000;
+            this.maxFreqTrackbar.Minimum = 100;
+            this.maxFreqTrackbar.Name = "maxFreqTrackbar";
+            this.maxFreqTrackbar.Size = new System.Drawing.Size(248, 45);
+            this.maxFreqTrackbar.SmallChange = 50;
+            this.maxFreqTrackbar.TabIndex = 8;
+            this.maxFreqTrackbar.Value = 4100;
+            this.maxFreqTrackbar.Scroll += new System.EventHandler(this.TrackBar2_Scroll);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(24, 29);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(54, 13);
+            this.label2.TabIndex = 7;
+            this.label2.Text = "Channels:";
+            // 
+            // chLabel
+            // 
+            this.chLabel.AutoSize = true;
+            this.chLabel.Location = new System.Drawing.Point(84, 29);
+            this.chLabel.Name = "chLabel";
+            this.chLabel.Size = new System.Drawing.Size(13, 13);
+            this.chLabel.TabIndex = 6;
+            this.chLabel.Text = "1";
+            // 
             // slopeLabel
             // 
             this.slopeLabel.AutoSize = true;
@@ -130,95 +223,6 @@
             this.slopeTrackbar.Value = 20;
             this.slopeTrackbar.Scroll += new System.EventHandler(this.TrackBar1_Scroll);
             // 
-            // chLabel
-            // 
-            this.chLabel.AutoSize = true;
-            this.chLabel.Location = new System.Drawing.Point(84, 29);
-            this.chLabel.Name = "chLabel";
-            this.chLabel.Size = new System.Drawing.Size(13, 13);
-            this.chLabel.TabIndex = 6;
-            this.chLabel.Text = "1";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(24, 29);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(54, 13);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Channels:";
-            // 
-            // maxFreqTrackbar
-            // 
-            this.maxFreqTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.maxFreqTrackbar.Location = new System.Drawing.Point(27, 139);
-            this.maxFreqTrackbar.Maximum = 10000;
-            this.maxFreqTrackbar.Minimum = 100;
-            this.maxFreqTrackbar.Name = "maxFreqTrackbar";
-            this.maxFreqTrackbar.Size = new System.Drawing.Size(248, 45);
-            this.maxFreqTrackbar.TabIndex = 8;
-            this.maxFreqTrackbar.Value = 2050;
-            this.maxFreqTrackbar.Scroll += new System.EventHandler(this.TrackBar2_Scroll);
-            // 
-            // minFreqTrackbar
-            // 
-            this.minFreqTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.minFreqTrackbar.Location = new System.Drawing.Point(27, 74);
-            this.minFreqTrackbar.Maximum = 1000;
-            this.minFreqTrackbar.Minimum = 1;
-            this.minFreqTrackbar.Name = "minFreqTrackbar";
-            this.minFreqTrackbar.Size = new System.Drawing.Size(248, 45);
-            this.minFreqTrackbar.TabIndex = 9;
-            this.minFreqTrackbar.Value = 50;
-            this.minFreqTrackbar.Scroll += new System.EventHandler(this.MinFreqTrackbar_Scroll);
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 123);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(102, 13);
-            this.label1.TabIndex = 10;
-            this.label1.Text = "Max Frequency (Hz)";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 196);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(34, 13);
-            this.label3.TabIndex = 11;
-            this.label3.Text = "Slope";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 58);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(99, 13);
-            this.label4.TabIndex = 12;
-            this.label4.Text = "Min Frequency (Hz)";
-            // 
-            // maxFreqLabel
-            // 
-            this.maxFreqLabel.AutoSize = true;
-            this.maxFreqLabel.Location = new System.Drawing.Point(6, 156);
-            this.maxFreqLabel.Name = "maxFreqLabel";
-            this.maxFreqLabel.Size = new System.Drawing.Size(31, 13);
-            this.maxFreqLabel.TabIndex = 13;
-            this.maxFreqLabel.Text = "2050";
-            // 
-            // minFreqLabel
-            // 
-            this.minFreqLabel.AutoSize = true;
-            this.minFreqLabel.Location = new System.Drawing.Point(6, 92);
-            this.minFreqLabel.Name = "minFreqLabel";
-            this.minFreqLabel.Size = new System.Drawing.Size(19, 13);
-            this.minFreqLabel.TabIndex = 14;
-            this.minFreqLabel.Text = "50";
-            // 
             // UCRGBVisualizer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -232,9 +236,9 @@
             this.Size = new System.Drawing.Size(425, 371);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.slopeTrackbar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.maxFreqTrackbar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.minFreqTrackbar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.maxFreqTrackbar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.slopeTrackbar)).EndInit();
             this.ResumeLayout(false);
 
         }

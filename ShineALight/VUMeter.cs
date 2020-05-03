@@ -19,6 +19,9 @@ namespace ShineALight
             InitializeComponent();
         }
 
+        public Brush Color { get; set; } = Brushes.Lime;
+        public Brush PeakColor { get; set; } = Brushes.Red;
+
         public double Value
         {
             get
@@ -41,11 +44,11 @@ namespace ShineALight
                     if (value < 0.9)
                     {
                         var h = (float)(pictureBox1.Size.Height * value);
-                        g.FillRectangle(Brushes.Lime, 0, pictureBox1.Size.Height - h, pictureBox1.Size.Width, h);
+                        g.FillRectangle(Color, 0, pictureBox1.Size.Height - h, pictureBox1.Size.Width, h);
                     }
                     else
                     {
-                        g.FillRectangle(Brushes.Red, 0, 0, pictureBox1.Size.Width, pictureBox1.Size.Height);
+                        g.FillRectangle(PeakColor, 0, 0, pictureBox1.Size.Width, pictureBox1.Size.Height);
                         _val = 1;
                     }
                 }

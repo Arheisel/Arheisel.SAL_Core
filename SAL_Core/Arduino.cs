@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
@@ -166,6 +167,35 @@ namespace SAL_Core
     public class ArduinoCollection
     {
         private readonly List<Arduino> collection = new List<Arduino>();
+        private readonly ConcurrentQueue<Color> queue;
+        private readonly Thread thread;
+        private Color _color = Colors.NONE;
+
+        public ArduinoCollection()
+        {
+            thread = new Thread(new ThreadStart(Worker));
+            queue = new ConcurrentQueue<Color>();
+            thread.Start();
+        }
+
+        private void Worker()
+        {
+            while (true)
+            {
+                if(queue.TryDequeue(out Color color))
+                {
+                    if (color != _color)
+                    {
+                        _color = color;
+                        foreach (Arduino arduino in collection)
+                        {
+                            arduino.SetColor(color);
+                        }
+                    }
+                }
+                Thread.Sleep(1);
+            }
+        }
 
         public Arduino this[int index]
         {
@@ -198,18 +228,9 @@ namespace SAL_Core
             }
         }
 
-        private Color _color = Colors.NONE;
-
         public void SetColor(Color color)
         {
-            if (color != _color)
-            {
-                _color = color;
-                foreach (Arduino arduino in collection)
-                {
-                    arduino.SetColor(color);
-                }
-            }
+            queue.Enqueue(color);
         }
 
         public void SetColor(int R, int G, int B)
@@ -241,25 +262,6 @@ namespace SAL_Core
         }*/
 
     }
-
-    /*public enum Colors
-    {
-        NONE = -1,
-        OFF = 0,
-        RED = 1,
-        GREEN = 2,
-        BLUE = 3,
-        YELLOW = 4,
-        MAGENTA = 5,
-        CYAN = 6,
-        ORANGE = 7,
-        LYME = 8,
-        PURPLE = 9,
-        PINK = 10,
-        AQGREEN = 11,
-        EBLUE = 12,
-        WHITE = 13
-    }*/
 
     public static class Colors
     {

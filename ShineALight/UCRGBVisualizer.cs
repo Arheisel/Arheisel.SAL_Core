@@ -28,7 +28,13 @@ namespace ShineALight
             //curvePlot1.Function = audio.Curve;
             this.collection = collection;
             chLabel.Text = audio.Channels.ToString();
-            audio.MaxFreq = 2050;
+            audio.MaxFreq = 4100;
+            vuMeterR.Color = Brushes.Red;
+            vuMeterR.PeakColor = Brushes.Red;
+            vuMeterB.Color = Brushes.Blue;
+            vuMeterB.PeakColor = Brushes.Blue;
+            vuMeterG.Color = Brushes.Green;
+            vuMeterG.PeakColor = Brushes.Green;
         }
 
         public override void DisposeDeferred()
