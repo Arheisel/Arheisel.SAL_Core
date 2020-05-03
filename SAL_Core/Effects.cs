@@ -95,6 +95,21 @@ namespace SAL_Core
             }
         }
 
+        public int HoldSteps
+        {
+            get
+            {
+                return holdingSteps;
+            }
+            set
+            {
+                if (value >= 0 && value <= 100)
+                {
+                    holdingSteps = value;
+                }
+            }
+        }
+
         public int Time { get; private set; } = 100;
 
         public Color[] Effect
@@ -179,7 +194,7 @@ namespace SAL_Core
 
         public TransitionColor(double oldValue, double newValue, double steps)
         {
-            m = (newValue - oldValue) / steps;
+            m = (newValue - oldValue) / (steps - 1.0);
             b = oldValue;
         }
 

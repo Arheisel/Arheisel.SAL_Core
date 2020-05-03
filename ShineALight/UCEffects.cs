@@ -48,5 +48,11 @@ namespace ShineALight
             effects.Steps = stepsTrackbar.Value;
             stepsLabel.Text = stepsTrackbar.Value.ToString();
         }
+
+        private void HoldTrackbar_Scroll(object sender, EventArgs e)
+        {
+            effects.HoldSteps = holdTrackbar.Value;
+            holdLabel.Text = holdTrackbar.Value.ToString();
+        }
     }
 }
