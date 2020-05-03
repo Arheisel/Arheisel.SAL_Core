@@ -9,11 +9,15 @@ namespace SAL_Core
 {
     public class Effects
     {
-        private string _current = "Cycle";
+        private string _current = "Rainbow";
         private Timer timer;
         private ArduinoCollection arduinoCollection;
 
         public int Count = 0;
+        private Transition transition;
+        private int step = 0;
+        private int totalSteps = 255;
+        private int holdingSteps = 50;
 
         public string Current
         {
@@ -35,6 +39,7 @@ namespace SAL_Core
 
         public readonly Dictionary<string, Color[]> list = new Dictionary<string, Color[]>()
         {
+            {"Rainbow", new Color[] { Colors.MAGENTA, Colors.CYAN, Colors.YELLOW } },
             {"Cycle", new Color[] { Colors.RED, Colors.GREEN, Colors.BLUE } },
             {"Extended Cycle", new Color[] { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK } },
             {"Color Flash", new Color[]
@@ -75,6 +80,21 @@ namespace SAL_Core
             }
         }
 
+        public int Steps
+        {
+            get
+            {
+                return totalSteps;
+            }
+            set
+            {
+                if (value > 0 && value <= 255)
+                {
+                    totalSteps = value;
+                }
+            }
+        }
+
         public int Time { get; private set; } = 100;
 
         public Color[] Effect
@@ -82,6 +102,23 @@ namespace SAL_Core
             get
             {
                 return list[_current];
+            }
+        }
+
+        public Color CurrentColor
+        {
+            get
+            {
+                return Effect[Count];
+            }
+        }
+
+        public Color NextColor
+        {
+            get
+            {
+                if (Count == Effect.Length - 1) return Effect[0];
+                else return Effect[Count + 1];
             }
         }
 
@@ -95,35 +132,60 @@ namespace SAL_Core
             };
             timer.Elapsed += Timer_Elapsed;
             arduinoCollection = arduino;
-        }
 
-        private Color _currentColor = Colors.OFF;
+            transition = new Transition(CurrentColor, NextColor, totalSteps);
+        }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            var target = Effect[Count];
-
-            if(target == _currentColor)
+            if(step >= totalSteps + holdingSteps)
             {
                 if (Count == Effect.Length - 1) Count = 0;
                 else Count++;
-                target = Effect[Count];
+                transition = new Transition(CurrentColor, NextColor, totalSteps);
+                step = 0;
             }
-            var R = _currentColor.R;
-            var G = _currentColor.G;
-            var B = _currentColor.B;
 
-            if (target.R > R) R++;
-            else if (target.R < R) R--;
-            if (target.G > G) G++;
-            else if (target.G < G) G--;
-            if (target.B > B) B++;
-            else if (target.B < B) B--;
+            if(step < totalSteps)
+                arduinoCollection.SetColor(transition.getColor(step));
 
-            _currentColor = new Color(R, G, B);
+            step++;
+        }
+    }
 
-            arduinoCollection.SetColor(_currentColor);
-            
+    class Transition
+    {
+        private TransitionColor R;
+        private TransitionColor G;
+        private TransitionColor B;
+
+        public Transition(Color oldColor, Color newColor, int steps)
+        {
+            R = new TransitionColor(oldColor.R, newColor.R, steps);
+            G = new TransitionColor(oldColor.G, newColor.G, steps);
+            B = new TransitionColor(oldColor.B, newColor.B, steps);
+        }
+
+        public Color getColor(int step)
+        {
+            return new Color(R.getColorValue(step), G.getColorValue(step), B.getColorValue(step));
+        }
+    }
+
+    class TransitionColor
+    {
+        private double m;
+        private double b;
+
+        public TransitionColor(double oldValue, double newValue, double steps)
+        {
+            m = (newValue - oldValue) / steps;
+            b = oldValue;
+        }
+
+        public int getColorValue(double step)
+        {
+            return (int)Math.Round(m * step + b);
         }
     }
 }

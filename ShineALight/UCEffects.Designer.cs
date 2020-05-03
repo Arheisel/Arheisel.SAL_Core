@@ -31,9 +31,14 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.currentSelect = new System.Windows.Forms.ComboBox();
-            this.speedSelect = new System.Windows.Forms.TrackBar();
+            this.speedTrackbar = new System.Windows.Forms.TrackBar();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            ((System.ComponentModel.ISupportInitialize)(this.speedSelect)).BeginInit();
+            this.speedLabel = new System.Windows.Forms.Label();
+            this.stepsLabel = new System.Windows.Forms.Label();
+            this.stepsTrackbar = new System.Windows.Forms.TrackBar();
+            this.label4 = new System.Windows.Forms.Label();
+            ((System.ComponentModel.ISupportInitialize)(this.speedTrackbar)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.stepsTrackbar)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -66,28 +71,73 @@
             this.currentSelect.TabIndex = 2;
             this.currentSelect.SelectedIndexChanged += new System.EventHandler(this.CurrentSelect_SelectedIndexChanged);
             // 
-            // speedSelect
+            // speedTrackbar
             // 
-            this.speedSelect.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.speedTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.speedSelect.Location = new System.Drawing.Point(73, 52);
-            this.speedSelect.Maximum = 100;
-            this.speedSelect.Name = "speedSelect";
-            this.speedSelect.Size = new System.Drawing.Size(276, 45);
-            this.speedSelect.TabIndex = 3;
-            this.speedSelect.Scroll += new System.EventHandler(this.SpeedSelect_Scroll);
+            this.speedTrackbar.Location = new System.Drawing.Point(73, 52);
+            this.speedTrackbar.Maximum = 100;
+            this.speedTrackbar.Name = "speedTrackbar";
+            this.speedTrackbar.Size = new System.Drawing.Size(276, 45);
+            this.speedTrackbar.TabIndex = 3;
+            this.speedTrackbar.Scroll += new System.EventHandler(this.SpeedTrackbar_Scroll);
+            // 
+            // speedLabel
+            // 
+            this.speedLabel.AutoSize = true;
+            this.speedLabel.Location = new System.Drawing.Point(50, 75);
+            this.speedLabel.Name = "speedLabel";
+            this.speedLabel.Size = new System.Drawing.Size(13, 13);
+            this.speedLabel.TabIndex = 4;
+            this.speedLabel.Text = "0";
+            // 
+            // stepsLabel
+            // 
+            this.stepsLabel.AutoSize = true;
+            this.stepsLabel.Location = new System.Drawing.Point(49, 126);
+            this.stepsLabel.Name = "stepsLabel";
+            this.stepsLabel.Size = new System.Drawing.Size(25, 13);
+            this.stepsLabel.TabIndex = 7;
+            this.stepsLabel.Text = "255";
+            // 
+            // stepsTrackbar
+            // 
+            this.stepsTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.stepsTrackbar.Location = new System.Drawing.Point(72, 103);
+            this.stepsTrackbar.Maximum = 255;
+            this.stepsTrackbar.Minimum = 1;
+            this.stepsTrackbar.Name = "stepsTrackbar";
+            this.stepsTrackbar.Size = new System.Drawing.Size(276, 45);
+            this.stepsTrackbar.TabIndex = 6;
+            this.stepsTrackbar.Value = 255;
+            this.stepsTrackbar.Scroll += new System.EventHandler(this.StepsTrackbar_Scroll);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(21, 103);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(37, 13);
+            this.label4.TabIndex = 5;
+            this.label4.Text = "Steps:";
             // 
             // UCEffects
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.speedSelect);
+            this.Controls.Add(this.stepsLabel);
+            this.Controls.Add(this.stepsTrackbar);
+            this.Controls.Add(this.label4);
+            this.Controls.Add(this.speedLabel);
+            this.Controls.Add(this.speedTrackbar);
             this.Controls.Add(this.currentSelect);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Name = "UCEffects";
             this.Size = new System.Drawing.Size(372, 347);
-            ((System.ComponentModel.ISupportInitialize)(this.speedSelect)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.speedTrackbar)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.stepsTrackbar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -98,7 +148,11 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ComboBox currentSelect;
-        private System.Windows.Forms.TrackBar speedSelect;
+        private System.Windows.Forms.TrackBar speedTrackbar;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.Label speedLabel;
+        private System.Windows.Forms.Label stepsLabel;
+        private System.Windows.Forms.TrackBar stepsTrackbar;
+        private System.Windows.Forms.Label label4;
     }
 }

@@ -62,10 +62,10 @@ namespace ShineALight
 
         }
 
-        private void TrackBar1_Scroll(object sender, EventArgs e)
+        private void slopeTrackbar_Scroll(object sender, EventArgs e)
         {
-            music.Data.Slope = trackBar1.Value;
-            slopeLabel.Text = trackBar1.Value.ToString();
+            music.Data.Slope = slopeTrackbar.Value;
+            slopeLabel.Text = slopeTrackbar.Value.ToString();
             curvePlot1.Refresh();
         }
     }

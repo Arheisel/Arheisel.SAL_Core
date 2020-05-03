@@ -24,12 +24,12 @@ namespace ShineALight
                 currentSelect.Items.Add(name);
             }
             currentSelect.Text = effects.Current;
-            this.Disposed += UCEffects_Disposed;
         }
 
-        private void UCEffects_Disposed(object sender, EventArgs e)
+        public override void DisposeDeferred()
         {
             effects.Speed = 0;
+            Dispose();
         }
 
         private void CurrentSelect_SelectedIndexChanged(object sender, EventArgs e)
@@ -37,9 +37,16 @@ namespace ShineALight
             effects.Current = currentSelect.Text;
         }
 
-        private void SpeedSelect_Scroll(object sender, EventArgs e)
+        private void SpeedTrackbar_Scroll(object sender, EventArgs e)
         {
-            effects.Speed = speedSelect.Value;
+            effects.Speed = speedTrackbar.Value;
+            speedLabel.Text = speedTrackbar.Value.ToString();
+        }
+
+        private void StepsTrackbar_Scroll(object sender, EventArgs e)
+        {
+            effects.Steps = stepsTrackbar.Value;
+            stepsLabel.Text = stepsTrackbar.Value.ToString();
         }
     }
 }

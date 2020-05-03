@@ -46,9 +46,9 @@ namespace ShineALight
 
         private void Audio_DataAvailable(object sender, AudioDataAvailableArgs e)
         {
-            int r = (int) Math.Round(e.ChannelMagnitudes[0] * 14);
-            int b = (int) Math.Round(e.ChannelMagnitudes[1] * 14);
-            int g = (int) Math.Round(e.ChannelMagnitudes[2] * 14);
+            int r = (int) Math.Round(e.ChannelMagnitudes[0] * 255);
+            int b = (int) Math.Round(e.ChannelMagnitudes[1] * 255);
+            int g = (int) Math.Round(e.ChannelMagnitudes[2] * 255);
             collection.SetColor(new SAL_Core.Color(r, g, b));
             UIUpdate(e);
         }
@@ -73,7 +73,7 @@ namespace ShineALight
             }
         }
 
-        private void TrackBar1_Scroll(object sender, EventArgs e)
+        private void slopeTrackbar_Scroll(object sender, EventArgs e)
         {
             audio.Slope = slopeTrackbar.Value;
             slopeLabel.Text = slopeTrackbar.Value.ToString();

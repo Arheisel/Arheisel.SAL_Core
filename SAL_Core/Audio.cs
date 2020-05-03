@@ -299,7 +299,7 @@ namespace SAL_Core
         public static Color EncodeRGB(double num)
         {
             if (num <= 0) return new Color(0, 0, 0);
-            else if (num >= 1) return new Color(14, 0, 0);
+            else if (num >= 1) return new Color(255, 0, 0);
 
             double y = 0;
 
@@ -308,7 +308,7 @@ namespace SAL_Core
             else
             {
                 y = 2.0 * num - 1.0;
-                R = (int)Math.Round(y * 14.0);
+                R = (int)Math.Round(y * 255.0);
             }
 
             int G;
@@ -320,7 +320,7 @@ namespace SAL_Core
             {
                 y = -1.81 * num + 1.36;
             }
-            G = (int)Math.Round(y * 14.0);
+            G = (int)Math.Round(y * 255.0);
 
             int B;
             if(num < 0.5)
@@ -331,7 +331,7 @@ namespace SAL_Core
             {
                 y = -2.5 * num + 2.25;
             }
-            B = (int)Math.Round(y * 14.0);
+            B = (int)Math.Round(y * 255.0);
 
             return new Color(R, G, B);
         }

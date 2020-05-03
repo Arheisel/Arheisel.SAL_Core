@@ -31,10 +31,10 @@
             this.vuMeter1 = new ShineALight.VUMeter();
             this.autoscalerControl1 = new ShineALight.AutoscalerControl();
             this.curvePlot1 = new ShineALight.CurvePlot();
-            this.trackBar1 = new System.Windows.Forms.TrackBar();
+            this.slopeTrackbar = new System.Windows.Forms.TrackBar();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.slopeLabel = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.slopeTrackbar)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -69,22 +69,22 @@
             // 
             // trackBar1
             // 
-            this.trackBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.slopeTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.trackBar1.Location = new System.Drawing.Point(27, 28);
-            this.trackBar1.Maximum = 40;
-            this.trackBar1.Name = "trackBar1";
-            this.trackBar1.Size = new System.Drawing.Size(348, 45);
-            this.trackBar1.TabIndex = 4;
-            this.trackBar1.Value = 10;
-            this.trackBar1.Scroll += new System.EventHandler(this.TrackBar1_Scroll);
+            this.slopeTrackbar.Location = new System.Drawing.Point(27, 28);
+            this.slopeTrackbar.Maximum = 40;
+            this.slopeTrackbar.Name = "trackBar1";
+            this.slopeTrackbar.Size = new System.Drawing.Size(348, 45);
+            this.slopeTrackbar.TabIndex = 4;
+            this.slopeTrackbar.Value = 10;
+            this.slopeTrackbar.Scroll += new System.EventHandler(this.slopeTrackbar_Scroll);
             // 
             // groupBox1
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.slopeLabel);
-            this.groupBox1.Controls.Add(this.trackBar1);
+            this.groupBox1.Controls.Add(this.slopeTrackbar);
             this.groupBox1.Location = new System.Drawing.Point(40, 184);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(381, 79);
@@ -112,7 +112,7 @@
             this.Name = "UCMusic";
             this.Size = new System.Drawing.Size(425, 371);
             this.Load += new System.EventHandler(this.UCMusic_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.slopeTrackbar)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -123,7 +123,7 @@
         private VUMeter vuMeter1;
         private AutoscalerControl autoscalerControl1;
         private CurvePlot curvePlot1;
-        private System.Windows.Forms.TrackBar trackBar1;
+        private System.Windows.Forms.TrackBar slopeTrackbar;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label slopeLabel;
     }

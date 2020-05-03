@@ -79,7 +79,7 @@ namespace SAL_Core
             }
         }*/
 
-        public void SetColor(int R, int G, int B)
+        /*public void SetColor(int R, int G, int B)
         {
             if (R < 0) R = 0;
             else if (R > 14) R = 14;
@@ -97,6 +97,24 @@ namespace SAL_Core
             data += (byte)B;
             Send(data);
 
+        }*/
+
+        public void SetColor(int R, int G, int B)
+        {
+            if (R < 0) R = 0;
+            else if (R > 255) R = 255;
+            if (G < 0) G = 0;
+            else if (G > 255) G = 255;
+            if (B < 0) B = 0;
+            if (B > 255) B = 255;
+
+            if (R == 252) R++;
+            if (G == 252) G++;
+            if (B == 252) B++;
+
+
+            byte[] data = { 252, (byte)R, (byte)G, (byte)B };
+            Send(data);
         }
 
         private Color _color = Colors.NONE;
@@ -122,11 +140,16 @@ namespace SAL_Core
         }
         private void Send(byte data)
         {
+            dataArr[0] = data;
+            Send(dataArr);
+        }
+
+        private void Send(byte[] data)
+        {
             if (usingUDP) udp.Send(data);
             else
             {
-                dataArr[0] = data;
-                serial.Write(dataArr, 0, 1);
+                serial.Write(data, 0, data.Length);
             }
         }
 
@@ -267,19 +290,19 @@ namespace SAL_Core
     {
         public static Color NONE { get; } = new Color(-1, -1, -1);
         public static Color OFF { get; } = new Color(0, 0, 0);
-        public static Color RED { get; } = new Color(14, 0, 0);
-        public static Color GREEN { get; } = new Color(0, 14, 0);
-        public static Color BLUE { get; } = new Color(0, 0, 14);
-        public static Color YELLOW { get; } = new Color(14, 14, 0);
-        public static Color MAGENTA { get; } = new Color(14, 0, 14);
-        public static Color CYAN { get; } = new Color(0, 14, 14);
-        public static Color ORANGE { get; } = new Color(14, 6, 0);
-        public static Color LYME { get; } = new Color(6, 14, 0);
-        public static Color PURPLE { get; } = new Color(6, 0, 14);
-        public static Color PINK { get; } = new Color(14, 0, 6);
-        public static Color AQGREEN { get; } = new Color(0, 14, 6);
-        public static Color EBLUE { get; } = new Color(0, 6, 14);
-        public static Color WHITE { get; } = new Color(14, 14, 14);
+        public static Color RED { get; } = new Color(255, 0, 0);
+        public static Color GREEN { get; } = new Color(0, 255, 0);
+        public static Color BLUE { get; } = new Color(0, 0, 255);
+        public static Color YELLOW { get; } = new Color(255, 255, 0);
+        public static Color MAGENTA { get; } = new Color(255, 0, 255);
+        public static Color CYAN { get; } = new Color(0, 255, 255);
+        public static Color ORANGE { get; } = new Color(255, 127, 0);
+        public static Color LYME { get; } = new Color(127, 255, 0);
+        public static Color PURPLE { get; } = new Color(127, 0, 255);
+        public static Color PINK { get; } = new Color(255, 0, 127);
+        public static Color AQGREEN { get; } = new Color(0, 255, 127);
+        public static Color EBLUE { get; } = new Color(0, 127, 255);
+        public static Color WHITE { get; } = new Color(255, 255, 255);
     }
 
     public struct Color

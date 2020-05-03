@@ -221,7 +221,7 @@
             this.slopeTrackbar.Size = new System.Drawing.Size(248, 45);
             this.slopeTrackbar.TabIndex = 4;
             this.slopeTrackbar.Value = 20;
-            this.slopeTrackbar.Scroll += new System.EventHandler(this.TrackBar1_Scroll);
+            this.slopeTrackbar.Scroll += new System.EventHandler(this.slopeTrackbar_Scroll);
             // 
             // UCRGBVisualizer
             // 

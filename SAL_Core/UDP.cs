@@ -49,7 +49,12 @@ namespace SAL_Core
         public void Send(byte data)
         {
             var dgram = new byte[] { data };
-            sock.Send(dgram, 1, dest);
+            Send(dgram);
+        }
+
+        public void Send(byte[] data)
+        {
+            sock.Send(data, data.Length, dest);
         }
 
         public void Dispose()
