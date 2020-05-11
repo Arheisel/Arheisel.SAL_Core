@@ -209,7 +209,7 @@
             this.slopeLabel.Name = "slopeLabel";
             this.slopeLabel.Size = new System.Drawing.Size(19, 13);
             this.slopeLabel.TabIndex = 5;
-            this.slopeLabel.Text = "20";
+            this.slopeLabel.Text = "10";
             // 
             // slopeTrackbar
             // 
@@ -220,7 +220,7 @@
             this.slopeTrackbar.Name = "slopeTrackbar";
             this.slopeTrackbar.Size = new System.Drawing.Size(248, 45);
             this.slopeTrackbar.TabIndex = 4;
-            this.slopeTrackbar.Value = 20;
+            this.slopeTrackbar.Value = 10;
             this.slopeTrackbar.Scroll += new System.EventHandler(this.slopeTrackbar_Scroll);
             // 
             // UCRGBVisualizer

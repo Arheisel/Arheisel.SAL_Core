@@ -27,7 +27,7 @@ namespace ShineALight
             audio.StartCapture();
             //curvePlot1.Function = audio.Curve;
             this.collection = collection;
-            chLabel.Text = audio.Channels.ToString();
+            chLabel.Text = audio.AudioChannels.ToString();
             audio.MaxFreq = 4100;
             vuMeterR.Color = Brushes.Red;
             vuMeterR.PeakColor = Brushes.Red;

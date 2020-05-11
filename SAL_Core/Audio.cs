@@ -26,11 +26,11 @@ namespace SAL_Core
         private readonly ArduinoCollection arduinoCollection;
 
         public readonly AutoScaler autoScaler;
-        public double Slope = 20.0;
+        public double Slope = 10.0;
 
         private int _channels = 8;
         private int _minFreq = 50; //Hz
-        private int _maxFreq = 2050;
+        private int _maxFreq = 4100;
 
         private int divider = 1;
         private double _octave = 0;
@@ -49,6 +49,15 @@ namespace SAL_Core
                     _channels = value;
                     UpdateOctaveDist();
                 }
+            }
+        }
+
+        public int AudioChannels
+        {
+            get
+            {
+                if (capture != null) return capture.WaveFormat.Channels;
+                else return 0;
             }
         }
 
@@ -73,12 +82,12 @@ namespace SAL_Core
         {
             get
             {
-                return _maxFreq * capture.WaveFormat.Channels;
+                return _maxFreq; // * capture.WaveFormat.Channels;
             }
             set
             {
-                value = value / capture.WaveFormat.Channels; //I don't know why this works and I'm too afraid to ask
-                if (value > _minFreq && waveFormat != null && value <= waveFormat.SampleRate / 2)
+                //value = value / capture.WaveFormat.Channels; //I don't know why this works and I'm too afraid to ask
+                if (value > _minFreq && waveFormat != null && value <= waveFormat.SampleRate)
                 {
                     _maxFreq = value;
                     divider = (waveFormat.SampleRate / _maxFreq);
@@ -125,7 +134,7 @@ namespace SAL_Core
 
             capture = new WasapiLoopbackCapture();
             waveFormat = capture.WaveFormat;
-            bytesPerFrame = (capture.WaveFormat.BitsPerSample / 8) * capture.WaveFormat.Channels;
+            bytesPerFrame = (capture.WaveFormat.BitsPerSample / 8); // * capture.WaveFormat.Channels;
             MaxFreq = MaxFreq; // Calculate divider and Update Octave Distance
             waveBuffer = new BufferedWaveProvider(waveFormat)
             {
@@ -159,32 +168,50 @@ namespace SAL_Core
             waveBuffer.AddSamples(e.Buffer, 0, e.BytesRecorded);
             ISampleProvider samples = waveBuffer.ToSampleProvider();
 
-            int count = waveBuffer.BufferedBytes / bytesPerFrame;
+            int count = (waveBuffer.BufferedBytes / bytesPerFrame) / waveFormat.Channels;
 
-            if (count < minLength) return;
-
-            if (count > maxLength)
+            int n = 0;
+            for (int i = 0; i < 30; i++)
             {
-                count = maxLength;
+                int curr = 1 << i;
+                if (curr > count) break;
+                n = curr;
+            }
+            count = n * waveFormat.Channels;
+
+            if (n < minLength) return;
+
+            if (n > maxLength)
+            {
+                n = maxLength;
             }
 
             var frames = new float[count];
             samples.Read(frames, 0, count);
-
-            int n = count;
-            if (!Tools.IsPowerOf2(n))
-            {
-                while (!Tools.IsPowerOf2(n))
-                {
-                    n &= n - 1;
-                }
-                //n <<= 1;
-            }
+            waveBuffer.ClearBuffer();
 
             Complex[] complexBuffer = new Complex[n];
 
-            for (int i = 0; i < n; i++)
-                complexBuffer[i] = new Complex(frames[i], 0);
+            if (waveFormat.Channels > 1)
+            {
+                var bufferIndex = 0;
+                for (int i = 0; i < count; i += waveFormat.Channels)
+                {
+                    float f = 0;
+                    for(int j = 0; j < waveFormat.Channels; j++)
+                    {
+                        f += frames[i + j];
+                    }
+                    complexBuffer[bufferIndex++] = new Complex(f, 0);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < n; i++)
+                {
+                    complexBuffer[i] = new Complex(frames[i], 0);
+                }
+            }
 
             FourierTransform.FFT(complexBuffer, FourierTransform.Direction.Forward);
 
