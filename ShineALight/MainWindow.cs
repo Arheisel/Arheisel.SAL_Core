@@ -61,6 +61,12 @@ namespace ShineALight
                     control.Dock = DockStyle.Fill;
                     control.Show();
                     break;
+                case "Visualizer":
+                    control = new UCVisualizer(arduinoCollection);
+                    Main.Panel2.Controls.Add(control);
+                    control.Dock = DockStyle.Fill;
+                    control.Show();
+                    break;
             }
         }
 

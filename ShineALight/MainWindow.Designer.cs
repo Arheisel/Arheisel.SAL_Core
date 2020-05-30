@@ -127,6 +127,7 @@
             "Effects",
             "Music",
             "RGB Visualizer",
+            "Visualizer",
             "Receiver"});
             this.ModeSelect.Location = new System.Drawing.Point(55, 12);
             this.ModeSelect.Name = "ModeSelect";
