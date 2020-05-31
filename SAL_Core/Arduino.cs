@@ -37,14 +37,41 @@ namespace SAL_Core
                 Handshake = Handshake.None,
 
                 WriteTimeout = 5,
-                ReadTimeout = 1000
+                ReadTimeout = 200
             };
 
             serial.Open();
-            dataArr[0] = 242;
-            Send(dataArr);
-            Channels = Receive();
+            GetChannels();
             SetColor(Colors.RED);
+        }
+
+        public void GetChannels()
+        { 
+            try
+            {
+                dataArr[0] = 242;
+                Send(dataArr);
+                Channels = Receive();
+            }
+            catch(TimeoutException)
+            {
+                GetChannels(0);
+            }
+        }
+
+        public void GetChannels(int retryCount)
+        {
+            try
+            {
+                dataArr[0] = 242;
+                Send(dataArr);
+                Channels = Receive();
+            }
+            catch (TimeoutException)
+            {
+                if (retryCount < 10) GetChannels(++retryCount);
+                else throw new Exception("Failed at getting device Model");
+            }
         }
 
         /// <summary>
@@ -219,7 +246,7 @@ namespace SAL_Core
         private readonly ConcurrentQueue<ChColor> queue;
         private readonly Thread thread;
         //private Color _color = Colors.NONE;
-        private readonly Color[] _chColor = new Color[1024];
+        private readonly Color[] _chColor = new Color[100];
 
         public ArduinoCollection()
         {
@@ -234,7 +261,7 @@ namespace SAL_Core
         {
             while (true)
             {
-                while(queue.TryDequeue(out ChColor chColor))
+                if(queue.TryDequeue(out ChColor chColor))
                 {
                     int channel = chColor.Channel;
                     if (channel == 0)
@@ -252,6 +279,7 @@ namespace SAL_Core
                             if (channel - arduino.Channels <= 0)
                             {
                                 arduino.SetColor(channel, chColor.Color);
+                                break;
                             }
                             else
                             {

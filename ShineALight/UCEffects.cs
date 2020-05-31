@@ -19,11 +19,12 @@ namespace ShineALight
             InitializeComponent();
             effects = new Effects(collection);
 
-            foreach(string name in effects.list.Keys)
+            foreach(string name in effects.Settings.PresetList.Keys)
             {
                 currentSelect.Items.Add(name);
             }
             currentSelect.Text = effects.Current;
+            UpdateScrollbars();
         }
 
         public override void DisposeDeferred()
@@ -35,6 +36,7 @@ namespace ShineALight
         private void CurrentSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
             effects.Current = currentSelect.Text;
+            UpdateScrollbars();
         }
 
         private void SpeedTrackbar_Scroll(object sender, EventArgs e)
@@ -52,6 +54,20 @@ namespace ShineALight
         private void HoldTrackbar_Scroll(object sender, EventArgs e)
         {
             effects.HoldSteps = holdTrackbar.Value;
+            holdLabel.Text = holdTrackbar.Value.ToString();
+        }
+
+        private void UpdateScrollbars()
+        {
+            var preset = effects.Settings.CurrentPreset;
+
+            speedTrackbar.Value = preset.Speed;
+            speedLabel.Text = speedTrackbar.Value.ToString();
+
+            stepsTrackbar.Value = preset.TotalSteps;
+            stepsLabel.Text = stepsTrackbar.Value.ToString();
+
+            holdTrackbar.Value = preset.HoldingSteps;
             holdLabel.Text = holdTrackbar.Value.ToString();
         }
     }

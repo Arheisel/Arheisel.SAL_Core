@@ -9,70 +9,41 @@ namespace SAL_Core
 {
     public class Effects
     {
-        private string _current = "Rainbow";
+
         private Timer timer;
         private ArduinoCollection arduinoCollection;
 
-        public int Count = 0;
-        private Transition transition;
-        private int step = 0;
-        private int totalSteps = 255;
-        private int holdingSteps = 50;
+        private Effect effect;
+
+        public EffectSettings Settings { get; } = new EffectSettings();
 
         public string Current
         {
             get
             {
-                return _current;
+                return Settings.Current;
             }
             set
             {
-                if (list.ContainsKey(value))
+                if (Settings.PresetList.ContainsKey(value))
                 {
-                    _current = value;
-                    Count = 0;
+                    Settings.Current = value;
+                    InitializeEffect();
                 }
             }
         }
-
-        
-
-        public readonly Dictionary<string, Color[]> list = new Dictionary<string, Color[]>()
-        {
-            {"Rainbow", new Color[] { Colors.MAGENTA, Colors.CYAN, Colors.YELLOW } },
-            {"Cycle", new Color[] { Colors.RED, Colors.GREEN, Colors.BLUE } },
-            {"Extended Cycle", new Color[] { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK } },
-            {"Color Flash", new Color[]
-            {
-                Colors.RED,
-                Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,
-                Colors.GREEN,
-                Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,
-                Colors.BLUE,
-                Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,
-                Colors.YELLOW,
-                Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,
-                Colors.MAGENTA,
-                Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,
-                Colors.CYAN,
-                Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,Colors.OFF,
-            } },
-            {"Flash", new Color[] { Colors.WHITE, Colors.OFF, Colors.OFF, Colors.OFF, Colors.OFF } }
-        };
-
-        private int _speed = 0;
 
         public int Speed
         {
             get
             {
-                return _speed;
+                return Settings.CurrentPreset.Speed;
             }
             set
             {
                 if (value >= 0 && value <= 100)
                 {
-                    _speed = value;
+                    Settings.CurrentPreset.Speed = value;
                     Time = 101 - value;
                     timer.Enabled = value != 0;
                     timer.Interval = Time;
@@ -84,13 +55,13 @@ namespace SAL_Core
         {
             get
             {
-                return totalSteps;
+                return Settings.CurrentPreset.TotalSteps;
             }
             set
             {
                 if (value > 0 && value <= 255)
                 {
-                    totalSteps = value;
+                    Settings.CurrentPreset.TotalSteps = value;
                 }
             }
         }
@@ -99,43 +70,19 @@ namespace SAL_Core
         {
             get
             {
-                return holdingSteps;
+                return Settings.CurrentPreset.HoldingSteps;
             }
             set
             {
                 if (value >= 0 && value <= 100)
                 {
-                    holdingSteps = value;
+                    Settings.CurrentPreset.HoldingSteps = value;
                 }
             }
         }
 
         public int Time { get; private set; } = 100;
 
-        public Color[] Effect
-        {
-            get
-            {
-                return list[_current];
-            }
-        }
-
-        public Color CurrentColor
-        {
-            get
-            {
-                return Effect[Count];
-            }
-        }
-
-        public Color NextColor
-        {
-            get
-            {
-                if (Count == Effect.Length - 1) return Effect[0];
-                else return Effect[Count + 1];
-            }
-        }
 
         public Effects(ArduinoCollection arduino)
         {
@@ -148,23 +95,33 @@ namespace SAL_Core
             timer.Elapsed += Timer_Elapsed;
             arduinoCollection = arduino;
 
-            transition = new Transition(CurrentColor, NextColor, totalSteps);
+            InitializeEffect();
+        }
+
+        public void InitializeEffect()
+        {
+            var preset = Settings.CurrentPreset;
+            Speed = preset.Speed;
+            switch (preset.Type)
+            {
+                case EffectTypes.Rainbow:
+                    effect = new Rainbow(arduinoCollection, preset);
+                    break;
+                case EffectTypes.Cycle:
+                    effect = new Cycle(arduinoCollection, preset);
+                    break;
+                case EffectTypes.Breathing:
+                    effect = new Breathing(arduinoCollection, preset);
+                    break;
+                case EffectTypes.Flash:
+                    effect = new Flash(arduinoCollection, preset);
+                    break;
+            }
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if(step >= totalSteps + holdingSteps)
-            {
-                if (Count == Effect.Length - 1) Count = 0;
-                else Count++;
-                transition = new Transition(CurrentColor, NextColor, totalSteps);
-                step = 0;
-            }
-
-            if(step < totalSteps)
-                arduinoCollection.SetColor(transition.getColor(step));
-
-            step++;
+            effect.Step();
         }
     }
 
@@ -201,6 +158,189 @@ namespace SAL_Core
         public int getColorValue(double step)
         {
             return (int)Math.Round(m * step + b);
+        }
+    }
+
+    class Effect
+    {
+        protected readonly ArduinoCollection arduino;
+        public EffectPreset Preset { get; set; }
+        protected int step = 0;
+        protected int count = 0;
+
+        public Effect(ArduinoCollection collection, EffectPreset settings)
+        {
+            Preset = settings;
+            arduino = collection;
+        }
+
+        public virtual void Step()
+        {
+
+        }
+
+        public void Reset()
+        {
+            count = 0;
+            step = 0;
+        }
+    }
+
+    class Rainbow : Effect
+    {
+        private int channels = 0;
+        private readonly Transition[] transitions = new Transition[100];
+        public Rainbow(ArduinoCollection collection, EffectPreset settings) : base(collection, settings)
+        {
+        }
+
+        public override void Step()
+        {
+            if (arduino.ChannelCount == 0) return;
+            if(step == 0)
+            {
+                channels = arduino.ChannelCount;
+                for(int i = 0; i < channels; i++)
+                {
+                    transitions[i] = new Transition(Preset.ColorList[MathH.Mod(count - i, Preset.ColorList.Count)], Preset.ColorList[MathH.Mod(count - i + 1, Preset.ColorList.Count)], Preset.TotalSteps);
+                    arduino.SetColor(i + 1, Preset.ColorList[MathH.Mod(count - i, Preset.ColorList.Count)]);
+                }
+                if (count >= Preset.ColorList.Count - 1) count = 0;
+                else count++;
+                step++;
+            }
+            else
+            {
+                if (step >= Preset.TotalSteps + Preset.HoldingSteps)
+                {
+                    step = 0;
+                    return;
+                }
+
+                if (step < Preset.TotalSteps)
+                    for (int i = 0; i < channels; i++)
+                        arduino.SetColor(i + 1, transitions[i].getColor(step));
+
+                step++;
+            }
+        }
+    }
+
+    class Cycle : Effect
+    {
+        private Transition transition;
+        public Cycle(ArduinoCollection collection, EffectPreset settings) : base(collection, settings)
+        {
+        }
+
+        public override void Step()
+        {
+            if (arduino.ChannelCount == 0) return;
+            if (step == 0)
+            {
+                transition = new Transition(Preset.ColorList[count], Preset.ColorList[MathH.Mod(count + 1, Preset.ColorList.Count)], Preset.TotalSteps);
+                arduino.SetColor(Preset.ColorList[count]);
+
+                if (count >= Preset.ColorList.Count - 1) count = 0;
+                else count++;
+                step++;
+            }
+            else
+            {
+                if (step >= Preset.TotalSteps + Preset.HoldingSteps)
+                {
+                    step = 0;
+                    return;
+                }
+
+                if (step < Preset.TotalSteps)
+                        arduino.SetColor(transition.getColor(step));
+
+                step++;
+            }
+        }
+    }
+
+    class Breathing : Effect
+    {
+        private Transition transition;
+        private bool mode = true;
+        public Breathing(ArduinoCollection collection, EffectPreset settings) : base(collection, settings)
+        {
+        }
+
+        public override void Step()
+        {
+            if (arduino.ChannelCount == 0) return;
+            if (step == 0)
+            {
+                if (mode)
+                {
+                    transition = new Transition(Colors.OFF, Preset.ColorList[count], Preset.TotalSteps);
+                    arduino.SetColor(Colors.OFF);
+
+                    mode = false;
+                }
+                else
+                {
+                    transition = new Transition(Preset.ColorList[count], Colors.OFF, Preset.TotalSteps);
+                    arduino.SetColor(Preset.ColorList[count]);
+
+                    if (count >= Preset.ColorList.Count - 1) count = 0;
+                    else count++;
+
+                    mode = true;
+                }
+                step++;
+            }
+            else
+            {
+                if (step >= Preset.TotalSteps + Preset.HoldingSteps)
+                {
+                    step = 0;
+                    return;
+                }
+
+                if (step < Preset.TotalSteps)
+                    arduino.SetColor(transition.getColor(step));
+
+                step++;
+            }
+        }
+    }
+
+    class Flash : Effect
+    {
+        private Color color;
+        public Flash(ArduinoCollection collection, EffectPreset settings) : base(collection, settings)
+        {
+        }
+
+        public override void Step()
+        {
+            if (arduino.ChannelCount == 0) return;
+            if (step == 0)
+            {
+                color = Preset.ColorList[count];
+                arduino.SetColor(Colors.OFF);
+
+                if (count >= Preset.ColorList.Count - 1) count = 0;
+                else count++;
+                step++;
+            }
+            else
+            {
+                if (step >= Preset.TotalSteps + Preset.HoldingSteps)
+                {
+                    step = 0;
+                    return;
+                }
+
+                if (step > Preset.TotalSteps)
+                    arduino.SetColor(color);
+
+                step++;
+            }
         }
     }
 }
