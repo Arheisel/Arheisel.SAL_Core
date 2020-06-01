@@ -13,19 +13,20 @@ namespace SAL_Core
         public event EventHandler<MusicDataAvailableArgs> DataAvailable;
 
         public readonly AutoScaler AutoScaler;
-        public readonly MusicData Data;
+        public readonly MusicSettings Settings;
 
         private readonly ArduinoCollection arduinoCollection;
         //private readonly Audio audio;
         //private readonly Stopwatch timer;
         private readonly Thread thread;
 
-        public Music(ArduinoCollection arduino)
+
+        public Music(ArduinoCollection arduino, MusicSettings settings)
         {
             arduinoCollection = arduino;
-            AutoScaler = new AutoScaler();
+            Settings = settings;
+            AutoScaler = new AutoScaler(settings.Autoscaler);
             thread = new Thread(new ThreadStart(ProcessAudioData));
-            Data = new MusicData();
         }
 
         public void Run()
@@ -40,7 +41,7 @@ namespace SAL_Core
 
         public double Curve(double x)
         {
-            return (1.0 / ((1.1 - x) * Data.Slope)) - 0.1;
+            return (1.0 / ((1.1 - x) * Settings.Slope)) - 0.1;
         }
 
         private void ProcessAudioData()
@@ -82,7 +83,6 @@ namespace SAL_Core
                     else if (index > Maps.MaxIndex) index = Maps.MaxIndex;*/
 
                     arduinoCollection.SetColor(Maps.EncodeRGB(res));
-                    Data.Peak = res;
                     DataAvailable?.Invoke(this, new MusicDataAvailableArgs(res));
 
                     values.Clear();
@@ -101,11 +101,5 @@ namespace SAL_Core
         }
 
         public double Sample { get; }
-    }
-
-    public class MusicData
-    {
-        public double Peak;
-        public double Slope = 10;
     }
 }

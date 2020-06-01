@@ -10,20 +10,22 @@ namespace SAL_Core
     public class AutoScaler
     {
         private readonly Timer timer;
-        private bool _enabled = false;
 
-        public double Scale = 1;
         public double Peak = 0;
+
+        private readonly AutoscalerSettings Settings;
+
+        private bool newSamples = false;
 
         public bool Enabled
         {
             get
             {
-                return _enabled;
+                return Settings.Enabled;
             }
             set
             {
-                _enabled = value;
+                Settings.Enabled = value;
                 if (value)
                 {
                     timer.Start();
@@ -35,8 +37,26 @@ namespace SAL_Core
             }
         }
 
-        public AutoScaler()
+        public double Scale
         {
+            get
+            {
+                return Settings.Scale;
+            }
+            set
+            {
+                Settings.Scale = value;
+            }
+        }
+
+        public void Stop()
+        {
+            timer.Stop();
+        }
+
+        public AutoScaler(AutoscalerSettings settings)
+        {
+            Settings = settings;
             timer = new Timer()
             {
                 AutoReset = true,
@@ -44,6 +64,8 @@ namespace SAL_Core
                 Interval = 100,
             };
             timer.Elapsed += Autoscale;
+
+            if (settings.Enabled) timer.Start();
         }
 
         public void Sample(double value)
@@ -52,10 +74,14 @@ namespace SAL_Core
             {
                 Peak = value;
             }
+            newSamples = true;
         }
 
         public void Autoscale(object sender, ElapsedEventArgs e)
         {
+            if (newSamples) newSamples = false;
+            else return;
+
             if (Peak > 1)
             {
                 Scale -= (float)0.02;

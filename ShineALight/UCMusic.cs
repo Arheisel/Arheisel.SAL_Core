@@ -16,20 +16,25 @@ namespace ShineALight
         private readonly Music music;
         private delegate void UpdateDelegate(MusicDataAvailableArgs e);
 
-        public UCMusic(ArduinoCollection collection)
+        public UCMusic(ArduinoCollection collection, MusicSettings settings)
         {
             InitializeComponent();
-            music = new Music(collection);
+            music = new Music(collection, settings);
             autoscalerControl1.AutoScaler = music.AutoScaler;
+            autoscalerControl1.UpdateValues();
             music.DataAvailable += Music_DataAvailable;
             music.Run();
             curvePlot1.Function = music.Curve;
+            slopeTrackbar.Value = music.Settings.Slope;
+            slopeLabel.Text = slopeTrackbar.Value.ToString();
+            curvePlot1.Refresh();
         }
 
         public override void DisposeDeferred()
         {
             music.DataAvailable -= Music_DataAvailable;
             music.Stop();
+            autoscalerControl1.AutoScaler.Stop();
             Dispose();
         }
 
@@ -64,7 +69,7 @@ namespace ShineALight
 
         private void slopeTrackbar_Scroll(object sender, EventArgs e)
         {
-            music.Data.Slope = slopeTrackbar.Value;
+            music.Settings.Slope = slopeTrackbar.Value;
             slopeLabel.Text = slopeTrackbar.Value.ToString();
             curvePlot1.Refresh();
         }

@@ -17,30 +17,42 @@ namespace ShineALight
         private readonly Audio audio;
         private delegate void UpdateDelegate(AudioDataAvailableArgs e);
         private readonly ArduinoCollection collection;
-        public UCRGBVisualizer(ArduinoCollection collection)
+        public UCRGBVisualizer(ArduinoCollection collection, VSettings settings)
         {
             InitializeComponent();
-            audio = new Audio(collection);
+            audio = new Audio(settings);
             audio.Channels = 3;
             autoscalerControl.AutoScaler = audio.autoScaler;
+            autoscalerControl.UpdateValues();
             audio.DataAvailable += Audio_DataAvailable;
             audio.StartCapture();
             //curvePlot1.Function = audio.Curve;
             this.collection = collection;
             chLabel.Text = audio.AudioChannels.ToString();
-            audio.MaxFreq = 4100;
             vuMeterR.Color = Brushes.Red;
             vuMeterR.PeakColor = Brushes.Red;
             vuMeterB.Color = Brushes.Blue;
             vuMeterB.PeakColor = Brushes.Blue;
             vuMeterG.Color = Brushes.Green;
             vuMeterG.PeakColor = Brushes.Green;
+
+            slopeTrackbar.Value = audio.Slope;
+            slopeLabel.Text = slopeTrackbar.Value.ToString();
+
+            minFreqTrackbar.Value = audio.MinFreq;
+            minFreqLabel.Text = minFreqTrackbar.Value.ToString();
+            maxFreqTrackbar.Minimum = audio.MinFreq * 2;
+
+            maxFreqTrackbar.Value = audio.MaxFreq;
+            maxFreqLabel.Text = maxFreqTrackbar.Value.ToString();
+            minFreqTrackbar.Maximum = audio.MaxFreq / 2;
         }
 
         public override void DisposeDeferred()
         {
             audio.DataAvailable -= Audio_DataAvailable;
             audio.StopCapture();
+            autoscalerControl.AutoScaler.Stop();
             Dispose();
         }
 
@@ -84,12 +96,14 @@ namespace ShineALight
         {
             audio.MinFreq = minFreqTrackbar.Value;
             minFreqLabel.Text = minFreqTrackbar.Value.ToString();
+            maxFreqTrackbar.Minimum = audio.MinFreq * 2;
         }
 
         private void TrackBar2_Scroll(object sender, EventArgs e)
         {
             audio.MaxFreq = maxFreqTrackbar.Value;
             maxFreqLabel.Text = maxFreqTrackbar.Value.ToString();
+            minFreqTrackbar.Maximum = audio.MaxFreq / 2;
         }
     }
 }

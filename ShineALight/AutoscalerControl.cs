@@ -35,6 +35,7 @@ namespace ShineALight
         {
             trackBar1.Value = (int)(AutoScaler.Scale * 100.0);
             label1.Text = AutoScaler.Scale.ToString("0.00");
+            checkBox1.Checked = AutoScaler.Enabled;
         }
     }
 }

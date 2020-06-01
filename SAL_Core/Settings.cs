@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,7 +10,51 @@ namespace SAL_Core
     [Serializable]
     public class Settings
     {
-        public EffectPreset Effects { get; set; } = new EffectPreset();
+        public EffectSettings Effects { get; set; } = new EffectSettings();
+
+        public MusicSettings Music { get; set; } = new MusicSettings();
+
+        public VSettings RGBVisualizer { get; set; } = new VSettings();
+
+        public VSettings Visualizer { get; set; } = new VSettings();
+
+        public static void WriteToFile<T>(string filePath, T objectToWrite, bool append = false)
+        {
+            using (Stream stream = File.Open(filePath, append ? FileMode.Append : FileMode.Create))
+            {
+                var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                binaryFormatter.Serialize(stream, objectToWrite);
+            }
+        }
+
+        public static T ReadFromFile<T>(string filePath)
+        {
+            using (Stream stream = File.Open(filePath, FileMode.Open))
+            {
+                var binaryFormatter = new System.Runtime.Serialization.Formatters.Binary.BinaryFormatter();
+                return (T)binaryFormatter.Deserialize(stream);
+            }
+        }
+
+        public void Save()
+        {
+            WriteToFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.bin"), this);
+        }
+
+        public static Settings Load()
+        {
+            try
+            {
+                if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.bin")))
+                    return ReadFromFile<Settings>(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.bin"));
+                else
+                    return new Settings();
+            }
+            catch (Exception)
+            {
+                return new Settings();
+            }
+        }
     }
 
     [Serializable]
@@ -106,5 +151,34 @@ namespace SAL_Core
             }
         }
 
+    }
+
+    [Serializable]
+    public class MusicSettings
+    {
+        public int Slope { get; set; } = 10;
+
+        public AutoscalerSettings Autoscaler { get; set; } = new AutoscalerSettings();
+    }
+
+    [Serializable]
+    public class VSettings
+    {
+        public int Slope { get; set; } = 10;
+
+        public AutoscalerSettings Autoscaler { get; set; } = new AutoscalerSettings();
+
+        public int MinFreq { get; set; } = 50;
+
+        public int MaxFreq { get; set; } = 4100;
+
+    }
+
+    [Serializable]
+    public class AutoscalerSettings
+    {
+        public bool Enabled { get; set; } = false;
+
+        public double Scale { get; set; } = 1.0;
     }
 }

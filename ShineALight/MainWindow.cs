@@ -14,12 +14,14 @@ namespace ShineALight
     public partial class MainWindow : Form
     {
         private readonly ArduinoCollection arduinoCollection;
+        private readonly Settings settings;
         
         public MainWindow()
         {
             InitializeComponent();
 
             arduinoCollection = new ArduinoCollection();
+            settings = Settings.Load();
 
             ModeSelect.SelectedIndex = 0;
 
@@ -44,25 +46,25 @@ namespace ShineALight
             switch (ModeSelect.Text)
             {
                 case "Effects":
-                    control = new UCEffects(arduinoCollection);
+                    control = new UCEffects(arduinoCollection, settings.Effects);
                     Main.Panel2.Controls.Add(control);
                     control.Dock = DockStyle.Fill;
                     control.Show();
                     break;
                 case "Music":
-                    control = new UCMusic(arduinoCollection);
+                    control = new UCMusic(arduinoCollection, settings.Music);
                     Main.Panel2.Controls.Add(control);
                     control.Dock = DockStyle.Fill;
                     control.Show();
                     break;
                 case "RGB Visualizer":
-                    control = new UCRGBVisualizer(arduinoCollection);
+                    control = new UCRGBVisualizer(arduinoCollection, settings.RGBVisualizer);
                     Main.Panel2.Controls.Add(control);
                     control.Dock = DockStyle.Fill;
                     control.Show();
                     break;
                 case "Visualizer":
-                    control = new UCVisualizer(arduinoCollection);
+                    control = new UCVisualizer(arduinoCollection, settings.Visualizer);
                     Main.Panel2.Controls.Add(control);
                     control.Dock = DockStyle.Fill;
                     control.Show();
@@ -81,6 +83,16 @@ namespace ShineALight
                     ArduinoList.Items.Add(window.arduino.Name, false);
                 }
             }
+        }
+
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
+        }
+
+        private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            settings.Save();
         }
     }
 

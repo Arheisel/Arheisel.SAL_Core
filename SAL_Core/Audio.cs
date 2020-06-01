@@ -23,14 +23,11 @@ namespace SAL_Core
         private BufferedWaveProvider waveBuffer = null;
         private WaveFormat waveFormat = null;
         private int bytesPerFrame = 1;
-        private readonly ArduinoCollection arduinoCollection;
+        private readonly VSettings Settings;
 
         public readonly AutoScaler autoScaler;
-        public double Slope = 10.0;
 
         private int _channels = 8;
-        private int _minFreq = 50; //Hz
-        private int _maxFreq = 4100;
 
         private int divider = 1;
         private double _octave = 0;
@@ -65,13 +62,13 @@ namespace SAL_Core
         {
             get
             {
-                return _minFreq;
+                return Settings.MinFreq;
             }
             set
             {
-                if (value > 0 && value < _maxFreq)
+                if (value > 0 && value < Settings.MaxFreq)
                 {
-                    _minFreq = value;
+                    Settings.MinFreq = value;
                     UpdateOctaveDist();
 
                 }
@@ -82,24 +79,36 @@ namespace SAL_Core
         {
             get
             {
-                return _maxFreq; // * capture.WaveFormat.Channels;
+                return Settings.MaxFreq; // * capture.WaveFormat.Channels;
             }
             set
             {
                 //value = value / capture.WaveFormat.Channels; //I don't know why this works and I'm too afraid to ask
-                if (value > _minFreq && waveFormat != null && value <= waveFormat.SampleRate)
+                if (value > Settings.MinFreq && waveFormat != null && value <= waveFormat.SampleRate)
                 {
-                    _maxFreq = value;
-                    divider = (waveFormat.SampleRate / _maxFreq);
+                    Settings.MaxFreq = value;
+                    divider = (waveFormat.SampleRate / Settings.MaxFreq);
                     UpdateOctaveDist();
                 }
             }
         }
 
+        public int Slope
+        {
+            get
+            {
+                return Settings.Slope;
+            }
+            set
+            {
+                Settings.Slope = value;
+            }
+        }
+
         private void UpdateOctaveDist()
         {
-            _octaveDist = Math.Pow((double)_maxFreq / (double)_minFreq, 1 / (double)_channels);
-            _octave = _minFreq * _octaveDist;
+            _octaveDist = Math.Pow((double)Settings.MaxFreq / (double)Settings.MinFreq, 1 / (double)_channels);
+            _octave = Settings.MinFreq * _octaveDist;
         }
 
 
@@ -120,12 +129,10 @@ namespace SAL_Core
 
         }
 
-        public Audio(ArduinoCollection arduino)
+        public Audio(VSettings settings)
         {
-            //enumerator = new MMDeviceEnumerator();
-            //device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-            arduinoCollection = arduino;
-            autoScaler = new AutoScaler();
+            Settings = settings;
+            autoScaler = new AutoScaler(settings.Autoscaler);
         }
 
         public void StartCapture()
@@ -155,7 +162,7 @@ namespace SAL_Core
 
         public double Curve(double x)
         {
-            return Math.Log10(x) + (Slope / 10);//Math.Log10(x) + (Slope / 10); //Math.Log10(x*10) * (10/slope); //Math.Log10(x) + (slope / 10); //(Math.Log(x, 2) + slope) / 10;
+            return Math.Log10(x) + (Settings.Slope / 10);//Math.Log10(x) + (Slope / 10); //Math.Log10(x*10) * (10/slope); //Math.Log10(x) + (slope / 10); //(Math.Log(x, 2) + slope) / 10;
         }
 
         private void Capture_DataAvailable(object sender, WaveInEventArgs e)
@@ -218,7 +225,7 @@ namespace SAL_Core
             double[] transform = new double[Convert.ToInt32(Math.Floor((double)n / divider))];
 
             double step = (double)waveFormat.SampleRate / (double)n;
-            int offset = Convert.ToInt32(_minFreq / step);
+            int offset = Convert.ToInt32(Settings.MinFreq / step);
 
             for (int i = 0; i < transform.Length && i + offset < complexBuffer.Length; i++)
             {
@@ -245,19 +252,11 @@ namespace SAL_Core
                 avgPeak += max;
 
                 double x = Convert.ToDouble(max * autoScaler.Scale);
-                //if (x > 1) x = 1;
-                //double res = (1.0 / ((1.1 - x) * slope)) - 0.1;
                 double res = Curve(x);
                 autoScaler.Sample(res);
                 if (res > 1) res = 1;
                 else if (res < 0) res = 0;
                 channelMagnitudes[i] = res;
-                /*int index = Convert.ToInt32(Math.Floor(res * Maps.MaxIndex + 0.99));
-                if (index < 0) index = 0;
-                else if (index > Maps.MaxIndex) index = Maps.MaxIndex;*/
-                //arduinoCollection.SetColor(i, Maps.Map[index]);
-
-                //if (i == 0) arduinoCollection.SetColor(Maps.EncodeRGB(res));
             }
             avgPeak /= _channels;
 

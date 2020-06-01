@@ -15,7 +15,7 @@ namespace SAL_Core
 
         private Effect effect;
 
-        public EffectSettings Settings { get; } = new EffectSettings();
+        public readonly EffectSettings Settings;
 
         public string Current
         {
@@ -51,6 +51,11 @@ namespace SAL_Core
             }
         }
 
+        public void Stop()
+        {
+            timer.Enabled = false;
+        }
+
         public int Steps
         {
             get
@@ -84,8 +89,9 @@ namespace SAL_Core
         public int Time { get; private set; } = 100;
 
 
-        public Effects(ArduinoCollection arduino)
+        public Effects(ArduinoCollection arduino, EffectSettings settings)
         {
+            Settings = settings;
             timer = new Timer()
             {
                 Enabled = false,

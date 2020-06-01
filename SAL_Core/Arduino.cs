@@ -368,6 +368,7 @@ namespace SAL_Core
         public static Color WHITE { get; } = new Color(255, 255, 255);
     }
 
+    [Serializable]
     public struct Color
     {
         public readonly int R;

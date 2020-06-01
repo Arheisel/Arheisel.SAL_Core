@@ -14,10 +14,10 @@ namespace ShineALight
     public partial class UCEffects : CustomUserControl
     {
         private readonly Effects effects;
-        public UCEffects(ArduinoCollection collection)
+        public UCEffects(ArduinoCollection collection, EffectSettings settings)
         {
             InitializeComponent();
-            effects = new Effects(collection);
+            effects = new Effects(collection, settings);
 
             foreach(string name in effects.Settings.PresetList.Keys)
             {
@@ -29,7 +29,7 @@ namespace ShineALight
 
         public override void DisposeDeferred()
         {
-            effects.Speed = 0;
+            effects.Stop();
             Dispose();
         }
 
