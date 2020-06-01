@@ -94,6 +94,19 @@ namespace ShineALight
         {
             settings.Save();
         }
+
+        private void MainWindow_Load(object sender, EventArgs e)
+        {
+            using (AddArduino window = new AddArduino())
+            {
+                window.ShowDialog(this);
+                if (window.DialogResult == DialogResult.OK)
+                {
+                    arduinoCollection.Add(window.arduino);
+                    ArduinoList.Items.Add(window.arduino.Name, false);
+                }
+            }
+        }
     }
 
     public class CustomUserControl : UserControl

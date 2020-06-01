@@ -68,8 +68,9 @@ namespace SAL_Core
                     if (avg == 0)
                     {
                         arduinoCollection.SetColor(Colors.OFF);
-                        Thread.Sleep(5);
                         values.Clear();
+                        Thread.Sleep(5);
+                        continue;
                     }
                     double x = Convert.ToDouble(avg * AutoScaler.Scale);
                     if (x > 1.09) x = 1.09;
