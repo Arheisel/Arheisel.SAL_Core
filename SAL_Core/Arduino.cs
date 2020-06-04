@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Damez.Log;
 
 namespace SAL_Core
 {
@@ -27,22 +28,30 @@ namespace SAL_Core
         {
             Name = com;
 
-            serial = new SerialPort
+            try
             {
-                PortName = com,
-                BaudRate = 9600,
-                Parity = Parity.None,
-                DataBits = 8,
-                StopBits = StopBits.One,
-                Handshake = Handshake.None,
+                serial = new SerialPort
+                {
+                    PortName = com,
+                    BaudRate = 9600,
+                    Parity = Parity.None,
+                    DataBits = 8,
+                    StopBits = StopBits.One,
+                    Handshake = Handshake.None,
 
-                WriteTimeout = 5,
-                ReadTimeout = 200
-            };
+                    WriteTimeout = 5,
+                    ReadTimeout = 200
+                };
 
-            serial.Open();
-            GetChannels();
-            SetColor(Colors.RED);
+                serial.Open();
+                GetChannels();
+                SetColor(Colors.RED);
+            }
+            catch(Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }
         }
 
         public void GetChannels()
@@ -82,7 +91,16 @@ namespace SAL_Core
         public Arduino(string ip, int dstPort)
         {
             Name = ip + ":" + dstPort;
-            StartUDPClient(ip, dstPort);
+
+            try
+            {
+                StartUDPClient(ip, dstPort);
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }
         }
 
         /*public void SetColor(Colors color)
@@ -199,30 +217,54 @@ namespace SAL_Core
 
         private void Send(byte[] data)
         {
-            if (usingUDP) udp.Send(data);
-            else
+            try
             {
-                serial.Write(data, 0, data.Length);
+            if (usingUDP) udp.Send(data);
+                else
+                {
+                    serial.Write(data, 0, data.Length);
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
             }
         }
 
         private int Receive()
         {
-            return serial.ReadByte();
+            try
+            {
+                return serial.ReadByte();
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }
         }
 
         public bool TryReceive(out int data)
         {
-            data = 0;
-            if (!usingUDP && serial.BytesToRead > 0)
+            try
             {
-                data = Receive();
-                return true;
+                data = 0;
+                if (!usingUDP && serial.BytesToRead > 0)
+                {
+                    data = Receive();
+                    return true;
+                }
+                return false;
             }
-            return false;
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }
         }
 
-        public void StartUDPClient(string ip, int dstPort)
+        private void StartUDPClient(string ip, int dstPort)
         {
             udp = new UDPCLient(ip, dstPort, port++);
             usingUDP = true;
@@ -231,10 +273,17 @@ namespace SAL_Core
 
         public void StopUDPClient()
         {
-            udp.Dispose();
-            udp = null;
-            usingUDP = false;
-            port--;
+            try
+            {
+                udp.Dispose();
+                udp = null;
+                usingUDP = false;
+                port--;
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+            }
         }
 
 
@@ -252,44 +301,58 @@ namespace SAL_Core
         {
             for (int i = 0; i < _chColor.Length; i++) _chColor[i] = Colors.NONE;
 
-            thread = new Thread(new ThreadStart(Worker));
-            queue = new ConcurrentQueue<ChColor>();
-            thread.Start();
+            try
+            {
+                thread = new Thread(new ThreadStart(Worker));
+                queue = new ConcurrentQueue<ChColor>();
+                thread.Start();
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + e.Message + Environment.NewLine + e.StackTrace);
+            }
         }
 
         private void Worker()
         {
             while (true)
             {
-                if(queue.TryDequeue(out ChColor chColor))
+                try
                 {
-                    int channel = chColor.Channel;
-                    if (channel == 0)
+                    if (queue.TryDequeue(out ChColor chColor))
                     {
-                        foreach (Arduino arduino in collection)
+                        int channel = chColor.Channel;
+                        if (channel == 0)
                         {
-                            arduino.SetColor(chColor.Color);
-                        }
-                    }
-                    else
-                    {
-                        
-                        foreach (Arduino arduino in collection)
-                        {
-                            if (channel - arduino.Channels <= 0)
+                            foreach (Arduino arduino in collection)
                             {
-                                arduino.SetColor(channel, chColor.Color);
-                                break;
-                            }
-                            else
-                            {
-                                channel -= arduino.Channels;
+                                arduino.SetColor(chColor.Color);
                             }
                         }
-                    }
+                        else
+                        {
 
+                            foreach (Arduino arduino in collection)
+                            {
+                                if (channel - arduino.Channels <= 0)
+                                {
+                                    arduino.SetColor(channel, chColor.Color);
+                                    break;
+                                }
+                                else
+                                {
+                                    channel -= arduino.Channels;
+                                }
+                            }
+                        }
+
+                    }
+                    Thread.Sleep(1);
                 }
-                Thread.Sleep(1);
+                catch (Exception e)
+                {
+                    Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + e.Message + Environment.NewLine + e.StackTrace);
+                }   
             }
         }
 
@@ -312,9 +375,16 @@ namespace SAL_Core
 
         public void Add(Arduino arduino)
         {
-            if (FindByName(arduino.Name) != -1) return;
-            collection.Add(arduino);
-            ChannelCount += arduino.Channels;
+            try
+            {
+                if (FindByName(arduino.Name) != -1) return;
+                collection.Add(arduino);
+                ChannelCount += arduino.Channels;
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + e.Message + Environment.NewLine + e.StackTrace);
+            }
         }
 
         public int Count

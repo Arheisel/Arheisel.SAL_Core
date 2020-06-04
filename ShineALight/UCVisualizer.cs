@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SAL_Core;
+using Damez.Log;
 
 namespace ShineALight
 {
@@ -20,12 +21,21 @@ namespace ShineALight
         public UCVisualizer(ArduinoCollection collection, VSettings settings)
         {
             InitializeComponent();
-            audio = new Audio(settings);
-            audio.Channels = 4;
-            autoscalerControl.AutoScaler = audio.autoScaler;
-            autoscalerControl.UpdateValues();
-            audio.DataAvailable += Audio_DataAvailable;
-            audio.StartCapture();
+            try
+            {
+                audio = new Audio(settings);
+                audio.Channels = 4;
+                autoscalerControl.AutoScaler = audio.autoScaler;
+                autoscalerControl.UpdateValues();
+                audio.DataAvailable += Audio_DataAvailable;
+                audio.StartCapture();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.TYPE_ERROR, "UCVisualizer :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                MessageBox.Show("ERROR: " + ex.Message);
+            }
+
             //curvePlot1.Function = audio.Curve;
             this.collection = collection;
             chLabel.Text = audio.AudioChannels.ToString();
@@ -45,9 +55,17 @@ namespace ShineALight
 
         public override void DisposeDeferred()
         {
-            audio.DataAvailable -= Audio_DataAvailable;
-            audio.StopCapture();
-            autoscalerControl.AutoScaler.Stop();
+            try
+            {
+                audio.DataAvailable -= Audio_DataAvailable;
+                audio.StopCapture();
+                autoscalerControl.AutoScaler.Stop();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.TYPE_ERROR, "UCVisualizer :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                MessageBox.Show("ERROR: " + ex.Message);
+            }
             Dispose();
         }
 

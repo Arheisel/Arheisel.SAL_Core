@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SAL_Core;
+using Damez.Log;
 
 namespace ShineALight
 {
@@ -39,9 +40,10 @@ namespace ShineALight
                     }
                     catch(Exception ex)
                     {
+                        Log.Write(Log.TYPE_ERROR, "AddArduino :: " + ex.Message + Environment.NewLine + ex.StackTrace);
                         MessageBox.Show(ex.Message);
-                        DialogResult = DialogResult.Cancel;
-                        Close();
+                        //DialogResult = DialogResult.Cancel;
+                        //Close();
                     }
                 }
             }
@@ -57,9 +59,10 @@ namespace ShineALight
                     }
                     catch (Exception ex)
                     {
+                        Log.Write(Log.TYPE_ERROR, "AddArduino :: " + ex.Message + Environment.NewLine + ex.StackTrace);
                         MessageBox.Show(ex.Message);
-                        DialogResult = DialogResult.Cancel;
-                        Close();
+                        //DialogResult = DialogResult.Cancel;
+                        //Close();
                     }
                 }
             }

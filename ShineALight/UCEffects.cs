@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SAL_Core;
+using Damez.Log;
 
 namespace ShineALight
 {
@@ -17,7 +18,15 @@ namespace ShineALight
         public UCEffects(ArduinoCollection collection, EffectSettings settings)
         {
             InitializeComponent();
-            effects = new Effects(collection, settings);
+            try
+            {
+                effects = new Effects(collection, settings);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.TYPE_ERROR, "UCEffects :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                MessageBox.Show("ERROR: " + ex.Message);
+            }
 
             foreach(string name in effects.Settings.PresetList.Keys)
             {
@@ -35,8 +44,16 @@ namespace ShineALight
 
         private void CurrentSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
-            effects.Current = currentSelect.Text;
-            UpdateScrollbars();
+            try
+            {
+                effects.Current = currentSelect.Text;
+                UpdateScrollbars();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.TYPE_ERROR, "UCEffects :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                MessageBox.Show("ERROR: " + ex.Message);
+            }
         }
 
         private void SpeedTrackbar_Scroll(object sender, EventArgs e)

@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
+using Damez.Log;
 
 namespace SAL_Core
 {
@@ -15,28 +16,50 @@ namespace SAL_Core
         public readonly AutoScaler AutoScaler;
         public readonly MusicSettings Settings;
 
-        private readonly ArduinoCollection arduinoCollection;
         //private readonly Audio audio;
         //private readonly Stopwatch timer;
         private readonly Thread thread;
 
 
-        public Music(ArduinoCollection arduino, MusicSettings settings)
+        public Music(MusicSettings settings)
         {
-            arduinoCollection = arduino;
-            Settings = settings;
-            AutoScaler = new AutoScaler(settings.Autoscaler);
-            thread = new Thread(new ThreadStart(ProcessAudioData));
+            try
+            {
+                Settings = settings;
+                AutoScaler = new AutoScaler(settings.Autoscaler);
+                thread = new Thread(new ThreadStart(ProcessAudioData));
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Music :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }
         }
 
         public void Run()
         {
-            thread.Start();
+            try
+            {
+                thread.Start();
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Music :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }
         }
 
         public void Stop()
         {
-            thread.Abort();
+            try
+            {
+                thread.Abort();
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Music :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }
         }
 
         public double Curve(double x)
@@ -46,52 +69,55 @@ namespace SAL_Core
 
         private void ProcessAudioData()
         {
-            var audio = new Audio();
-            var timer = new Stopwatch();
-            var values = new List<float>();
-
-            timer.Start();
-
-            while (true)
+            try
             {
-                values.Add(audio.Peak);
+                var audio = new Audio();
+                var timer = new Stopwatch();
+                var values = new List<float>();
+            
 
-                if(timer.ElapsedMilliseconds > 5)
+                timer.Start();
+
+                while (true)
                 {
-                    float avg = 0;
-                    foreach (float i in values)
-                    {
-                        avg += i;
-                    }
-                    avg /= values.Count;
+                    values.Add(audio.Peak);
 
-                    if (avg == 0)
+                    if(timer.ElapsedMilliseconds > 5)
                     {
-                        arduinoCollection.SetColor(Colors.OFF);
+                        float avg = 0;
+                        foreach (float i in values)
+                        {
+                            avg += i;
+                        }
+                        avg /= values.Count;
+
+                        if (avg == 0)
+                        {
+                            DataAvailable?.Invoke(this, new MusicDataAvailableArgs(0));
+                            values.Clear();
+                            Thread.Sleep(5);
+                            continue;
+                        }
+                        double x = Convert.ToDouble(avg * AutoScaler.Scale);
+                        if (x > 1.09) x = 1.09;
+                        double res = Curve(x);
+                        AutoScaler.Sample(res);
+                        if (res > 1) res = 1;
+                        else if (res < 0) res = 0;
+
+                        DataAvailable?.Invoke(this, new MusicDataAvailableArgs(res));
+
                         values.Clear();
-                        Thread.Sleep(5);
-                        continue;
+                        timer.Restart();
                     }
-                    double x = Convert.ToDouble(avg * AutoScaler.Scale);
-                    if (x > 1.09) x = 1.09;
-                    double res = Curve(x);
-                    AutoScaler.Sample(res);
-                    if (res > 1) res = 1;
-                    else if (res < 0) res = 0;
-
-                    /*int index = Convert.ToInt32(Math.Floor(res * Maps.MaxIndex + 0.99));
-                    if (index < 0) index = 0;
-                    else if (index > Maps.MaxIndex) index = Maps.MaxIndex;*/
-
-                    arduinoCollection.SetColor(Maps.EncodeRGB(res));
-                    DataAvailable?.Invoke(this, new MusicDataAvailableArgs(res));
-
-                    values.Clear();
-                    timer.Restart();
                 }
             }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Music :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }
         }
-
     }
 
     public class MusicDataAvailableArgs : EventArgs

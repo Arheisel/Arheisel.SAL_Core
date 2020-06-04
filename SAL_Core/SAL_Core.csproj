@@ -57,5 +57,11 @@
     <Compile Include="Settings.cs" />
     <Compile Include="UDP.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Matias\Documents\GitHub\Log\Log\Log.csproj">
+      <Project>{c00975a9-0cb2-480c-87ee-b5935a460ffa}</Project>
+      <Name>Log</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

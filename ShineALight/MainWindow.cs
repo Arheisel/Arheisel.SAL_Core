@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SAL_Core;
+using Damez.Log;
 
 namespace ShineALight
 {
@@ -21,9 +22,9 @@ namespace ShineALight
             InitializeComponent();
 
             arduinoCollection = new ArduinoCollection();
-            settings = Settings.Load();
+            settings = Program.settings;
 
-            ModeSelect.SelectedIndex = 0;
+            ModeSelect.SelectedIndex = settings.CurrentMode;
 
             FormClosed += MainWindow_FormClosed;
         }
@@ -35,40 +36,48 @@ namespace ShineALight
 
         private void ModeSelect_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (Main.Panel2.Controls.Count > 0)
+            try
             {
-                CustomUserControl cuc = (CustomUserControl)Main.Panel2.Controls[0];
-                cuc.DisposeDeferred();
-            }
-            Main.Panel2.Controls.Clear();
+                if (Main.Panel2.Controls.Count > 0)
+                {
+                    CustomUserControl cuc = (CustomUserControl)Main.Panel2.Controls[0];
+                    cuc.DisposeDeferred();
+                }
+                Main.Panel2.Controls.Clear();
 
-            Control control;
-            switch (ModeSelect.Text)
+                Control control;
+                switch (ModeSelect.Text)
+                {
+                    case "Effects":
+                        control = new UCEffects(arduinoCollection, settings.Effects);
+                        Main.Panel2.Controls.Add(control);
+                        control.Dock = DockStyle.Fill;
+                        control.Show();
+                        break;
+                    case "Music":
+                        control = new UCMusic(arduinoCollection, settings.Music);
+                        Main.Panel2.Controls.Add(control);
+                        control.Dock = DockStyle.Fill;
+                        control.Show();
+                        break;
+                    case "RGB Visualizer":
+                        control = new UCRGBVisualizer(arduinoCollection, settings.RGBVisualizer);
+                        Main.Panel2.Controls.Add(control);
+                        control.Dock = DockStyle.Fill;
+                        control.Show();
+                        break;
+                    case "Visualizer":
+                        control = new UCVisualizer(arduinoCollection, settings.Visualizer);
+                        Main.Panel2.Controls.Add(control);
+                        control.Dock = DockStyle.Fill;
+                        control.Show();
+                        break;
+                }
+                settings.CurrentMode = ModeSelect.SelectedIndex;
+            }
+            catch(Exception ex)
             {
-                case "Effects":
-                    control = new UCEffects(arduinoCollection, settings.Effects);
-                    Main.Panel2.Controls.Add(control);
-                    control.Dock = DockStyle.Fill;
-                    control.Show();
-                    break;
-                case "Music":
-                    control = new UCMusic(arduinoCollection, settings.Music);
-                    Main.Panel2.Controls.Add(control);
-                    control.Dock = DockStyle.Fill;
-                    control.Show();
-                    break;
-                case "RGB Visualizer":
-                    control = new UCRGBVisualizer(arduinoCollection, settings.RGBVisualizer);
-                    Main.Panel2.Controls.Add(control);
-                    control.Dock = DockStyle.Fill;
-                    control.Show();
-                    break;
-                case "Visualizer":
-                    control = new UCVisualizer(arduinoCollection, settings.Visualizer);
-                    Main.Panel2.Controls.Add(control);
-                    control.Dock = DockStyle.Fill;
-                    control.Show();
-                    break;
+                Log.Write(Log.TYPE_ERROR, "MainWindow :: " + ex.Message + Environment.NewLine + ex.StackTrace);
             }
         }
 

@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SAL_Core;
+using Damez.Log;
 
 namespace ShineALight
 {
@@ -20,7 +21,16 @@ namespace ShineALight
         public UCRGBVisualizer(ArduinoCollection collection, VSettings settings)
         {
             InitializeComponent();
-            audio = new Audio(settings);
+            try
+            {
+                audio = new Audio(settings);
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.TYPE_ERROR, "UCRGBVisualizer :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                MessageBox.Show("ERROR: " + ex.Message);
+            }
+
             audio.Channels = 3;
             autoscalerControl.AutoScaler = audio.autoScaler;
             autoscalerControl.UpdateValues();
@@ -50,9 +60,18 @@ namespace ShineALight
 
         public override void DisposeDeferred()
         {
-            audio.DataAvailable -= Audio_DataAvailable;
-            audio.StopCapture();
-            autoscalerControl.AutoScaler.Stop();
+            try
+            {
+                audio.DataAvailable -= Audio_DataAvailable;
+                audio.StopCapture();
+                autoscalerControl.AutoScaler.Stop();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.TYPE_ERROR, "UCRGBVisualizer :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                MessageBox.Show("ERROR: " + ex.Message);
+            }
+
             Dispose();
         }
 

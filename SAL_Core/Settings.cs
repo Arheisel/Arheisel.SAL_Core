@@ -10,6 +10,7 @@ namespace SAL_Core
     [Serializable]
     public class Settings
     {
+        public int CurrentMode { get; set; } = 0;
         public EffectSettings Effects { get; set; } = new EffectSettings();
 
         public MusicSettings Music { get; set; } = new MusicSettings();

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Timers;
+using Damez.Log;
 
 namespace SAL_Core
 {
@@ -106,28 +107,43 @@ namespace SAL_Core
 
         public void InitializeEffect()
         {
-            var preset = Settings.CurrentPreset;
-            Speed = preset.Speed;
-            switch (preset.Type)
+            try
             {
-                case EffectTypes.Rainbow:
-                    effect = new Rainbow(arduinoCollection, preset);
-                    break;
-                case EffectTypes.Cycle:
-                    effect = new Cycle(arduinoCollection, preset);
-                    break;
-                case EffectTypes.Breathing:
-                    effect = new Breathing(arduinoCollection, preset);
-                    break;
-                case EffectTypes.Flash:
-                    effect = new Flash(arduinoCollection, preset);
-                    break;
+                var preset = Settings.CurrentPreset;
+                Speed = preset.Speed;
+                switch (preset.Type)
+                {
+                    case EffectTypes.Rainbow:
+                        effect = new Rainbow(arduinoCollection, preset);
+                        break;
+                    case EffectTypes.Cycle:
+                        effect = new Cycle(arduinoCollection, preset);
+                        break;
+                    case EffectTypes.Breathing:
+                        effect = new Breathing(arduinoCollection, preset);
+                        break;
+                    case EffectTypes.Flash:
+                        effect = new Flash(arduinoCollection, preset);
+                        break;
+                }
             }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Effects :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }  
         }
 
         private void Timer_Elapsed(object sender, ElapsedEventArgs e)
         {
-            effect.Step();
+            try
+            {
+                effect.Step();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.TYPE_ERROR, "Effects :: " + Current +  " :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+            }  
         }
     }
 

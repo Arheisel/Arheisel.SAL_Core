@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using AForge.Math;
+using Damez.Log;
 
 namespace SAL_Core
 {
@@ -122,42 +123,69 @@ namespace SAL_Core
 
         public Audio()
         {
-            /*Thread thread = new Thread(new ThreadStart(Capture));
-            thread.Start();*/
-            enumerator = new MMDeviceEnumerator();
-            device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
-
+            try
+            {
+                enumerator = new MMDeviceEnumerator();
+                device = enumerator.GetDefaultAudioEndpoint(DataFlow.Render, Role.Multimedia);
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Audio :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }
         }
 
         public Audio(VSettings settings)
         {
-            Settings = settings;
-            autoScaler = new AutoScaler(settings.Autoscaler);
+            try
+            {
+                Settings = settings;
+                autoScaler = new AutoScaler(settings.Autoscaler);
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Audio :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }
         }
 
         public void StartCapture()
         {
             if (capture != null) StopCapture();
-
-            capture = new WasapiLoopbackCapture();
-            waveFormat = capture.WaveFormat;
-            bytesPerFrame = (capture.WaveFormat.BitsPerSample / 8); // * capture.WaveFormat.Channels;
-            MaxFreq = MaxFreq; // Calculate divider and Update Octave Distance
-            waveBuffer = new BufferedWaveProvider(waveFormat)
+            try
             {
-                DiscardOnBufferOverflow = true
-            };
-            capture.StartRecording();
-            capture.DataAvailable += Capture_DataAvailable;
+                capture = new WasapiLoopbackCapture();
+                waveFormat = capture.WaveFormat;
+                bytesPerFrame = (capture.WaveFormat.BitsPerSample / 8); // * capture.WaveFormat.Channels;
+                MaxFreq = MaxFreq; // Calculate divider and Update Octave Distance
+                waveBuffer = new BufferedWaveProvider(waveFormat)
+                {
+                    DiscardOnBufferOverflow = true
+                };
+                capture.StartRecording();
+                capture.DataAvailable += Capture_DataAvailable;
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Audio :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }
         }
 
         public void StopCapture()
         {
             if (capture == null) return;
-
-            capture.StopRecording();
-            capture.Dispose();
-            capture = null;
+            try
+            {
+                capture.StopRecording();
+                capture.Dispose();
+                capture = null;
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Audio :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }      
         }
 
         public double Curve(double x)
@@ -172,97 +200,103 @@ namespace SAL_Core
 
         private void ProcessAudioData(WaveInEventArgs e)
         {
-            waveBuffer.AddSamples(e.Buffer, 0, e.BytesRecorded);
-            ISampleProvider samples = waveBuffer.ToSampleProvider();
-
-            int count = (waveBuffer.BufferedBytes / bytesPerFrame) / waveFormat.Channels;
-
-            int n = 0;
-            for (int i = 0; i < 30; i++)
+            try
             {
-                int curr = 1 << i;
-                if (curr > count) break;
-                n = curr;
-            }
-            count = n * waveFormat.Channels;
+                waveBuffer.AddSamples(e.Buffer, 0, e.BytesRecorded);
+                ISampleProvider samples = waveBuffer.ToSampleProvider();
 
-            if (n < minLength) return;
+                int count = (waveBuffer.BufferedBytes / bytesPerFrame) / waveFormat.Channels;
 
-            if (n > maxLength)
-            {
-                n = maxLength;
-            }
-
-            var frames = new float[count];
-            samples.Read(frames, 0, count);
-            waveBuffer.ClearBuffer();
-
-            Complex[] complexBuffer = new Complex[n];
-
-            if (waveFormat.Channels > 1)
-            {
-                var bufferIndex = 0;
-                for (int i = 0; i < count; i += waveFormat.Channels)
+                int n = 0;
+                for (int i = 0; i < 30; i++)
                 {
-                    float f = 0;
-                    for(int j = 0; j < waveFormat.Channels; j++)
+                    int curr = 1 << i;
+                    if (curr > count) break;
+                    n = curr;
+                }
+                count = n * waveFormat.Channels;
+
+                if (n < minLength) return;
+
+                if (n > maxLength)
+                {
+                    n = maxLength;
+                }
+
+                var frames = new float[count];
+                samples.Read(frames, 0, count);
+                waveBuffer.ClearBuffer();
+
+                Complex[] complexBuffer = new Complex[n];
+
+                if (waveFormat.Channels > 1)
+                {
+                    var bufferIndex = 0;
+                    for (int i = 0; i < count; i += waveFormat.Channels)
                     {
-                        f += frames[i + j];
+                        float f = 0;
+                        for (int j = 0; j < waveFormat.Channels; j++)
+                        {
+                            f += frames[i + j];
+                        }
+                        complexBuffer[bufferIndex++] = new Complex(f, 0);
                     }
-                    complexBuffer[bufferIndex++] = new Complex(f, 0);
                 }
-            }
-            else
-            {
-                for (int i = 0; i < n; i++)
+                else
                 {
-                    complexBuffer[i] = new Complex(frames[i], 0);
+                    for (int i = 0; i < n; i++)
+                    {
+                        complexBuffer[i] = new Complex(frames[i], 0);
+                    }
                 }
-            }
 
-            FourierTransform.FFT(complexBuffer, FourierTransform.Direction.Forward);
+                FourierTransform.FFT(complexBuffer, FourierTransform.Direction.Forward);
 
-            double[] transform = new double[Convert.ToInt32(Math.Floor((double)n / divider))];
+                double[] transform = new double[Convert.ToInt32(Math.Floor((double)n / divider))];
 
-            double step = (double)waveFormat.SampleRate / (double)n;
-            int offset = Convert.ToInt32(Settings.MinFreq / step);
+                double step = (double)waveFormat.SampleRate / (double)n;
+                int offset = Convert.ToInt32(Settings.MinFreq / step);
 
-            for (int i = 0; i < transform.Length && i + offset < complexBuffer.Length; i++)
-            {
-                transform[i] = complexBuffer[i + offset].Magnitude * 2;
-            }
-
-            double[] channelMagnitudes = new double[_channels];
-
-            int startingPoint = 0;
-
-            double octave = _octave;
-            double avgPeak = 0;
-
-            for (int i = 0; i < _channels; i++)
-            {
-                double max = 0;
-                for (int j = startingPoint; j * step + offset < octave && j < transform.Length; j++) //startingPoint + nFreqs
+                for (int i = 0; i < transform.Length && i + offset < complexBuffer.Length; i++)
                 {
-                    if (transform[j] > max) max = transform[j];
-                    startingPoint++;
+                    transform[i] = complexBuffer[i + offset].Magnitude * 2;
                 }
-                octave *= _octaveDist;
-                //channelMagnitudes[i] = max;
-                avgPeak += max;
 
-                double x = Convert.ToDouble(max * autoScaler.Scale);
-                double res = Curve(x);
-                autoScaler.Sample(res);
-                if (res > 1) res = 1;
-                else if (res < 0) res = 0;
-                channelMagnitudes[i] = res;
+                double[] channelMagnitudes = new double[_channels];
+
+                int startingPoint = 0;
+
+                double octave = _octave;
+                double avgPeak = 0;
+
+                for (int i = 0; i < _channels; i++)
+                {
+                    double max = 0;
+                    for (int j = startingPoint; j * step + offset < octave && j < transform.Length; j++) //startingPoint + nFreqs
+                    {
+                        if (transform[j] > max) max = transform[j];
+                        startingPoint++;
+                    }
+                    octave *= _octaveDist;
+                    //channelMagnitudes[i] = max;
+                    avgPeak += max;
+
+                    double x = Convert.ToDouble(max * autoScaler.Scale);
+                    double res = Curve(x);
+                    autoScaler.Sample(res);
+                    if (res > 1) res = 1;
+                    else if (res < 0) res = 0;
+                    channelMagnitudes[i] = res;
+                }
+                avgPeak /= _channels;
+
+                DataAvailable?.Invoke(this, new AudioDataAvailableArgs(avgPeak, channelMagnitudes));
             }
-            avgPeak /= _channels;
-
-            DataAvailable?.Invoke(this, new AudioDataAvailableArgs(avgPeak, channelMagnitudes));
+            catch (Exception ex)
+            {
+                Log.Write(Log.TYPE_ERROR, "Audio :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+            }
         }
-
     }
 
     public static class Maps

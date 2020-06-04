@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using SAL_Core;
+using Damez.Log;
 
 namespace ShineALight
 {
@@ -16,14 +17,27 @@ namespace ShineALight
         private readonly Music music;
         private delegate void UpdateDelegate(MusicDataAvailableArgs e);
 
+        private readonly ArduinoCollection arduinoCollection;
+
         public UCMusic(ArduinoCollection collection, MusicSettings settings)
         {
             InitializeComponent();
-            music = new Music(collection, settings);
-            autoscalerControl1.AutoScaler = music.AutoScaler;
-            autoscalerControl1.UpdateValues();
-            music.DataAvailable += Music_DataAvailable;
-            music.Run();
+            arduinoCollection = collection;
+
+            try
+            {
+                music = new Music(settings);
+                autoscalerControl1.AutoScaler = music.AutoScaler;
+                autoscalerControl1.UpdateValues();
+                music.DataAvailable += Music_DataAvailable;
+                music.Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.TYPE_ERROR, "UCMusic :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                MessageBox.Show("ERROR: " + ex.Message);
+            }
+
             curvePlot1.Function = music.Curve;
             slopeTrackbar.Value = music.Settings.Slope;
             slopeLabel.Text = slopeTrackbar.Value.ToString();
@@ -32,15 +46,24 @@ namespace ShineALight
 
         public override void DisposeDeferred()
         {
-            music.DataAvailable -= Music_DataAvailable;
-            music.Stop();
-            autoscalerControl1.AutoScaler.Stop();
+            try
+            {
+                music.DataAvailable -= Music_DataAvailable;
+                music.Stop();
+                autoscalerControl1.AutoScaler.Stop();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.TYPE_ERROR, "UCMusic :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                MessageBox.Show("ERROR: " + ex.Message);
+            }
+
             Dispose();
         }
 
         private void Music_DataAvailable(object sender, MusicDataAvailableArgs e)
         {
-            //volumeBar.Value = (int)e.Sample * 100; //This is not working at all
+            arduinoCollection.SetColor(Maps.EncodeRGB(e.Sample));
             UIUpdate(e);
         }
 

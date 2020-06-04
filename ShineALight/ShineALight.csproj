@@ -172,6 +172,10 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\Matias\Documents\GitHub\Log\Log\Log.csproj">
+      <Project>{c00975a9-0cb2-480c-87ee-b5935a460ffa}</Project>
+      <Name>Log</Name>
+    </ProjectReference>
     <ProjectReference Include="..\SAL_Core\SAL_Core.csproj">
       <Project>{62f8f430-fc48-484b-aca3-8f26eb34f9c8}</Project>
       <Name>SAL_Core</Name>
