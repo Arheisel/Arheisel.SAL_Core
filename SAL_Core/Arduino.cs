@@ -19,6 +19,7 @@ namespace SAL_Core
         private bool usingUDP = false;
         public readonly string Name;
 
+        public bool Online { get; private set; } = true;
 
         /// <summary>
         /// Initializes a Serial Arduino Connection
@@ -55,21 +56,7 @@ namespace SAL_Core
             }
         }
 
-        public void GetChannels()
-        { 
-            try
-            {
-                dataArr[0] = 242;
-                Send(dataArr);
-                Channels = Receive();
-            }
-            catch(TimeoutException)
-            {
-                GetChannels(0);
-            }
-        }
-
-        public void GetChannels(int retryCount)
+        public void GetChannels(int retryCount = 0)
         {
             try
             {
@@ -79,8 +66,12 @@ namespace SAL_Core
             }
             catch (TimeoutException)
             {
-                if (retryCount < 10) GetChannels(++retryCount);
-                else throw new Exception("Failed at getting device Model");
+                if (retryCount < 10 && Online) GetChannels(++retryCount);
+                else
+                {
+                    Online = false;
+                    throw new Exception("Failed at getting device Model");
+                }
             }
         }
 
@@ -216,11 +207,11 @@ namespace SAL_Core
         }
 
 
-        private void Send(byte[] data)
+        private void Send(byte[] data, int retryCount = 0)
         {
             try
             {
-            if (usingUDP) udp.Send(data);
+                if (usingUDP) udp.Send(data);
                 else
                 {
                     serial.Write(data, 0, data.Length);
@@ -229,20 +220,36 @@ namespace SAL_Core
             catch (TimeoutException e)
             {
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+                if (retryCount >= 10)
+                {
+                    Online = false;
+                    throw;
+                }
                 Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Attempting to reopen port");
                 try
                 {
                     serial.Close();
+                    serial = new SerialPort
+                    {
+                        PortName = Name,
+                        BaudRate = 9600,
+                        Parity = Parity.None,
+                        DataBits = 8,
+                        StopBits = StopBits.One,
+                        Handshake = Handshake.None,
+
+                        WriteTimeout = 5,
+                        ReadTimeout = 200
+                    };
                     serial.Open();
-                    GetChannels();
-                    SetColor(Colors.RED);
-                    Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Success");
+                    
                 }
                 catch (Exception ex)
                 {
                     Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + ex.Message + Environment.NewLine + ex.StackTrace);
                     throw;
                 }
+                Send(data, ++retryCount);
             }
             catch (Exception e)
             {
@@ -256,24 +263,6 @@ namespace SAL_Core
             try
             {
                 return serial.ReadByte();
-            }
-            catch (TimeoutException e)
-            {
-                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
-                Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Attempting to reopen port");
-                try
-                {
-                    serial.Close();
-                    serial.Open();
-                    GetChannels();
-                    SetColor(Colors.RED);
-                    Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Success");
-                }
-                catch (Exception ex)
-                {
-                    Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + ex.Message + Environment.NewLine + ex.StackTrace);
-                    throw;
-                }
             }
             catch (Exception e)
             {
@@ -363,7 +352,18 @@ namespace SAL_Core
                         {
                             foreach (Arduino arduino in collection)
                             {
-                                arduino.SetColor(chColor.Color);
+                                if (arduino.Online)
+                                {
+                                    try
+                                    {
+                                        arduino.SetColor(chColor.Color);
+                                    }
+                                    catch
+                                    {
+                                        throw;
+                                    }
+                                }
+                                
                             }
                         }
                         else
@@ -373,7 +373,17 @@ namespace SAL_Core
                             {
                                 if (channel - arduino.Channels <= 0)
                                 {
-                                    arduino.SetColor(channel, chColor.Color);
+                                    if (arduino.Online)
+                                    {
+                                        try
+                                        {
+                                            arduino.SetColor(channel, chColor.Color);
+                                        }
+                                        catch
+                                        {
+                                            throw;
+                                        }
+                                    }
                                     break;
                                 }
                                 else
