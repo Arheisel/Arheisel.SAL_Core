@@ -20,7 +20,7 @@ namespace ShineALight
         public AddArduino()
         {
             InitializeComponent();
-            var serial = new AddArduinoSerial();
+            serial = new AddArduinoSerial();
             tableLayoutPanel1.Controls.Add(serial);
             serial.Dock = DockStyle.Fill;
             serial.Show();
@@ -100,6 +100,12 @@ namespace ShineALight
         }
 
         private void CancelButton_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+            Close();
+        }
+
+        private void CancelButton_Click_1(object sender, EventArgs e)
         {
             DialogResult = DialogResult.Cancel;
             Close();

@@ -34,6 +34,7 @@ namespace ShineALight
             this.UDPRadio = new System.Windows.Forms.RadioButton();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.OKButton = new System.Windows.Forms.Button();
+            this.CancelButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // SerialRadio
@@ -85,6 +86,16 @@ namespace ShineALight
             this.OKButton.UseVisualStyleBackColor = true;
             this.OKButton.Click += new System.EventHandler(this.OKButton_Click);
             // 
+            // CancelButton
+            // 
+            this.CancelButton.Location = new System.Drawing.Point(138, 104);
+            this.CancelButton.Name = "CancelButton";
+            this.CancelButton.Size = new System.Drawing.Size(75, 23);
+            this.CancelButton.TabIndex = 4;
+            this.CancelButton.Text = "Cancel";
+            this.CancelButton.UseVisualStyleBackColor = true;
+            this.CancelButton.Click += new System.EventHandler(this.CancelButton_Click_1);
+            // 
             // AddArduino
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -92,6 +103,7 @@ namespace ShineALight
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.ClientSize = new System.Drawing.Size(222, 134);
+            this.Controls.Add(this.CancelButton);
             this.Controls.Add(this.OKButton);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Controls.Add(this.UDPRadio);
@@ -112,6 +124,6 @@ namespace ShineALight
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Button OKButton;
         private System.Windows.Forms.Button PopupCancelButton;
-
+        private Button CancelButton;
     }
 }

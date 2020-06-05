@@ -49,6 +49,7 @@ namespace SAL_Core
             }
             catch(Exception e)
             {
+                serial.Close();
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
                 throw;
             }
@@ -225,6 +226,24 @@ namespace SAL_Core
                     serial.Write(data, 0, data.Length);
                 }
             }
+            catch (TimeoutException e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+                Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Attempting to reopen port");
+                try
+                {
+                    serial.Close();
+                    serial.Open();
+                    GetChannels();
+                    SetColor(Colors.RED);
+                    Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Success");
+                }
+                catch (Exception ex)
+                {
+                    Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                    throw;
+                }
+            }
             catch (Exception e)
             {
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
@@ -237,6 +256,24 @@ namespace SAL_Core
             try
             {
                 return serial.ReadByte();
+            }
+            catch (TimeoutException e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+                Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Attempting to reopen port");
+                try
+                {
+                    serial.Close();
+                    serial.Open();
+                    GetChannels();
+                    SetColor(Colors.RED);
+                    Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Success");
+                }
+                catch (Exception ex)
+                {
+                    Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                    throw;
+                }
             }
             catch (Exception e)
             {
