@@ -16,17 +16,41 @@ namespace ShineALight
     {
         private readonly ArduinoCollection arduinoCollection;
         private readonly Settings settings;
-        
+        private delegate void UpdateDelegate();
+
         public MainWindow()
         {
             InitializeComponent();
 
-            arduinoCollection = new ArduinoCollection();
+            arduinoCollection = Program.arduinoCollection;
+            arduinoCollection.OnError += ArduinoCollection_OnError;
             settings = Program.settings;
-
             ModeSelect.SelectedIndex = settings.CurrentMode;
 
             FormClosed += MainWindow_FormClosed;
+        }
+
+        private void ArduinoCollection_OnError(object sender, ArduinoExceptionArgs e)
+        {
+            MessageBox.Show("Connection lost with " + e.Arduino.Name + ": " + e.Exception.Message, "COM ERROR");
+            UIUpdate();
+        }
+
+        private void UIUpdate()
+        {
+            if (InvokeRequired)
+            {
+                var d = new UpdateDelegate(UIUpdate);
+                try
+                {
+                    Invoke(d);
+                }
+                catch { }; //Raises an exception when I close the program because *of course* the target doesn't fucking exist anymore.
+            }
+            else
+            {
+                ArduinoList.Refresh();
+            }
         }
 
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
@@ -78,6 +102,7 @@ namespace ShineALight
             catch(Exception ex)
             {
                 Log.Write(Log.TYPE_ERROR, "MainWindow :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                MessageBox.Show(ex.Message, "ERROR");
             }
         }
 
@@ -89,7 +114,7 @@ namespace ShineALight
                 if (window.DialogResult == DialogResult.OK)
                 {
                     arduinoCollection.Add(window.arduino);
-                    ArduinoList.Items.Add(window.arduino.Name, false);
+                   ArduinoList.Items.Add(window.arduino, false);
                 }
             }
         }
@@ -101,10 +126,23 @@ namespace ShineALight
 
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            settings.Save();
+            try
+            {
+                settings.Save();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.TYPE_ERROR, "MainWindow :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                MessageBox.Show(ex.Message, "ERROR");
+            }
         }
 
         private void MainWindow_Load(object sender, EventArgs e)
+        {
+            
+        }
+
+        private void MainWindow_Shown(object sender, EventArgs e)
         {
             using (AddArduino window = new AddArduino())
             {
@@ -112,7 +150,7 @@ namespace ShineALight
                 if (window.DialogResult == DialogResult.OK)
                 {
                     arduinoCollection.Add(window.arduino);
-                    ArduinoList.Items.Add(window.arduino.Name, false);
+                    ArduinoList.Items.Add(window.arduino, false);
                 }
             }
         }

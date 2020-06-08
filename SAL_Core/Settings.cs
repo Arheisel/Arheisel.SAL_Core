@@ -4,12 +4,14 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Damez.Log;
 
 namespace SAL_Core
 {
     [Serializable]
     public class Settings
     {
+        public List<ArduinoSettings> Arduinos { get; set; } = new List<ArduinoSettings>();
         public int CurrentMode { get; set; } = 0;
         public EffectSettings Effects { get; set; } = new EffectSettings();
 
@@ -51,11 +53,30 @@ namespace SAL_Core
                 else
                     return new Settings();
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Log.Write(Log.TYPE_ERROR, "Settings :: " + e.Message + Environment.NewLine + e.StackTrace);
                 return new Settings();
             }
         }
+    }
+
+    [Serializable]
+    public class ArduinoSettings
+    {
+        public ConectionType ConectionType { get; set; } = ConectionType.Serial;
+
+        public string COM { get; set; } = string.Empty;
+
+        public string IP { get; set; } = string.Empty;
+
+        public int Port { get; set; } = 0;
+    }
+
+    public enum ConectionType
+    {
+        Serial = 0,
+        UDP = 1
     }
 
     [Serializable]

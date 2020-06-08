@@ -32,19 +32,13 @@ namespace ShineALight
             {
                 if (!String.IsNullOrWhiteSpace(serial.port))
                 {
-                    try
-                    {
-                        arduino = new Arduino(serial.port);
-                        DialogResult = DialogResult.OK;
-                        Close();
-                    }
-                    catch(Exception ex)
-                    {
-                        Log.Write(Log.TYPE_ERROR, "AddArduino :: " + ex.Message + Environment.NewLine + ex.StackTrace);
-                        MessageBox.Show(ex.Message);
-                        //DialogResult = DialogResult.Cancel;
-                        //Close();
-                    }
+                    arduino = Program.COMArduinos[serial.port];
+                    DialogResult = DialogResult.OK;
+                    Close();
+                }
+                else
+                {
+                    MessageBox.Show("No device selected", "WARNING");
                 }
             }
             else if (UDPRadio.Checked)
@@ -60,7 +54,7 @@ namespace ShineALight
                     catch (Exception ex)
                     {
                         Log.Write(Log.TYPE_ERROR, "AddArduino :: " + ex.Message + Environment.NewLine + ex.StackTrace);
-                        MessageBox.Show(ex.Message);
+                        MessageBox.Show(ex.Message, "ERROR");
                         //DialogResult = DialogResult.Cancel;
                         //Close();
                     }
@@ -77,6 +71,7 @@ namespace ShineALight
         {
             if (UDPRadio.Checked)
             {
+                serial.StopDiscover();
                 udp = new AddArduinoUDP();
                 tableLayoutPanel1.Controls[0].Dispose();
                 tableLayoutPanel1.Controls.Clear();
@@ -101,6 +96,7 @@ namespace ShineALight
 
         private void CancelButton_Click(object sender, EventArgs e)
         {
+            serial.StopDiscover();
             DialogResult = DialogResult.Cancel;
             Close();
         }
