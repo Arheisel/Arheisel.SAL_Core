@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.Main = new System.Windows.Forms.SplitContainer();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label2 = new System.Windows.Forms.Label();
             this.RemoveArduino = new System.Windows.Forms.Button();
             this.AddArduino = new System.Windows.Forms.Button();
@@ -57,6 +58,7 @@
             // Main.Panel1
             // 
             this.Main.Panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.Main.Panel1.Controls.Add(this.progressBar1);
             this.Main.Panel1.Controls.Add(this.label2);
             this.Main.Panel1.Controls.Add(this.RemoveArduino);
             this.Main.Panel1.Controls.Add(this.AddArduino);
@@ -67,6 +69,13 @@
             this.Main.Size = new System.Drawing.Size(800, 426);
             this.Main.SplitterDistance = 200;
             this.Main.TabIndex = 0;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(15, 66);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(163, 10);
+            this.progressBar1.TabIndex = 6;
             // 
             // label2
             // 
@@ -104,9 +113,9 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ArduinoList.FormattingEnabled = true;
-            this.ArduinoList.Location = new System.Drawing.Point(15, 67);
+            this.ArduinoList.Location = new System.Drawing.Point(15, 82);
             this.ArduinoList.Name = "ArduinoList";
-            this.ArduinoList.Size = new System.Drawing.Size(163, 304);
+            this.ArduinoList.Size = new System.Drawing.Size(163, 289);
             this.ArduinoList.TabIndex = 2;
             // 
             // label1
@@ -129,7 +138,8 @@
             "Music",
             "RGB Visualizer",
             "Visualizer",
-            "Receiver"});
+            "Musicbar",
+            "Musicbar 2"});
             this.ModeSelect.Location = new System.Drawing.Point(55, 12);
             this.ModeSelect.Name = "ModeSelect";
             this.ModeSelect.Size = new System.Drawing.Size(123, 21);
@@ -221,6 +231,7 @@
         private System.Windows.Forms.CheckedListBox ArduinoList;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ProgressBar progressBar1;
     }
 }
 

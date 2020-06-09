@@ -24,6 +24,7 @@ namespace ShineALight
             InitializeComponent();
             background = new BackgroundWorker();
             background.WorkerReportsProgress = true;
+            background.WorkerSupportsCancellation = true;
             background.DoWork += new DoWorkEventHandler(Background_DoWork);
             background.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Background_RunWorkerCompleted);
             background.ProgressChanged += new ProgressChangedEventHandler(Background_ProgressChanged);
@@ -62,7 +63,7 @@ namespace ShineALight
 
         private void Background_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            progressBar1.Visible = false;
+            //progressBar1.Visible = false;
             if(e.Error != null)
             {
                 Log.Write(Log.TYPE_ERROR, "AddArduinoSerial :: " + e.Error.Message + Environment.NewLine + e.Error.StackTrace);

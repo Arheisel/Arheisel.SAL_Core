@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using SAL_Core;
 using Damez.Log;
+using System.Threading;
 
 namespace ShineALight
 {
@@ -17,6 +18,7 @@ namespace ShineALight
         private readonly ArduinoCollection arduinoCollection;
         private readonly Settings settings;
         private delegate void UpdateDelegate();
+        private readonly BackgroundWorker background;
 
         public MainWindow()
         {
@@ -28,6 +30,16 @@ namespace ShineALight
             ModeSelect.SelectedIndex = settings.CurrentMode;
 
             FormClosed += MainWindow_FormClosed;
+
+            background = new BackgroundWorker();
+            background.WorkerReportsProgress = true;
+            background.WorkerSupportsCancellation = true;
+            background.DoWork += new DoWorkEventHandler(Background_DoWork);
+            background.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Background_RunWorkerCompleted);
+            background.ProgressChanged += new ProgressChangedEventHandler(Background_ProgressChanged);
+            progressBar1.Visible = true;
+            ArduinoList.Items.Add("Connecting...", false);
+            background.RunWorkerAsync();
         }
 
         private void ArduinoCollection_OnError(object sender, ArduinoExceptionArgs e)
@@ -55,6 +67,23 @@ namespace ShineALight
 
         private void MainWindow_FormClosed(object sender, FormClosedEventArgs e)
         {
+            try
+            {
+                if (background.IsBusy)
+                {
+                    background.CancelAsync();
+                    while (background.IsBusy) Thread.Sleep(1);
+                }
+                settings.Save();
+                arduinoCollection.SetColor(Colors.OFF);
+                Thread.Sleep(10);
+                arduinoCollection.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.TYPE_ERROR, "MainWindow :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                MessageBox.Show(ex.Message, "ERROR");
+            }
             Environment.Exit(0);
         }
 
@@ -96,6 +125,18 @@ namespace ShineALight
                         control.Dock = DockStyle.Fill;
                         control.Show();
                         break;
+                    case "Musicbar":
+                        control = new UCMusicbar(arduinoCollection, settings.Musicbar);
+                        Main.Panel2.Controls.Add(control);
+                        control.Dock = DockStyle.Fill;
+                        control.Show();
+                        break;
+                    case "Musicbar 2":
+                        control = new UCMusicbar2(arduinoCollection, settings.Musicbar2);
+                        Main.Panel2.Controls.Add(control);
+                        control.Dock = DockStyle.Fill;
+                        control.Show();
+                        break;
                 }
                 settings.CurrentMode = ModeSelect.SelectedIndex;
             }
@@ -114,14 +155,18 @@ namespace ShineALight
                 if (window.DialogResult == DialogResult.OK)
                 {
                     arduinoCollection.Add(window.arduino);
-                   ArduinoList.Items.Add(window.arduino, false);
+                    ArduinoList.Items.Add(window.arduino, false);
+                    if (window.arduino.ConnectionType == ConnectionType.Serial)
+                        settings.Arduinos.Add(new ArduinoSettings(window.arduino.COM));
+                    else
+                        settings.Arduinos.Add(new ArduinoSettings(window.arduino.IP, window.arduino.Port));
                 }
             }
         }
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Environment.Exit(0);
+            MainWindow_FormClosed(this, new FormClosedEventArgs(CloseReason.UserClosing));
         }
 
         private void SaveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -144,15 +189,85 @@ namespace ShineALight
 
         private void MainWindow_Shown(object sender, EventArgs e)
         {
-            using (AddArduino window = new AddArduino())
+
+        }
+
+        private void Background_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+
+            e.Result = ConnectToArduinos(worker, e);
+        }
+
+        private void Background_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            progressBar1.Value = e.ProgressPercentage;
+        }
+
+        private void Background_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            //progressBar1.Visible = false;
+            if (e.Error != null)
             {
-                window.ShowDialog(this);
-                if (window.DialogResult == DialogResult.OK)
+                Log.Write(Log.TYPE_ERROR, "MainWindow :: " + e.Error.Message + Environment.NewLine + e.Error.StackTrace);
+                MessageBox.Show(e.Error.Message, "ERROR");
+                ArduinoList.Items.Clear();
+                ArduinoList.Items.Add(e.Error.Message, false);
+            }
+            else if (e.Cancelled)
+            {
+                ArduinoList.Items.Clear();
+                ArduinoList.Items.Add("Cancelled", false);
+            }
+            else
+            {
+                ArduinoList.Items.Clear();
+                var result = (List<Arduino>)e.Result;
+                foreach (Arduino arduino in result)
                 {
-                    arduinoCollection.Add(window.arduino);
-                    ArduinoList.Items.Add(window.arduino, false);
+                    ArduinoList.Items.Add(arduino);
                 }
             }
+        }
+
+        private List<Arduino> ConnectToArduinos(BackgroundWorker worker, DoWorkEventArgs e)
+        {
+            var list = new List<Arduino>();
+            int count = 0;
+            Log.Write(Log.TYPE_INFO, "MainWindow :: Starting serial connect");
+            foreach (ArduinoSettings arduino in settings.Arduinos)
+            {
+                if (worker.CancellationPending)
+                {
+                    e.Cancel = true;
+                    break;
+                }
+                if (arduino.ConnectionType == ConnectionType.UDP) continue;
+
+                if (!Program.COMArduinos.ContainsKey(arduino.COM))
+                {
+                    try
+                    {
+                        var dev = new Arduino(arduino.COM);
+                        Program.COMArduinos.Add(dev.Name, dev);
+                        arduinoCollection.Add(dev);
+                        list.Add(dev);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Write(Log.TYPE_ERROR, "MainWindow :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                    }
+                }
+                else if (!Program.arduinoCollection.ContainsArduino(arduino.COM))
+                {
+                    arduinoCollection.Add(Program.COMArduinos[arduino.COM]);
+                }
+
+                worker.ReportProgress((++count * 100) / settings.Arduinos.Count);
+            }
+
+            Log.Write(Log.TYPE_INFO, "MainWindow :: Serial connect ended");
+            return list;
         }
     }
 

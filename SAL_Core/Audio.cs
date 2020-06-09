@@ -10,15 +10,15 @@ using Damez.Log;
 
 namespace SAL_Core
 {
-    public class Audio
+    public class Audio : IDisposable
     {
         private const int minLength = 2;
         private const int maxLength = 16384;
 
         public event EventHandler<AudioDataAvailableArgs> DataAvailable;
 
-        private readonly MMDeviceEnumerator enumerator;
-        private readonly MMDevice device;
+        private readonly MMDeviceEnumerator enumerator = null;
+        private readonly MMDevice device = null;
 
         private WasapiLoopbackCapture capture = null;
         private BufferedWaveProvider waveBuffer = null;
@@ -296,6 +296,31 @@ namespace SAL_Core
             {
                 Log.Write(Log.TYPE_ERROR, "Audio :: " + ex.Message + Environment.NewLine + ex.StackTrace);
             }
+        }
+
+        private bool _disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                if (enumerator != null) enumerator.Dispose();
+                if (device != null) device.Dispose();
+                if (capture != null) capture.Dispose();
+            }
+
+            _disposed = true;
         }
     }
 

@@ -21,6 +21,10 @@ namespace SAL_Core
 
         public VSettings Visualizer { get; set; } = new VSettings();
 
+        public MusicSettings Musicbar { get; set; } = new MusicSettings();
+
+        public MusicSettings Musicbar2 { get; set; } = new MusicSettings();
+
         public static void WriteToFile<T>(string filePath, T objectToWrite, bool append = false)
         {
             using (Stream stream = File.Open(filePath, append ? FileMode.Append : FileMode.Create))
@@ -64,19 +68,26 @@ namespace SAL_Core
     [Serializable]
     public class ArduinoSettings
     {
-        public ConectionType ConectionType { get; set; } = ConectionType.Serial;
+        public ConnectionType ConnectionType { get; set; } = ConnectionType.Serial;
 
         public string COM { get; set; } = string.Empty;
 
         public string IP { get; set; } = string.Empty;
 
         public int Port { get; set; } = 0;
-    }
 
-    public enum ConectionType
-    {
-        Serial = 0,
-        UDP = 1
+        public ArduinoSettings(string com)
+        {
+            ConnectionType = ConnectionType.Serial;
+            COM = com;
+        }
+
+        public ArduinoSettings(string ip, int port)
+        {
+            ConnectionType = ConnectionType.UDP;
+            IP = ip;
+            Port = port;
+        }
     }
 
     [Serializable]
@@ -89,7 +100,9 @@ namespace SAL_Core
             {"Rainbow", EffectPresetDefaults.Rainbow },
             {"Cycle", EffectPresetDefaults.Cycle },
             {"Breathing", EffectPresetDefaults.Breathing },
-            {"Flash", EffectPresetDefaults.Flash }
+            {"Flash", EffectPresetDefaults.Flash },
+            {"Fire", EffectPresetDefaults.Fire },
+            {"Static", EffectPresetDefaults.Static }
         };
 
         public EffectPreset CurrentPreset
@@ -113,14 +126,6 @@ namespace SAL_Core
 
     }
 
-    public enum EffectTypes
-    {
-        Rainbow = 0,
-        Cycle = 1,
-        Breathing = 2,
-        Flash = 3
-    }
-
     public static class EffectPresetDefaults
     {
         public static EffectPreset Rainbow
@@ -130,7 +135,7 @@ namespace SAL_Core
                 return new EffectPreset()
                 {
                     Type = EffectTypes.Rainbow,
-                    Speed = 0,
+                    Speed = 50,
                     TotalSteps = 20,
                     HoldingSteps = 0,
                     ColorList = new List<Color> { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK }
@@ -144,6 +149,7 @@ namespace SAL_Core
                 return new EffectPreset()
                 {
                     Type = EffectTypes.Cycle,
+                    Speed = 50,
                     ColorList = new List<Color> { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK }
                 };
             }
@@ -155,6 +161,7 @@ namespace SAL_Core
                 return new EffectPreset()
                 {
                     Type = EffectTypes.Breathing,
+                    Speed = 50,
                     ColorList = new List<Color> { Colors.RED, Colors.GREEN, Colors.BLUE, Colors.YELLOW, Colors.MAGENTA, Colors.CYAN }
                 };
             }
@@ -166,6 +173,7 @@ namespace SAL_Core
                 return new EffectPreset()
                 {
                     Type = EffectTypes.Flash,
+                    Speed = 50,
                     TotalSteps = 20,
                     HoldingSteps = 2,
                     ColorList = new List<Color> { Colors.WHITE }
@@ -173,6 +181,33 @@ namespace SAL_Core
             }
         }
 
+        public static EffectPreset Fire
+        {
+            get
+            {
+                return new EffectPreset()
+                {
+                    Type = EffectTypes.Fire,
+                    Speed = 50,
+                    TotalSteps = 255,
+                    HoldingSteps = 100,
+                    ColorList = new List<Color> { Colors.ORANGE, Colors.RED }
+                };
+            }
+        }
+
+        public static EffectPreset Static
+        {
+            get
+            {
+                return new EffectPreset()
+                {
+                    Type = EffectTypes.Static,
+                    Speed = 0,
+                    ColorList = new List<Color> { Colors.PURPLE }
+                };
+            }
+        }
     }
 
     [Serializable]

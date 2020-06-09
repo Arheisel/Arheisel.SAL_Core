@@ -87,5 +87,6 @@ namespace ShineALight
             holdTrackbar.Value = preset.HoldingSteps;
             holdLabel.Text = holdTrackbar.Value.ToString();
         }
+
     }
 }

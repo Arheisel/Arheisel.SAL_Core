@@ -10,14 +10,20 @@ using Damez.Log;
 
 namespace SAL_Core
 {
-    public class Arduino
+    public class Arduino : IDisposable
     {
         private SerialPort serial;
         private readonly byte[] dataArr = new byte[1];
         private UDPCLient udp = null;
         private static int port = 9050;
         private bool usingUDP = false;
-        public readonly string Name;
+
+        public string Name { get; private set; }
+        public string COM { get; private set; } = string.Empty;
+        public string IP { get; private set; } = string.Empty;
+        public int Port { get; private set; } = 0;
+
+        public ConnectionType ConnectionType { get; private set; }
 
         public bool Online { get; private set; } = true;
 
@@ -28,7 +34,8 @@ namespace SAL_Core
         public Arduino(string com)
         {
             Name = com;
-
+            COM = com;
+            ConnectionType = ConnectionType.Serial;
             try
             {
                 StartSerial(com);
@@ -83,7 +90,9 @@ namespace SAL_Core
         public Arduino(string ip, int dstPort)
         {
             Name = ip + ":" + dstPort;
-
+            ConnectionType = ConnectionType.UDP;
+            IP = ip;
+            Port = dstPort;
             try
             {
                 StartUDPClient(ip, dstPort);
@@ -250,7 +259,7 @@ namespace SAL_Core
                 udp.Dispose();
                 udp = null;
                 usingUDP = false;
-                port--;
+                Online = false;
             }
             catch (Exception e)
             {
@@ -258,10 +267,35 @@ namespace SAL_Core
             }
         }
 
+        private bool _disposed = false;
 
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                if (usingUDP == false)
+                {
+                    serial.Close();
+                    serial.Dispose();
+                }
+            }
+
+            _disposed = true;
+        }
     }
 
-    public class ArduinoCollection
+    public class ArduinoCollection : IDisposable
     {
         private readonly List<Arduino> collection = new List<Arduino>();
         private readonly ConcurrentQueue<ChColor> queue;
@@ -419,6 +453,29 @@ namespace SAL_Core
             }
         }
 
+        private bool _disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                foreach (Arduino arduino in collection) arduino.Dispose();
+            }
+
+            _disposed = true;
+        }
+
     }
 
     public static class Colors
@@ -496,5 +553,11 @@ namespace SAL_Core
             Arduino = arduino;
             Exception = exception;
         }
+    }
+
+    public enum ConnectionType
+    {
+        Serial = 0,
+        UDP = 1
     }
 }

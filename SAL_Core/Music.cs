@@ -8,7 +8,7 @@ using Damez.Log;
 
 namespace SAL_Core
 {
-    public class Music
+    public class Music : IDisposable
     {
         //public delegate void DataAvailableEventHandler(double sample);
         public event EventHandler<MusicDataAvailableArgs> DataAvailable;
@@ -117,6 +117,24 @@ namespace SAL_Core
                 Log.Write(Log.TYPE_ERROR, "Music :: " + e.Message + Environment.NewLine + e.StackTrace);
                 throw;
             }
+        }
+
+        private bool _disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
         }
     }
 

@@ -8,7 +8,7 @@ using Damez.Log;
 
 namespace SAL_Core
 {
-    public class Effects
+    public class Effects : IDisposable
     {
 
         private Timer timer;
@@ -125,6 +125,12 @@ namespace SAL_Core
                     case EffectTypes.Flash:
                         effect = new Flash(arduinoCollection, preset);
                         break;
+                    case EffectTypes.Fire:
+                        effect = new Fire(arduinoCollection, preset);
+                        break;
+                    case EffectTypes.Static:
+                        effect = new Static(arduinoCollection, preset);
+                        break;
                 }
             }
             catch (Exception e)
@@ -144,6 +150,31 @@ namespace SAL_Core
             {
                 Log.Write(Log.TYPE_ERROR, "Effects :: " + Current +  " :: " + ex.Message + Environment.NewLine + ex.StackTrace);
             }  
+        }
+
+        private bool _disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                effect.Dispose();
+                timer.Stop();
+                timer.Dispose();
+            }
+
+            _disposed = true;
         }
     }
 
@@ -183,7 +214,17 @@ namespace SAL_Core
         }
     }
 
-    class Effect
+    public enum EffectTypes
+    {
+        Rainbow = 0,
+        Cycle = 1,
+        Breathing = 2,
+        Flash = 3,
+        Fire = 4,
+        Static = 5
+    }
+
+    class Effect : IDisposable
     {
         protected readonly ArduinoCollection arduino;
         public EffectPreset Preset { get; set; }
@@ -205,6 +246,24 @@ namespace SAL_Core
         {
             count = 0;
             step = 0;
+        }
+
+        private bool _disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            _disposed = true;
         }
     }
 
@@ -363,6 +422,50 @@ namespace SAL_Core
 
                 step++;
             }
+        }
+    }
+
+    class Fire : Effect
+    {
+        private Transition transition;
+        private Random random;
+        public Fire(ArduinoCollection collection, EffectPreset settings) : base(collection, settings)
+        {
+            random = new Random();
+        }
+
+        public override void Step()
+        {
+            if (arduino.ChannelCount == 0) return;
+            if (step == 0)
+            {
+                transition = new Transition(Preset.ColorList[0], Preset.ColorList[1], Preset.TotalSteps); ;
+
+                step++;
+            }
+            else
+            {
+                if (step >= Preset.TotalSteps + Preset.HoldingSteps)
+                {
+                    step = 0;
+                    return;
+                }
+
+                if(step > Preset.TotalSteps)
+                    arduino.SetColor(transition.getColor(random.Next(0, Preset.TotalSteps)));
+                else
+                    arduino.SetColor(transition.getColor(random.Next(0, Preset.TotalSteps/2)));
+
+                step++;
+            }
+        }
+    }
+
+    class Static : Effect
+    {
+        public Static(ArduinoCollection collection, EffectPreset settings) : base(collection, settings)
+        {
+            arduino.SetColor(Preset.ColorList[0]);
         }
     }
 }
