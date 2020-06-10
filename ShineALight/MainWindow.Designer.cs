@@ -29,6 +29,9 @@
         private void InitializeComponent()
         {
             this.Main = new System.Windows.Forms.SplitContainer();
+            this.Reverse = new System.Windows.Forms.Button();
+            this.MoveDown = new System.Windows.Forms.Button();
+            this.MoveUp = new System.Windows.Forms.Button();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label2 = new System.Windows.Forms.Label();
             this.RemoveArduino = new System.Windows.Forms.Button();
@@ -58,6 +61,9 @@
             // Main.Panel1
             // 
             this.Main.Panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.Main.Panel1.Controls.Add(this.Reverse);
+            this.Main.Panel1.Controls.Add(this.MoveDown);
+            this.Main.Panel1.Controls.Add(this.MoveUp);
             this.Main.Panel1.Controls.Add(this.progressBar1);
             this.Main.Panel1.Controls.Add(this.label2);
             this.Main.Panel1.Controls.Add(this.RemoveArduino);
@@ -69,6 +75,34 @@
             this.Main.Size = new System.Drawing.Size(800, 426);
             this.Main.SplitterDistance = 200;
             this.Main.TabIndex = 0;
+            // 
+            // Reverse
+            // 
+            this.Reverse.Location = new System.Drawing.Point(102, 352);
+            this.Reverse.Name = "Reverse";
+            this.Reverse.Size = new System.Drawing.Size(75, 23);
+            this.Reverse.TabIndex = 9;
+            this.Reverse.Text = "Reverse";
+            this.Reverse.UseVisualStyleBackColor = true;
+            this.Reverse.Click += new System.EventHandler(this.Reverse_Click);
+            // 
+            // MoveDown
+            // 
+            this.MoveDown.Location = new System.Drawing.Point(55, 352);
+            this.MoveDown.Name = "MoveDown";
+            this.MoveDown.Size = new System.Drawing.Size(35, 23);
+            this.MoveDown.TabIndex = 8;
+            this.MoveDown.Text = "▼";
+            this.MoveDown.UseVisualStyleBackColor = true;
+            // 
+            // MoveUp
+            // 
+            this.MoveUp.Location = new System.Drawing.Point(15, 352);
+            this.MoveUp.Name = "MoveUp";
+            this.MoveUp.Size = new System.Drawing.Size(34, 23);
+            this.MoveUp.TabIndex = 7;
+            this.MoveUp.Text = "▲";
+            this.MoveUp.UseVisualStyleBackColor = true;
             // 
             // progressBar1
             // 
@@ -95,6 +129,7 @@
             this.RemoveArduino.TabIndex = 4;
             this.RemoveArduino.Text = "Remove";
             this.RemoveArduino.UseVisualStyleBackColor = true;
+            this.RemoveArduino.Click += new System.EventHandler(this.RemoveArduino_Click);
             // 
             // AddArduino
             // 
@@ -115,7 +150,7 @@
             this.ArduinoList.FormattingEnabled = true;
             this.ArduinoList.Location = new System.Drawing.Point(15, 82);
             this.ArduinoList.Name = "ArduinoList";
-            this.ArduinoList.Size = new System.Drawing.Size(163, 289);
+            this.ArduinoList.Size = new System.Drawing.Size(163, 259);
             this.ArduinoList.TabIndex = 2;
             // 
             // label1
@@ -232,6 +267,9 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Button Reverse;
+        private System.Windows.Forms.Button MoveDown;
+        private System.Windows.Forms.Button MoveUp;
     }
 }
 

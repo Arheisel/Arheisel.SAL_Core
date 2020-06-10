@@ -27,15 +27,18 @@ namespace SAL_Core
 
         public bool Online { get; private set; } = true;
 
+        public bool Reverse { get; set; } = false;
+
         /// <summary>
         /// Initializes a Serial Arduino Connection
         /// </summary>
         /// <param name="com">COM Port Name</param>
-        public Arduino(string com)
+        public Arduino(string com, bool reverse = false)
         {
             Name = com;
             COM = com;
             ConnectionType = ConnectionType.Serial;
+            Reverse = reverse;
             try
             {
                 StartSerial(com);
@@ -87,12 +90,13 @@ namespace SAL_Core
         /// </summary>
         /// <param name="ip">IP of the Receiver</param>
         /// <param name="dstPort">Receiver Port</param>
-        public Arduino(string ip, int dstPort)
+        public Arduino(string ip, int dstPort, bool reverse = false)
         {
             Name = ip + ":" + dstPort;
             ConnectionType = ConnectionType.UDP;
             IP = ip;
             Port = dstPort;
+            Reverse = reverse;
             try
             {
                 StartUDPClient(ip, dstPort);
@@ -106,7 +110,11 @@ namespace SAL_Core
 
         public override string ToString()
         {
-            if (Online) return Name;
+            if (Online)
+            {
+                if(Reverse) return Name + " - Reversed";
+                else return Name;
+            }
             else return Name + " - Offline";
         }
 
@@ -122,7 +130,10 @@ namespace SAL_Core
             int ch = 252;
             if(Channels != 1 && channel > 0 && channel <= 4)
             {
-                ch -= channel * 2;
+                if (Reverse)
+                    ch -= (5 - channel) * 2;
+                else
+                    ch -= channel * 2;
             }
 
             R = NormalizeColor(R);
@@ -395,25 +406,30 @@ namespace SAL_Core
             }
         }
 
-        public int FindByName(string name)
+        public Arduino FindByName(string name)
         {
             for(int i = 0; i < collection.Count; i++)
             {
-                if (collection[i].Name == name) return i;
+                if (collection[i].Name == name) return collection[i];
             }
-            return -1;
+            return null;
         }
 
         public bool ContainsArduino(string name)
         {
-            return FindByName(name) != -1;
+            return FindByName(name) != null;
+        }
+
+        public bool ContainsArduino(Arduino arduino)
+        {
+            return collection.Contains(arduino);
         }
 
         public void Add(Arduino arduino)
         {
             try
             {
-                if (FindByName(arduino.Name) != -1) return;
+                if (ContainsArduino(arduino)) return;
                 collection.Add(arduino);
                 ChannelCount += arduino.Channels;
             }
@@ -421,6 +437,26 @@ namespace SAL_Core
             {
                 Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + e.Message + Environment.NewLine + e.StackTrace);
             }
+        }
+
+        public void Remove(Arduino arduino)
+        {
+            if (ContainsArduino(arduino))
+            {
+                collection.Remove(arduino);
+                arduino.Dispose();
+                CalculateChannels();
+            }
+        }
+
+        private void CalculateChannels()
+        {
+            var count = 0;
+            foreach(var arduino in collection)
+            {
+                count += arduino.Channels;
+            }
+            ChannelCount = count;
         }
 
         public int Count
