@@ -86,10 +86,11 @@ namespace ShineALight
             this.OKButton.UseVisualStyleBackColor = true;
             this.OKButton.Click += new System.EventHandler(this.OKButton_Click);
             // 
-            // CancelButton
+            // PopupCancelButton
             // 
+            this.PopupCancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.PopupCancelButton.Location = new System.Drawing.Point(138, 104);
-            this.PopupCancelButton.Name = "CancelButton";
+            this.PopupCancelButton.Name = "PopupCancelButton";
             this.PopupCancelButton.Size = new System.Drawing.Size(75, 23);
             this.PopupCancelButton.TabIndex = 4;
             this.PopupCancelButton.Text = "Cancel";
@@ -98,11 +99,14 @@ namespace ShineALight
             // 
             // AddArduino
             // 
+            this.AcceptButton = this.OKButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.CancelButton = this.PopupCancelButton;
             this.ClientSize = new System.Drawing.Size(222, 134);
+            this.ControlBox = false;
             this.Controls.Add(this.PopupCancelButton);
             this.Controls.Add(this.OKButton);
             this.Controls.Add(this.tableLayoutPanel1);

@@ -45,7 +45,15 @@ namespace SAL_Core
 
         public void Save()
         {
-            WriteToFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.bin"), this);
+            try
+            {
+                WriteToFile(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Settings.bin"), this);
+            }
+            catch(Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Settings :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }
         }
 
         public static Settings Load()
@@ -95,7 +103,7 @@ namespace SAL_Core
     {
         public string Current { get; set; } = "Rainbow";
 
-        public Dictionary<string, EffectPreset> PresetList { get; } = new Dictionary<string, EffectPreset>()
+        public Dictionary<string, EffectPreset> PresetList { get; set; } = new Dictionary<string, EffectPreset>()
         {
             {"Rainbow", EffectPresetDefaults.Rainbow },
             {"Cycle", EffectPresetDefaults.Cycle },
@@ -109,6 +117,10 @@ namespace SAL_Core
         {
             get
             {
+                if (!PresetList.ContainsKey(Current))
+                {
+                    Current = PresetList.First().Key;
+                }
                 return PresetList[Current];
             }
         }
@@ -118,11 +130,11 @@ namespace SAL_Core
     [Serializable]
     public class EffectPreset
     {
-        public EffectTypes Type { get; set; } = EffectTypes.Rainbow;
-        public int Speed { get; set; } = 0;
+        public EffectTypes Type { get; set; } = EffectTypes.Static;
+        public int Speed { get; set; } = 1;
         public int TotalSteps { get; set; } = 255;
         public int HoldingSteps { get; set; } = 50;
-        public List<Color> ColorList { get; set; } = new List<Color>();
+        public List<Color> ColorList { get; set; } = new List<Color>() { Colors.RED };
 
     }
 
@@ -203,7 +215,7 @@ namespace SAL_Core
                 return new EffectPreset()
                 {
                     Type = EffectTypes.Static,
-                    Speed = 0,
+                    Speed = 1,
                     ColorList = new List<Color> { Colors.PURPLE }
                 };
             }

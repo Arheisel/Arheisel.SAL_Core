@@ -152,19 +152,19 @@ namespace ShineALight
 
         private void AddArduino_Click(object sender, EventArgs e)
         {
-            using (AddArduino window = new AddArduino())
+            using (AddArduino dialog = new AddArduino())
             {
-                window.ShowDialog(this);
-                if (window.DialogResult == DialogResult.OK)
+                dialog.ShowDialog(this);
+                if (dialog.DialogResult == DialogResult.OK)
                 {
-                    arduinoCollection.Add(window.arduino);
-                    ArduinoList.Items.Add(window.arduino, false);
-                    if (!ConfigContains(window.arduino))
+                    arduinoCollection.Add(dialog.arduino);
+                    ArduinoList.Items.Add(dialog.arduino, false);
+                    if (!ConfigContains(dialog.arduino))
                     {
-                        if (window.arduino.ConnectionType == ConnectionType.Serial)
-                            settings.Arduinos.Add(new ArduinoSettings(window.arduino.COM));
+                        if (dialog.arduino.ConnectionType == ConnectionType.Serial)
+                            settings.Arduinos.Add(new ArduinoSettings(dialog.arduino.COM));
                         else
-                            settings.Arduinos.Add(new ArduinoSettings(window.arduino.IP, window.arduino.Port));
+                            settings.Arduinos.Add(new ArduinoSettings(dialog.arduino.IP, dialog.arduino.Port));
                     }
                 }
             }

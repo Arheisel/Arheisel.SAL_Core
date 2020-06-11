@@ -32,7 +32,7 @@ namespace ShineALight
             {
                 currentSelect.Items.Add(name);
             }
-            currentSelect.Text = effects.Current;
+            currentSelect.SelectedItem = effects.Current;
             UpdateScrollbars();
         }
 
@@ -88,5 +88,33 @@ namespace ShineALight
             holdLabel.Text = holdTrackbar.Value.ToString();
         }
 
+        private void EditBtn_Click(object sender, EventArgs e)
+        {
+            using (PresetsEdit dialog = new PresetsEdit(effects.Settings.PresetList))
+            {
+                dialog.ShowDialog(this);
+                if(dialog.DialogResult == DialogResult.OK)
+                {
+                    effects.Settings.PresetList = dialog.PresetList;
+                    effects.Current = effects.Settings.PresetList.First().Key;
+                    currentSelect.Items.Clear();
+                    foreach (string name in effects.Settings.PresetList.Keys)
+                    {
+                        currentSelect.Items.Add(name);
+                    }
+                    currentSelect.SelectedItem = effects.Current;
+                    UpdateScrollbars();
+                    try
+                    {
+                        Program.settings.Save();
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Write(Log.TYPE_ERROR, "UCEffects :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                        MessageBox.Show(ex.Message, "ERROR");
+                    }
+                }
+            }
+        }
     }
 }

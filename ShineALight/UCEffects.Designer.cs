@@ -40,6 +40,7 @@
             this.holdLabel = new System.Windows.Forms.Label();
             this.holdTrackbar = new System.Windows.Forms.TrackBar();
             this.label5 = new System.Windows.Forms.Label();
+            this.editBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.speedTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.stepsTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.holdTrackbar)).BeginInit();
@@ -71,7 +72,7 @@
             this.currentSelect.FormattingEnabled = true;
             this.currentSelect.Location = new System.Drawing.Point(72, 16);
             this.currentSelect.Name = "currentSelect";
-            this.currentSelect.Size = new System.Drawing.Size(277, 21);
+            this.currentSelect.Size = new System.Drawing.Size(196, 21);
             this.currentSelect.TabIndex = 2;
             this.currentSelect.SelectedIndexChanged += new System.EventHandler(this.CurrentSelect_SelectedIndexChanged);
             // 
@@ -81,9 +82,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.speedTrackbar.Location = new System.Drawing.Point(73, 52);
             this.speedTrackbar.Maximum = 100;
+            this.speedTrackbar.Minimum = 1;
             this.speedTrackbar.Name = "speedTrackbar";
             this.speedTrackbar.Size = new System.Drawing.Size(276, 45);
             this.speedTrackbar.TabIndex = 3;
+            this.speedTrackbar.Value = 1;
             this.speedTrackbar.Scroll += new System.EventHandler(this.SpeedTrackbar_Scroll);
             // 
             // speedLabel
@@ -156,10 +159,22 @@
             this.label5.TabIndex = 8;
             this.label5.Text = "Hold Steps:";
             // 
+            // editBtn
+            // 
+            this.editBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.editBtn.Location = new System.Drawing.Point(274, 16);
+            this.editBtn.Name = "editBtn";
+            this.editBtn.Size = new System.Drawing.Size(75, 23);
+            this.editBtn.TabIndex = 11;
+            this.editBtn.Text = "Edit";
+            this.editBtn.UseVisualStyleBackColor = true;
+            this.editBtn.Click += new System.EventHandler(this.EditBtn_Click);
+            // 
             // UCEffects
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.editBtn);
             this.Controls.Add(this.holdLabel);
             this.Controls.Add(this.holdTrackbar);
             this.Controls.Add(this.label5);
@@ -195,5 +210,6 @@
         private System.Windows.Forms.Label holdLabel;
         private System.Windows.Forms.TrackBar holdTrackbar;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Button editBtn;
     }
 }

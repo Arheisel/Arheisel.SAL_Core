@@ -22,6 +22,10 @@ namespace SAL_Core
         {
             get
             {
+                if (!Settings.PresetList.ContainsKey(Settings.Current))
+                {
+                    Settings.Current = Settings.PresetList.First().Key;
+                }
                 return Settings.Current;
             }
             set
@@ -465,7 +469,30 @@ namespace SAL_Core
     {
         public Static(ArduinoCollection collection, EffectPreset settings) : base(collection, settings)
         {
-            arduino.SetColor(Preset.ColorList[0]);
+            
+        }
+
+        public override void Step()
+        {
+            if (arduino.ChannelCount == 0) return;
+            if (step == 0)
+            {
+                arduino.SetColor(Preset.ColorList[count]);
+
+                if (count >= Preset.ColorList.Count - 1) count = 0;
+                else count++;
+                step++;
+            }
+            else
+            {
+                if (step >= Preset.TotalSteps + Preset.HoldingSteps)
+                {
+                    step = 0;
+                    return;
+                }
+
+                step++;
+            }
         }
     }
 }
