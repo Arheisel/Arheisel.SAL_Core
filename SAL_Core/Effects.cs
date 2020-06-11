@@ -72,6 +72,7 @@ namespace SAL_Core
                 if (value > 0 && value <= 255)
                 {
                     Settings.CurrentPreset.TotalSteps = value;
+                    effect.Reset();
                 }
             }
         }
@@ -87,6 +88,7 @@ namespace SAL_Core
                 if (value >= 0 && value <= 100)
                 {
                     Settings.CurrentPreset.HoldingSteps = value;
+                    effect.Reset();
                 }
             }
         }
