@@ -15,12 +15,15 @@ namespace ShineALight
     public partial class UCEffects : CustomUserControl
     {
         private readonly Effects effects;
+        private readonly ArduinoCollection arduinoCollection;
         public UCEffects(ArduinoCollection collection, EffectSettings settings)
         {
             InitializeComponent();
             try
             {
+                arduinoCollection = collection;
                 effects = new Effects(collection, settings);
+                effects.DataAvailable += Effects_DataAvailable;
             }
             catch (Exception ex)
             {
@@ -34,6 +37,14 @@ namespace ShineALight
             }
             currentSelect.SelectedItem = effects.Current;
             UpdateScrollbars();
+        }
+
+        private void Effects_DataAvailable(object sender, EffectDataAvailableArgs e)
+        {
+            foreach (var color in e.Colors)
+            {
+                arduinoCollection.SetColor(color.Channel, color.Color);
+            }
         }
 
         public override void DisposeDeferred()
@@ -86,6 +97,8 @@ namespace ShineALight
 
             holdTrackbar.Value = preset.HoldingSteps;
             holdLabel.Text = holdTrackbar.Value.ToString();
+
+            revCheck.Checked = preset.Reverse;
         }
 
         private void EditBtn_Click(object sender, EventArgs e)
@@ -115,6 +128,12 @@ namespace ShineALight
                     }
                 }
             }
+        }
+
+        private void RevCheck_CheckedChanged(object sender, EventArgs e)
+        {
+            if (effects.Settings.CurrentPreset != null)
+                effects.Settings.CurrentPreset.Reverse = revCheck.Checked;
         }
     }
 }

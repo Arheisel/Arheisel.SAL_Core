@@ -41,6 +41,8 @@ namespace ShineALight
             Reverse.Enabled = false;
             MoveUp.Enabled = false;
             MoveDown.Enabled = false;
+            RemoveArduino.Enabled = false;
+            AddArduino.Enabled = false;
             ArduinoList.Items.Add("Connecting...", false);
             background.RunWorkerAsync();
         }
@@ -100,7 +102,7 @@ namespace ShineALight
                     cuc.DisposeDeferred();
                 }
                 Main.Panel2.Controls.Clear();
-
+                arduinoCollection.SetColor(Colors.OFF);
                 Control control;
                 switch (ModeSelect.Text)
                 {
@@ -159,41 +161,11 @@ namespace ShineALight
                 {
                     arduinoCollection.Add(dialog.arduino);
                     ArduinoList.Items.Add(dialog.arduino, false);
-                    if (!ConfigContains(dialog.arduino))
-                    {
-                        if (dialog.arduino.ConnectionType == ConnectionType.Serial)
-                            settings.Arduinos.Add(new ArduinoSettings(dialog.arduino.COM));
-                        else
-                            settings.Arduinos.Add(new ArduinoSettings(dialog.arduino.IP, dialog.arduino.Port));
-                    }
+                    settings.AddArduino(dialog.arduino);
                 }
             }
         }
 
-        private bool ConfigContains(Arduino arduino)
-        {
-            foreach (var arduinoSettings in settings.Arduinos.ToList())
-            {
-                if (arduinoSettings.ConnectionType == arduino.ConnectionType)
-                {
-                    if (arduino.ConnectionType == ConnectionType.Serial)
-                    {
-                        if (arduino.COM == arduinoSettings.COM)
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        if (arduino.IP == arduinoSettings.IP && arduino.Port == arduinoSettings.Port)
-                        {
-                            return true;
-                        }
-                    }
-                }
-            }
-            return false;
-        }
 
         private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -261,6 +233,8 @@ namespace ShineALight
                 Reverse.Enabled = true;
                 MoveUp.Enabled = true;
                 MoveDown.Enabled = true;
+                RemoveArduino.Enabled = true;
+                AddArduino.Enabled = true;
             }
         }
 
@@ -282,9 +256,12 @@ namespace ShineALight
                 {
                     try
                     {
-                        var dev = new Arduino(arduino.COM);
-                        Program.COMArduinos.Add(dev.Name, dev);
-                        arduinoCollection.Add(dev);
+                        var dev = new Arduino(arduino, true);
+                        if (dev.Online)
+                        {
+                            Program.COMArduinos.Add(dev.Name, dev);
+                            arduinoCollection.Add(dev);
+                        }
                         list.Add(dev);
                     }
                     catch (Exception ex)
@@ -308,7 +285,7 @@ namespace ShineALight
         {
             foreach(Arduino arduino in ArduinoList.CheckedItems.OfType<Arduino>())
             {
-                arduino.Reverse = !arduino.Reverse;
+                arduino.Settings.Reverse = !arduino.Settings.Reverse;
             }
             ArduinoList.Refresh();
         }
@@ -318,30 +295,9 @@ namespace ShineALight
             foreach (Arduino arduino in ArduinoList.CheckedItems.OfType<Arduino>().ToList())
             {
                 ArduinoList.Items.Remove(arduino);
-                if(arduino.ConnectionType == ConnectionType.Serial) Program.COMArduinos.Remove(arduino.COM);
+                if(arduino.Settings.ConnectionType == ConnectionType.Serial) Program.COMArduinos.Remove(arduino.Settings.COM);
                 arduinoCollection.Remove(arduino);
-                foreach(var arduinoSettings in settings.Arduinos.ToList())
-                {
-                    if(arduinoSettings.ConnectionType == arduino.ConnectionType)
-                    {
-                        if(arduino.ConnectionType == ConnectionType.Serial)
-                        {
-                            if(arduino.COM == arduinoSettings.COM)
-                            {
-                                settings.Arduinos.Remove(arduinoSettings);
-                                break;
-                            }
-                        }
-                        else
-                        {
-                            if (arduino.IP == arduinoSettings.IP && arduino.Port == arduinoSettings.Port)
-                            {
-                                settings.Arduinos.Remove(arduinoSettings);
-                                break;
-                            }
-                        }
-                    }
-                }
+                settings.Arduinos.Remove(arduino.Settings);
             }
             ArduinoList.Refresh();
         }

@@ -25,6 +25,31 @@ namespace SAL_Core
 
         public MusicSettings Musicbar2 { get; set; } = new MusicSettings();
 
+        public void AddArduino(Arduino arduino)
+        {
+            for (int i = 0; i < Arduinos.Count; i++)
+            {
+                if (Arduinos[i].ConnectionType == arduino.Settings.ConnectionType)
+                {
+                    if (arduino.Settings.ConnectionType == ConnectionType.Serial)
+                    {
+                        if (arduino.Settings.COM == Arduinos[i].COM)
+                        {
+                            Arduinos[i] = arduino.Settings;
+                        }
+                    }
+                    else
+                    {
+                        if (arduino.Settings.IP == Arduinos[i].IP && arduino.Settings.Port == Arduinos[i].Port)
+                        {
+                            Arduinos[i] = arduino.Settings;
+                        }
+                    }
+                }
+            }
+            Arduinos.Add(arduino.Settings);
+        }
+
         public static void WriteToFile<T>(string filePath, T objectToWrite, bool append = false)
         {
             using (Stream stream = File.Open(filePath, append ? FileMode.Append : FileMode.Create))
@@ -84,6 +109,8 @@ namespace SAL_Core
 
         public int Port { get; set; } = 0;
 
+        public bool Reverse { get; set; } = false;
+
         public ArduinoSettings(string com)
         {
             ConnectionType = ConnectionType.Serial;
@@ -110,7 +137,10 @@ namespace SAL_Core
             {"Breathing", EffectPresetDefaults.Breathing },
             {"Flash", EffectPresetDefaults.Flash },
             {"Fire", EffectPresetDefaults.Fire },
-            {"Static", EffectPresetDefaults.Static }
+            {"Static", EffectPresetDefaults.Static },
+            {"Sweep", EffectPresetDefaults.Sweep },
+            {"Load", EffectPresetDefaults.Load },
+            {"Beam", EffectPresetDefaults.Beam }
         };
 
         public EffectPreset CurrentPreset
@@ -134,6 +164,7 @@ namespace SAL_Core
         public int Speed { get; set; } = 1;
         public int TotalSteps { get; set; } = 255;
         public int HoldingSteps { get; set; } = 50;
+        public bool Reverse { get; set; } = false;
         public List<Color> ColorList { get; set; } = new List<Color>() { Colors.RED };
 
     }
@@ -217,6 +248,43 @@ namespace SAL_Core
                     Type = EffectTypes.Static,
                     Speed = 1,
                     ColorList = new List<Color> { Colors.PURPLE }
+                };
+            }
+        }
+
+        public static EffectPreset Sweep
+        {
+            get
+            {
+                return new EffectPreset()
+                {
+                    Type = EffectTypes.Sweep,
+                    Speed = 50,
+                    ColorList = new List<Color> { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK }
+                };
+            }
+        }
+        public static EffectPreset Load
+        {
+            get
+            {
+                return new EffectPreset()
+                {
+                    Type = EffectTypes.Load,
+                    Speed = 50,
+                    ColorList = new List<Color> { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK }
+                };
+            }
+        }
+        public static EffectPreset Beam
+        {
+            get
+            {
+                return new EffectPreset()
+                {
+                    Type = EffectTypes.Beam,
+                    Speed = 50,
+                    ColorList = new List<Color> { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK }
                 };
             }
         }

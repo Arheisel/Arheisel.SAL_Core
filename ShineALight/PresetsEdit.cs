@@ -202,10 +202,13 @@ namespace ShineALight
                     case EffectTypes.Rainbow:
                     case EffectTypes.Cycle:
                     case EffectTypes.Fire:
+                    case EffectTypes.Sweep:
                         return 2;
                     case EffectTypes.Breathing:
                     case EffectTypes.Flash:
                     case EffectTypes.Static:
+                    case EffectTypes.Beam:
+                    case EffectTypes.Load:
                         return 1;
                     default:
                         return 2;

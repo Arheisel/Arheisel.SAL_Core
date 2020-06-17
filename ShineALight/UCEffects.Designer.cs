@@ -41,6 +41,8 @@
             this.holdTrackbar = new System.Windows.Forms.TrackBar();
             this.label5 = new System.Windows.Forms.Label();
             this.editBtn = new System.Windows.Forms.Button();
+            this.label3 = new System.Windows.Forms.Label();
+            this.revCheck = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.speedTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.stepsTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.holdTrackbar)).BeginInit();
@@ -170,10 +172,31 @@
             this.editBtn.UseVisualStyleBackColor = true;
             this.editBtn.Click += new System.EventHandler(this.EditBtn_Click);
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(21, 210);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(50, 13);
+            this.label3.TabIndex = 12;
+            this.label3.Text = "Reverse:";
+            // 
+            // revCheck
+            // 
+            this.revCheck.AutoSize = true;
+            this.revCheck.Location = new System.Drawing.Point(77, 210);
+            this.revCheck.Name = "revCheck";
+            this.revCheck.Size = new System.Drawing.Size(15, 14);
+            this.revCheck.TabIndex = 13;
+            this.revCheck.UseVisualStyleBackColor = true;
+            this.revCheck.CheckedChanged += new System.EventHandler(this.RevCheck_CheckedChanged);
+            // 
             // UCEffects
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.revCheck);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.editBtn);
             this.Controls.Add(this.holdLabel);
             this.Controls.Add(this.holdTrackbar);
@@ -211,5 +234,7 @@
         private System.Windows.Forms.TrackBar holdTrackbar;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button editBtn;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.CheckBox revCheck;
     }
 }

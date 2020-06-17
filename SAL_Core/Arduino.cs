@@ -16,29 +16,55 @@ namespace SAL_Core
         private readonly byte[] dataArr = new byte[1];
         private UDPCLient udp = null;
         private static int port = 9050;
-        private bool usingUDP = false;
 
         public string Name { get; private set; }
-        public string COM { get; private set; } = string.Empty;
-        public string IP { get; private set; } = string.Empty;
-        public int Port { get; private set; } = 0;
-
-        public ConnectionType ConnectionType { get; private set; }
 
         public bool Online { get; private set; } = true;
 
-        public bool Reverse { get; set; } = false;
+        public ArduinoSettings Settings { get; private set; } = null;
+
+        public Arduino(ArduinoSettings settings, bool muteExceptions = false)
+        {
+            Settings = settings;
+            if(settings.ConnectionType == ConnectionType.Serial)
+            {
+                Name = settings.COM;
+                try
+                {
+                    StartSerial(settings.COM);
+                    SetColor(Colors.RED);
+                }
+                catch (Exception e)
+                {
+                    serial.Close();
+                    Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+                    if (!muteExceptions) throw;
+                }
+            }
+            else
+            {
+                Name = Settings.IP + ":" + Settings.Port;
+                try
+                {
+                    StartUDPClient(Settings.IP, Settings.Port);
+                }
+                catch (Exception e)
+                {
+                    Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+                    if (!muteExceptions) throw;
+                }
+            }
+        }
 
         /// <summary>
         /// Initializes a Serial Arduino Connection
         /// </summary>
         /// <param name="com">COM Port Name</param>
-        public Arduino(string com, bool reverse = false)
+        public Arduino(string com, bool reverse = false, bool muteExceptions = false)
         {
             Name = com;
-            COM = com;
-            ConnectionType = ConnectionType.Serial;
-            Reverse = reverse;
+            Settings = new ArduinoSettings(com);
+            Settings.Reverse = reverse;
             try
             {
                 StartSerial(com);
@@ -48,7 +74,7 @@ namespace SAL_Core
             {
                 serial.Close();
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
-                throw;
+                if(!muteExceptions) throw;
             }
         }
 
@@ -90,13 +116,11 @@ namespace SAL_Core
         /// </summary>
         /// <param name="ip">IP of the Receiver</param>
         /// <param name="dstPort">Receiver Port</param>
-        public Arduino(string ip, int dstPort, bool reverse = false)
+        public Arduino(string ip, int dstPort, bool reverse = false, bool muteExceptions = false)
         {
             Name = ip + ":" + dstPort;
-            ConnectionType = ConnectionType.UDP;
-            IP = ip;
-            Port = dstPort;
-            Reverse = reverse;
+            Settings = new ArduinoSettings(ip, dstPort);
+            Settings.Reverse = reverse;
             try
             {
                 StartUDPClient(ip, dstPort);
@@ -104,7 +128,7 @@ namespace SAL_Core
             catch (Exception e)
             {
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
-                throw;
+                if(!muteExceptions) throw;
             }
         }
 
@@ -112,7 +136,7 @@ namespace SAL_Core
         {
             if (Online)
             {
-                if(Reverse) return Name + " - Reversed";
+                if(Settings.Reverse) return Name + " - Reversed";
                 else return Name;
             }
             else return Name + " - Offline";
@@ -130,7 +154,7 @@ namespace SAL_Core
             int ch = 252;
             if(Channels != 1 && channel > 0 && channel <= 4)
             {
-                if (Reverse)
+                if (Settings.Reverse)
                     ch -= (5 - channel) * 2;
                 else
                     ch -= channel * 2;
@@ -165,15 +189,15 @@ namespace SAL_Core
             return c;
         }
 
-        private Color _color = Colors.NONE;
+        //private Color _color = Colors.NONE;
         public void SetColor(Color color)
         {
-            if (color == _color) return;
-            _color = color;
+            //if (color == _color) return;
+            //_color = color;
             SetColor(0, color.R, color.G, color.B);
         }
 
-        private Color[] _colors = { Colors.NONE, Colors.NONE, Colors.NONE, Colors.NONE };
+        //private Color[] _colors = { Colors.NONE, Colors.NONE, Colors.NONE, Colors.NONE };
         public void SetColor(int channel, Color color)
         {
             if(channel <= 0 || channel > 4)
@@ -182,8 +206,8 @@ namespace SAL_Core
             }
             else
             {
-                if (color == _colors[channel - 1]) return;
-                _colors[channel - 1] = color;
+                //if (color == _colors[channel - 1]) return;
+                //_colors[channel - 1] = color;
                 SetColor(channel, color.R, color.G, color.B);
             }
         }
@@ -193,7 +217,7 @@ namespace SAL_Core
         {
             try
             {
-                if (usingUDP) udp.Send(data);
+                if (Settings.ConnectionType == ConnectionType.UDP) udp.Send(data);
                 else
                 {
                     serial.Write(data, 0, data.Length);
@@ -242,7 +266,7 @@ namespace SAL_Core
             try
             {
                 data = 0;
-                if (!usingUDP && serial.BytesToRead > 0)
+                if (Settings.ConnectionType == ConnectionType.Serial && serial.BytesToRead > 0)
                 {
                     data = Receive();
                     return true;
@@ -259,7 +283,6 @@ namespace SAL_Core
         private void StartUDPClient(string ip, int dstPort)
         {
             udp = new UDPCLient(ip, dstPort, port++);
-            usingUDP = true;
             SetColor(Colors.RED);
         }
 
@@ -269,7 +292,6 @@ namespace SAL_Core
             {
                 udp.Dispose();
                 udp = null;
-                usingUDP = false;
                 Online = false;
             }
             catch (Exception e)
@@ -295,7 +317,7 @@ namespace SAL_Core
 
             if (disposing)
             {
-                if (usingUDP == false)
+                if (Settings.ConnectionType == ConnectionType.Serial)
                 {
                     serial.Close();
                     serial.Dispose();
@@ -482,9 +504,10 @@ namespace SAL_Core
 
         public void SetColor(int channel, Color color)
         {
-            if (channel >= 0 && channel <= ChannelCount && color != _chColor[channel])
+            if (channel >= 0 && channel <= ChannelCount && (color != _chColor[channel] || (_chColor[0] != Colors.NONE && channel != 0)))
             {
                 _chColor[channel] = color;
+                if (channel != 0) _chColor[0] = Colors.NONE;
                 queue.Enqueue(new ChColor(channel, color));
             }
         }
