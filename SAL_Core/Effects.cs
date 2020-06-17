@@ -260,6 +260,7 @@ namespace SAL_Core
         public EffectPreset Preset { get; set; }
         protected int step = 0;
         protected int count = 0;
+        protected readonly List<ChColor> colors = new List<ChColor>();
 
         public Effect(ArduinoCollection collection, EffectPreset settings)
         {
@@ -277,6 +278,7 @@ namespace SAL_Core
         {
             count = 0;
             step = 0;
+            colors.Clear();
         }
 
         private bool _disposed = false;
@@ -308,7 +310,7 @@ namespace SAL_Core
 
         public override List<ChColor> Step()
         {
-            List<ChColor> colors = new List<ChColor>();
+            colors.Clear();
             if (arduino.ChannelCount == 0) return colors;
             if(step == 0)
             {
@@ -318,10 +320,8 @@ namespace SAL_Core
                     transitions[i] = new Transition(Preset.ColorList[MathH.Mod(count - i, Preset.ColorList.Count)], Preset.ColorList[MathH.Mod(count - i + 1, Preset.ColorList.Count)], Preset.TotalSteps);
                     if (Preset.Reverse)
                         colors.Add(new ChColor(channels - i, Preset.ColorList[MathH.Mod(count - i, Preset.ColorList.Count)]));
-                        //arduino.SetColor(channels - i, Preset.ColorList[MathH.Mod(count - i, Preset.ColorList.Count)]);
                     else
                         colors.Add(new ChColor(i + 1, Preset.ColorList[MathH.Mod(count - i, Preset.ColorList.Count)]));
-                        //arduino.SetColor(i + 1, Preset.ColorList[MathH.Mod(count - i, Preset.ColorList.Count)]);
                 }
                 if (count >= Preset.ColorList.Count - 1) count = 0;
                 else count++;
@@ -339,10 +339,8 @@ namespace SAL_Core
                     for (int i = 0; i < channels; i++)
                         if (Preset.Reverse)
                             colors.Add(new ChColor(channels - i, transitions[i].getColor(step)));
-                            //arduino.SetColor(channels - i, transitions[i].getColor(step));
                         else
                             colors.Add(new ChColor(i + 1, transitions[i].getColor(step)));
-                            //arduino.SetColor(i + 1, transitions[i].getColor(step));
 
                 step++;
             }
@@ -359,13 +357,12 @@ namespace SAL_Core
 
         public override List<ChColor> Step()
         {
-            List<ChColor> colors = new List<ChColor>();
+            colors.Clear();
             if (arduino.ChannelCount == 0) return colors;
             if (step == 0)
             {
                 transition = new Transition(Preset.ColorList[count], Preset.ColorList[MathH.Mod(count + 1, Preset.ColorList.Count)], Preset.TotalSteps);
                 colors.Add(new ChColor(0, Preset.ColorList[count]));
-                //arduino.SetColor(Preset.ColorList[count]);
 
                 if (count >= Preset.ColorList.Count - 1) count = 0;
                 else count++;
@@ -381,7 +378,6 @@ namespace SAL_Core
 
                 if (step < Preset.TotalSteps)
                     colors.Add(new ChColor(0, transition.getColor(step)));
-                    //arduino.SetColor(transition.getColor(step));
 
                 step++;
             }
@@ -399,7 +395,7 @@ namespace SAL_Core
 
         public override List<ChColor> Step()
         {
-            List<ChColor> colors = new List<ChColor>();
+            colors.Clear();
             if (arduino.ChannelCount == 0) return colors;
             if (step == 0)
             {
@@ -407,7 +403,6 @@ namespace SAL_Core
                 {
                     transition = new Transition(Colors.OFF, Preset.ColorList[count], Preset.TotalSteps);
                     colors.Add(new ChColor(0, Colors.OFF));
-                    //arduino.SetColor(Colors.OFF);
 
                     mode = false;
                 }
@@ -415,7 +410,6 @@ namespace SAL_Core
                 {
                     transition = new Transition(Preset.ColorList[count], Colors.OFF, Preset.TotalSteps);
                     colors.Add(new ChColor(0, Preset.ColorList[count]));
-                    //arduino.SetColor(Preset.ColorList[count]);
 
                     if (count >= Preset.ColorList.Count - 1) count = 0;
                     else count++;
@@ -434,7 +428,6 @@ namespace SAL_Core
 
                 if (step < Preset.TotalSteps)
                     colors.Add(new ChColor(0, transition.getColor(step)));
-                    //arduino.SetColor(transition.getColor(step));
 
                 step++;
             }
@@ -451,13 +444,12 @@ namespace SAL_Core
 
         public override List<ChColor> Step()
         {
-            List<ChColor> colors = new List<ChColor>();
+            colors.Clear();
             if (arduino.ChannelCount == 0) return colors;
             if (step == 0)
             {
                 color = Preset.ColorList[count];
                 colors.Add(new ChColor(0, Colors.OFF));
-                //arduino.SetColor(Colors.OFF);
 
                 if (count >= Preset.ColorList.Count - 1) count = 0;
                 else count++;
@@ -473,7 +465,6 @@ namespace SAL_Core
 
                 if (step > Preset.TotalSteps)
                     colors.Add(new ChColor(0, color));
-                    //arduino.SetColor(color);
 
                 step++;
             }
@@ -492,7 +483,7 @@ namespace SAL_Core
 
         public override List<ChColor> Step()
         {
-            List<ChColor> colors = new List<ChColor>();
+            colors.Clear();
             if (arduino.ChannelCount == 0) return colors;
             if (step == 0)
             {
@@ -510,10 +501,8 @@ namespace SAL_Core
 
                 if(step > Preset.TotalSteps)
                     colors.Add(new ChColor(0, transition.getColor(random.Next(0, Preset.TotalSteps))));
-                    //arduino.SetColor(transition.getColor(random.Next(0, Preset.TotalSteps)));
                 else
                     colors.Add(new ChColor(0, transition.getColor(random.Next(0, Preset.TotalSteps/2))));
-                    //arduino.SetColor(transition.getColor(random.Next(0, Preset.TotalSteps/2)));
 
                 step++;
             }
@@ -530,12 +519,11 @@ namespace SAL_Core
 
         public override List<ChColor> Step()
         {
-            List<ChColor> colors = new List<ChColor>();
+            colors.Clear();
             if (arduino.ChannelCount == 0) return colors;
             if (step == 0)
             {
                 colors.Add(new ChColor(0, Preset.ColorList[count]));
-                //arduino.SetColor(Preset.ColorList[count]);
 
                 if (count >= Preset.ColorList.Count - 1) count = 0;
                 else count++;
@@ -566,7 +554,7 @@ namespace SAL_Core
 
         public override List<ChColor> Step()
         {
-            List<ChColor> colors = new List<ChColor>();
+            colors.Clear();
             if (arduino.ChannelCount == 0) return colors;
             if (step == 0)
             {
@@ -575,7 +563,6 @@ namespace SAL_Core
                 {
                     transition = new Transition(Preset.ColorList[count], Preset.ColorList[MathH.Mod(count + 1, Preset.ColorList.Count)], Preset.TotalSteps);
                     colors.Add(new ChColor(0, Preset.ColorList[count]));
-                    //arduino.SetColor(Preset.ColorList[count]);
                     if (count >= Preset.ColorList.Count - 1) count = 0;
                     else count++;
                 }
@@ -595,10 +582,8 @@ namespace SAL_Core
                 if (step < Preset.TotalSteps)
                     if (Preset.Reverse)
                         colors.Add(new ChColor((channels + 1) - currentChannel, transition.getColor(step)));
-                        //arduino.SetColor((channels + 1) - currentChannel, transition.getColor(step));
                     else
                         colors.Add(new ChColor(currentChannel, transition.getColor(step)));
-                        //arduino.SetColor(currentChannel, transition.getColor(step));
 
                 step++;
             }
@@ -617,7 +602,7 @@ namespace SAL_Core
 
         public override List<ChColor> Step()
         {
-            List<ChColor> colors = new List<ChColor>();
+            colors.Clear();
             if (arduino.ChannelCount == 0) return colors;
             if (step == 0)
             {
@@ -626,7 +611,6 @@ namespace SAL_Core
                 {
                     transition = new Transition(Colors.OFF, Preset.ColorList[count], Preset.TotalSteps);
                     colors.Add(new ChColor(0, Colors.OFF));
-                    //arduino.SetColor(Colors.OFF);
                     if (count >= Preset.ColorList.Count - 1) count = 0;
                     else count++;
                 }
@@ -646,10 +630,8 @@ namespace SAL_Core
                 if (step < Preset.TotalSteps)
                     if (Preset.Reverse)
                         colors.Add(new ChColor((channels + 1) - currentChannel, transition.getColor(step)));
-                        //arduino.SetColor((channels + 1) - currentChannel, transition.getColor(step));
                     else
                         colors.Add(new ChColor(currentChannel, transition.getColor(step)));
-                        //arduino.SetColor(currentChannel, transition.getColor(step));
 
                 step++;
             }
@@ -669,7 +651,7 @@ namespace SAL_Core
 
         public override List<ChColor> Step()
         {
-            List<ChColor> colors = new List<ChColor>();
+            colors.Clear();
             if (arduino.ChannelCount == 0) return colors;
             if (step == 0)
             {
@@ -679,7 +661,6 @@ namespace SAL_Core
                     transition = new Transition(Colors.OFF, Preset.ColorList[count], Preset.TotalSteps);
                     transitionOff = new Transition(Preset.ColorList[count], Colors.OFF, Preset.TotalSteps);
                     colors.Add(new ChColor(0, Colors.OFF));
-                    //arduino.SetColor(Colors.OFF);
                     if (count >= Preset.ColorList.Count - 1) count = 0;
                     else count++;
                 }
@@ -702,19 +683,16 @@ namespace SAL_Core
                     {
                         if (currentChannel <= channels)
                             colors.Add(new ChColor((channels + 1) - currentChannel, transition.getColor(step)));
-                            //arduino.SetColor((channels + 1) - currentChannel, transition.getColor(step));
                         if (currentChannel > 1)
                             colors.Add(new ChColor((channels + 2) - currentChannel, transitionOff.getColor(step)));
-                        //arduino.SetColor((channels + 2) - currentChannel, transitionOff.getColor(step));
                     }
                     else
                     {
                         if (currentChannel <= channels)
                             colors.Add(new ChColor(currentChannel, transition.getColor(step)));
-                        //arduino.SetColor(currentChannel, transition.getColor(step));
                         if (currentChannel > 1)
                             colors.Add(new ChColor(currentChannel - 1, transitionOff.getColor(step)));
-                        //arduino.SetColor(currentChannel - 1, transitionOff.getColor(step));
+
                     }
                 }
                     
