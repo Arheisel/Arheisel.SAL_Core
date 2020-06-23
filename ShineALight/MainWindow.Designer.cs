@@ -78,6 +78,7 @@
             // 
             // Reverse
             // 
+            this.Reverse.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.Reverse.Location = new System.Drawing.Point(102, 352);
             this.Reverse.Name = "Reverse";
             this.Reverse.Size = new System.Drawing.Size(75, 23);
@@ -88,6 +89,7 @@
             // 
             // MoveDown
             // 
+            this.MoveDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.MoveDown.Location = new System.Drawing.Point(55, 352);
             this.MoveDown.Name = "MoveDown";
             this.MoveDown.Size = new System.Drawing.Size(35, 23);
@@ -97,6 +99,7 @@
             // 
             // MoveUp
             // 
+            this.MoveUp.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.MoveUp.Location = new System.Drawing.Point(15, 352);
             this.MoveUp.Name = "MoveUp";
             this.MoveUp.Size = new System.Drawing.Size(34, 23);
@@ -174,7 +177,8 @@
             "RGB Visualizer",
             "Visualizer",
             "Musicbar",
-            "Musicbar 2"});
+            "Musicbar 2",
+            "Effect Visualizer"});
             this.ModeSelect.Location = new System.Drawing.Point(55, 12);
             this.ModeSelect.Name = "ModeSelect";
             this.ModeSelect.Size = new System.Drawing.Size(123, 21);

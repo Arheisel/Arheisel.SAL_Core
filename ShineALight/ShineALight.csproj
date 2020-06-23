@@ -105,6 +105,7 @@
     <Compile Include="CurvePlot.Designer.cs">
       <DependentUpon>CurvePlot.cs</DependentUpon>
     </Compile>
+    <Compile Include="Design.cs" />
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -142,6 +143,12 @@
     </Compile>
     <Compile Include="UCMusic.Designer.cs">
       <DependentUpon>UCMusic.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UCEffectsVisualizer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UCEffectsVisualizer.Designer.cs">
+      <DependentUpon>UCEffectsVisualizer.cs</DependentUpon>
     </Compile>
     <Compile Include="UCVisualizer.cs">
       <SubType>UserControl</SubType>
@@ -205,6 +212,9 @@
     <EmbeddedResource Include="UCMusic.resx">
       <DependentUpon>UCMusic.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UCEffectsVisualizer.resx">
+      <DependentUpon>UCEffectsVisualizer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UCVisualizer.resx">
       <DependentUpon>UCVisualizer.cs</DependentUpon>

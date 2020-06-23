@@ -25,6 +25,8 @@ namespace SAL_Core
 
         public MusicSettings Musicbar2 { get; set; } = new MusicSettings();
 
+        public VSettings EffectsVisualizer { get; set; } = new VSettings();
+
         public void AddArduino(Arduino arduino)
         {
             for (int i = 0; i < Arduinos.Count; i++)

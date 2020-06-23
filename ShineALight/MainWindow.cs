@@ -23,11 +23,16 @@ namespace ShineALight
         public MainWindow()
         {
             InitializeComponent();
+            //BackColor = Design.BgColor;
+            //Main.Panel1.BackColor = Design.BgColor;
+            ///menuStrip1.BackColor = Design.BgColor;
+            ApplyBG(this);
+            //FormBorderStyle = FormBorderStyle.None;
 
             arduinoCollection = Program.arduinoCollection;
             arduinoCollection.OnError += ArduinoCollection_OnError;
             settings = Program.settings;
-            ModeSelect.SelectedIndex = settings.CurrentMode;
+            //ModeSelect.SelectedIndex = settings.CurrentMode;
 
             FormClosed += MainWindow_FormClosed;
 
@@ -45,6 +50,40 @@ namespace ShineALight
             AddArduino.Enabled = false;
             ArduinoList.Items.Add("Connecting...", false);
             background.RunWorkerAsync();
+        }
+
+        private void ApplyBG(Control control)
+        {
+            if (control is Button)
+            {
+                var c = control as Button;
+                c.BackColor = Design.BtnColor;
+                c.ForeColor = Design.TextColor;
+                c.FlatStyle = FlatStyle.Flat;
+                c.FlatAppearance.BorderColor = Design.TextColorAlt;
+                c.FlatAppearance.BorderSize = 1;
+            }
+            else if (control is TrackBar)
+            {
+                var c = control as TrackBar;
+                c.BackColor = Design.BgColor;
+            }
+            else if(control is ComboBox)
+            {
+                var c = control as ComboBox;
+                c.BackColor = Design.BtnColor;
+                c.ForeColor = Design.TextColor;
+                c.FlatStyle = FlatStyle.Flat;
+            }
+            else
+            {
+                control.BackColor = Design.BgColor;
+                control.ForeColor = Design.TextColor;
+            }
+            foreach (Control ctrl in control.Controls)
+            {
+                ApplyBG(ctrl);
+            }
         }
 
         private void ArduinoCollection_OnError(object sender, ArduinoExceptionArgs e)
@@ -142,8 +181,15 @@ namespace ShineALight
                         control.Dock = DockStyle.Fill;
                         control.Show();
                         break;
+                    case "Effect Visualizer":
+                        control = new UCEffectsVisualizer(arduinoCollection, settings.EffectsVisualizer, settings.Effects);
+                        Main.Panel2.Controls.Add(control);
+                        control.Dock = DockStyle.Fill;
+                        control.Show();
+                        break;
                 }
                 settings.CurrentMode = ModeSelect.SelectedIndex;
+                ApplyBG(Main.Panel2.Controls[0]);
             }
             catch(Exception ex)
             {
@@ -236,6 +282,7 @@ namespace ShineALight
                 RemoveArduino.Enabled = true;
                 AddArduino.Enabled = true;
             }
+            ModeSelect.SelectedIndex = settings.CurrentMode;
         }
 
         private List<Arduino> ConnectToArduinos(BackgroundWorker worker, DoWorkEventArgs e)

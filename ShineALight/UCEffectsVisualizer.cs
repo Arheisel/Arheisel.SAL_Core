@@ -13,13 +13,16 @@ using Damez.Log;
 namespace ShineALight
 {
 
-    public partial class UCVisualizer : CustomUserControl
+    public partial class UCEffectsVisualizer : CustomUserControl
     {
         private readonly Audio audio;
+        private readonly Effects effects;
         private delegate void UpdateDelegate(AudioDataAvailableArgs e);
         private readonly ArduinoCollection collection;
         private readonly VUMeter[] meters;
-        public UCVisualizer(ArduinoCollection collection, VSettings settings)
+        private readonly SAL_Core.Color[] effColors;
+
+        public UCEffectsVisualizer(ArduinoCollection collection, VSettings settings, EffectSettings effectSettings)
         {
             InitializeComponent();
 
@@ -41,8 +44,13 @@ namespace ShineALight
                 meters[i] = meter;
             }
 
+            effColors = new SAL_Core.Color[channels];
+
             try
             {
+                effects = new Effects(collection, effectSettings);
+                effects.DataAvailable += Effects_DataAvailable;
+
                 audio = new Audio(settings);
                 audio.Channels = channels;
                 autoscalerControl.AutoScaler = audio.autoScaler;
@@ -56,9 +64,14 @@ namespace ShineALight
                 MessageBox.Show("ERROR: " + ex.Message);
             }
 
+            foreach (string name in effects.Settings.PresetList.Keys)
+            {
+                currentSelect.Items.Add(name);
+            }
+            currentSelect.SelectedItem = effects.Current;
+
             //curvePlot1.Function = audio.Curve;
             this.collection = collection;
-            chLabel.Text = audio.AudioChannels.ToString();
             audio.MaxFreq = 4100;
 
             slopeTrackbar.Value = audio.Slope;
@@ -71,6 +84,21 @@ namespace ShineALight
             maxFreqTrackbar.Value = audio.MaxFreq;
             maxFreqLabel.Text = maxFreqTrackbar.Value.ToString();
             minFreqTrackbar.Maximum = audio.MaxFreq / 2;
+        }
+
+        private void Effects_DataAvailable(object sender, EffectDataAvailableArgs e)
+        {
+            foreach(var chColor in e.Colors)
+            {
+                if(chColor.Channel == 0)
+                {
+                    for (int i = 0; i < effColors.Length; i++) effColors[i] = chColor.Color;
+                }
+                else
+                {
+                    effColors[chColor.Channel - 1] = chColor.Color;
+                }
+            }
         }
 
         public override void DisposeDeferred()
@@ -93,7 +121,7 @@ namespace ShineALight
         {
             for(int i = 0; i < e.ChannelMagnitudes.Length; i++)
             {
-                collection.SetColor(i + 1, Maps.EncodeRGB(e.ChannelMagnitudes[i]));
+                collection.SetColor(i + 1, effColors[i] * e.ChannelMagnitudes[i]);
             }
             UIUpdate(e);
         }
@@ -138,6 +166,19 @@ namespace ShineALight
             audio.MaxFreq = maxFreqTrackbar.Value;
             maxFreqLabel.Text = maxFreqTrackbar.Value.ToString();
             minFreqTrackbar.Maximum = audio.MaxFreq / 2;
+        }
+
+        private void CurrentSelect_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                effects.Current = currentSelect.Text;
+            }
+            catch (Exception ex)
+            {
+                Log.Write(Log.TYPE_ERROR, "UCEffectsVisualizer :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                MessageBox.Show("ERROR: " + ex.Message);
+            }
         }
     }
 }

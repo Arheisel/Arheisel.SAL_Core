@@ -1,6 +1,6 @@
 ﻿namespace ShineALight
 {
-    partial class UCVisualizer
+    partial class UCEffectsVisualizer
     {
         /// <summary> 
         /// Required designer variable.
@@ -37,11 +37,11 @@
             this.label1 = new System.Windows.Forms.Label();
             this.minFreqTrackbar = new System.Windows.Forms.TrackBar();
             this.maxFreqTrackbar = new System.Windows.Forms.TrackBar();
-            this.label2 = new System.Windows.Forms.Label();
-            this.chLabel = new System.Windows.Forms.Label();
             this.slopeLabel = new System.Windows.Forms.Label();
             this.slopeTrackbar = new System.Windows.Forms.TrackBar();
             this.vuPanel = new System.Windows.Forms.Panel();
+            this.currentSelect = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.minFreqTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxFreqTrackbar)).BeginInit();
@@ -53,9 +53,9 @@
             this.autoscalerControl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.autoscalerControl.AutoScaler = null;
-            this.autoscalerControl.Location = new System.Drawing.Point(3, 272);
+            this.autoscalerControl.Location = new System.Drawing.Point(187, 204);
             this.autoscalerControl.Name = "autoscalerControl";
-            this.autoscalerControl.Size = new System.Drawing.Size(419, 96);
+            this.autoscalerControl.Size = new System.Drawing.Size(235, 95);
             this.autoscalerControl.TabIndex = 3;
             // 
             // groupBox1
@@ -69,13 +69,11 @@
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.minFreqTrackbar);
             this.groupBox1.Controls.Add(this.maxFreqTrackbar);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.chLabel);
             this.groupBox1.Controls.Add(this.slopeLabel);
             this.groupBox1.Controls.Add(this.slopeTrackbar);
             this.groupBox1.Location = new System.Drawing.Point(187, 3);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(235, 263);
+            this.groupBox1.Size = new System.Drawing.Size(235, 195);
             this.groupBox1.TabIndex = 6;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Settings";
@@ -83,7 +81,7 @@
             // minFreqLabel
             // 
             this.minFreqLabel.AutoSize = true;
-            this.minFreqLabel.Location = new System.Drawing.Point(6, 92);
+            this.minFreqLabel.Location = new System.Drawing.Point(6, 56);
             this.minFreqLabel.Name = "minFreqLabel";
             this.minFreqLabel.Size = new System.Drawing.Size(19, 13);
             this.minFreqLabel.TabIndex = 14;
@@ -92,7 +90,7 @@
             // maxFreqLabel
             // 
             this.maxFreqLabel.AutoSize = true;
-            this.maxFreqLabel.Location = new System.Drawing.Point(6, 156);
+            this.maxFreqLabel.Location = new System.Drawing.Point(6, 106);
             this.maxFreqLabel.Name = "maxFreqLabel";
             this.maxFreqLabel.Size = new System.Drawing.Size(31, 13);
             this.maxFreqLabel.TabIndex = 13;
@@ -101,7 +99,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(3, 58);
+            this.label4.Location = new System.Drawing.Point(3, 22);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(99, 13);
             this.label4.TabIndex = 12;
@@ -110,7 +108,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(3, 196);
+            this.label3.Location = new System.Drawing.Point(3, 124);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(34, 13);
             this.label3.TabIndex = 11;
@@ -119,7 +117,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 123);
+            this.label1.Location = new System.Drawing.Point(3, 73);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(102, 13);
             this.label1.TabIndex = 10;
@@ -130,7 +128,7 @@
             this.minFreqTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.minFreqTrackbar.LargeChange = 10;
-            this.minFreqTrackbar.Location = new System.Drawing.Point(27, 74);
+            this.minFreqTrackbar.Location = new System.Drawing.Point(27, 38);
             this.minFreqTrackbar.Maximum = 1000;
             this.minFreqTrackbar.Minimum = 1;
             this.minFreqTrackbar.Name = "minFreqTrackbar";
@@ -145,7 +143,7 @@
             this.maxFreqTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.maxFreqTrackbar.LargeChange = 100;
-            this.maxFreqTrackbar.Location = new System.Drawing.Point(27, 139);
+            this.maxFreqTrackbar.Location = new System.Drawing.Point(27, 89);
             this.maxFreqTrackbar.Maximum = 10000;
             this.maxFreqTrackbar.Minimum = 100;
             this.maxFreqTrackbar.Name = "maxFreqTrackbar";
@@ -155,28 +153,10 @@
             this.maxFreqTrackbar.Value = 4100;
             this.maxFreqTrackbar.Scroll += new System.EventHandler(this.TrackBar2_Scroll);
             // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(24, 29);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(54, 13);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "Channels:";
-            // 
-            // chLabel
-            // 
-            this.chLabel.AutoSize = true;
-            this.chLabel.Location = new System.Drawing.Point(84, 29);
-            this.chLabel.Name = "chLabel";
-            this.chLabel.Size = new System.Drawing.Size(13, 13);
-            this.chLabel.TabIndex = 6;
-            this.chLabel.Text = "1";
-            // 
             // slopeLabel
             // 
             this.slopeLabel.AutoSize = true;
-            this.slopeLabel.Location = new System.Drawing.Point(6, 230);
+            this.slopeLabel.Location = new System.Drawing.Point(6, 158);
             this.slopeLabel.Name = "slopeLabel";
             this.slopeLabel.Size = new System.Drawing.Size(19, 13);
             this.slopeLabel.TabIndex = 5;
@@ -186,7 +166,7 @@
             // 
             this.slopeTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.slopeTrackbar.Location = new System.Drawing.Point(27, 212);
+            this.slopeTrackbar.Location = new System.Drawing.Point(27, 140);
             this.slopeTrackbar.Maximum = 50;
             this.slopeTrackbar.Name = "slopeTrackbar";
             this.slopeTrackbar.Size = new System.Drawing.Size(202, 45);
@@ -200,17 +180,40 @@
             this.vuPanel.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.vuPanel.Location = new System.Drawing.Point(3, 3);
             this.vuPanel.Name = "vuPanel";
-            this.vuPanel.Size = new System.Drawing.Size(178, 263);
+            this.vuPanel.Size = new System.Drawing.Size(178, 296);
             this.vuPanel.TabIndex = 7;
             // 
-            // UCVisualizer
+            // currentSelect
+            // 
+            this.currentSelect.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.currentSelect.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.currentSelect.FormattingEnabled = true;
+            this.currentSelect.Location = new System.Drawing.Point(55, 305);
+            this.currentSelect.Name = "currentSelect";
+            this.currentSelect.Size = new System.Drawing.Size(237, 21);
+            this.currentSelect.TabIndex = 9;
+            this.currentSelect.SelectedIndexChanged += new System.EventHandler(this.CurrentSelect_SelectedIndexChanged);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(5, 308);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(44, 13);
+            this.label2.TabIndex = 8;
+            this.label2.Text = "Current:";
+            // 
+            // UCEffectsVisualizer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.currentSelect);
+            this.Controls.Add(this.label2);
             this.Controls.Add(this.vuPanel);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.autoscalerControl);
-            this.Name = "UCVisualizer";
+            this.Name = "UCEffectsVisualizer";
             this.Size = new System.Drawing.Size(425, 371);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
@@ -218,6 +221,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.maxFreqTrackbar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.slopeTrackbar)).EndInit();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -226,8 +230,6 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label slopeLabel;
         private System.Windows.Forms.TrackBar slopeTrackbar;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label chLabel;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TrackBar minFreqTrackbar;
@@ -236,5 +238,7 @@
         private System.Windows.Forms.Label minFreqLabel;
         private System.Windows.Forms.Label maxFreqLabel;
         private System.Windows.Forms.Panel vuPanel;
+        private System.Windows.Forms.ComboBox currentSelect;
+        private System.Windows.Forms.Label label2;
     }
 }

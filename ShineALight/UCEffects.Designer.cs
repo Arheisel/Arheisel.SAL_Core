@@ -144,11 +144,14 @@
             // 
             this.holdTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.holdTrackbar.Location = new System.Drawing.Point(72, 154);
+            this.holdTrackbar.Location = new System.Drawing.Point(157, 153);
             this.holdTrackbar.Maximum = 100;
             this.holdTrackbar.Name = "holdTrackbar";
-            this.holdTrackbar.Size = new System.Drawing.Size(276, 45);
+            this.holdTrackbar.Orientation = System.Windows.Forms.Orientation.Vertical;
+            this.holdTrackbar.Size = new System.Drawing.Size(45, 166);
             this.holdTrackbar.TabIndex = 9;
+            this.holdTrackbar.TickFrequency = 10;
+            this.holdTrackbar.TickStyle = System.Windows.Forms.TickStyle.Both;
             this.holdTrackbar.Value = 50;
             this.holdTrackbar.Scroll += new System.EventHandler(this.HoldTrackbar_Scroll);
             // 

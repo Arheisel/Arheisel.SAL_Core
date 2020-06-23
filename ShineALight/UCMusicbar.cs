@@ -19,11 +19,15 @@ namespace ShineALight
 
         private readonly ArduinoCollection arduinoCollection;
 
+        private List<SAL_Core.Color> colorList;
+        private int current = 0;
+        private bool currentSet = false;
+
         public UCMusicbar(ArduinoCollection collection, MusicSettings settings)
         {
             InitializeComponent();
             arduinoCollection = collection;
-
+            colorList = new List<SAL_Core.Color> { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK };
             try
             {
                 music = new Music(settings);
@@ -63,10 +67,18 @@ namespace ShineALight
 
         private void Music_DataAvailable(object sender, MusicDataAvailableArgs e)
         {
+            if(e.Sample >= 0.9 && !currentSet)
+            {
+                if (current >= colorList.Count - 1) current = 0;
+                else current++;
+                currentSet = true;
+            }
+            if (e.Sample < 0.7 && currentSet) currentSet = false;
+
             double div = 1.0 / (double)arduinoCollection.ChannelCount;
             for(int i = 0; i < arduinoCollection.ChannelCount; i++)
             {
-                if(e.Sample > div*i) arduinoCollection.SetColor(i + 1, Maps.EncodeRGB(e.Sample));
+                if(e.Sample > div*i) arduinoCollection.SetColor(i + 1, colorList[current] * e.Sample);
                 else arduinoCollection.SetColor(i + 1, Colors.OFF);
             }
             UIUpdate(e);

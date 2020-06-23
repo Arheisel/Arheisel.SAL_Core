@@ -571,13 +571,25 @@ namespace SAL_Core
             }
             else
             {
-                if (step >= Preset.TotalSteps + Preset.HoldingSteps)
+                if (currentChannel >= channels)
                 {
-                    if (currentChannel >= channels) currentChannel = 1;
-                    else currentChannel++;
-                    step = 0;
-                    return colors;
+                    if (step >= Preset.TotalSteps + Preset.HoldingSteps)
+                    {
+                        currentChannel = 1;
+                        step = 0;
+                        return colors;
+                    }
                 }
+                else
+                {
+                    if (step >= Preset.TotalSteps)
+                    { 
+                        currentChannel++;
+                        step = 0;
+                        return colors;
+                    }
+                }
+                
 
                 if (step < Preset.TotalSteps)
                     if (Preset.Reverse)
@@ -619,12 +631,23 @@ namespace SAL_Core
             }
             else
             {
-                if (step >= Preset.TotalSteps + Preset.HoldingSteps)
+                if (currentChannel >= channels)
                 {
-                    if (currentChannel >= channels) currentChannel = 1;
-                    else currentChannel++;
-                    step = 0;
-                    return colors;
+                    if (step >= Preset.TotalSteps + Preset.HoldingSteps)
+                    {
+                        currentChannel = 1;
+                        step = 0;
+                        return colors;
+                    }
+                }
+                else
+                {
+                    if (step >= Preset.TotalSteps)
+                    {
+                        currentChannel++;
+                        step = 0;
+                        return colors;
+                    }
                 }
 
                 if (step < Preset.TotalSteps)
@@ -669,12 +692,23 @@ namespace SAL_Core
             }
             else
             {
-                if (step >= Preset.TotalSteps + Preset.HoldingSteps)
+                if (currentChannel >= channels + 1)
                 {
-                    if (currentChannel >= channels + 1) currentChannel = 1;
-                    else currentChannel++;
-                    step = 0;
-                    return  colors;
+                    if (step >= Preset.TotalSteps + Preset.HoldingSteps)
+                    {
+                        currentChannel = 1;
+                        step = 0;
+                        return colors;
+                    }
+                }
+                else
+                {
+                    if (step >= Preset.TotalSteps)
+                    {
+                        currentChannel++;
+                        step = 0;
+                        return colors;
+                    }
                 }
 
                 if (step < Preset.TotalSteps)

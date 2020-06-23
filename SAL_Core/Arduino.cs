@@ -90,8 +90,9 @@ namespace SAL_Core
                     DataBits = 8,
                     StopBits = StopBits.One,
                     Handshake = Handshake.None,
+                    //DtrEnable = true,
 
-                    WriteTimeout = 5,
+                    WriteTimeout = 100,
                     ReadTimeout = 200
                 };
 
@@ -605,6 +606,11 @@ namespace SAL_Core
         public System.Drawing.Color ToSystemColor()
         {
             return System.Drawing.Color.FromArgb(R, G, B);
+        }
+
+        public static Color operator * (Color left, double right)
+        {
+            return new Color((int)(left.R * right), (int)(left.G * right), (int)(left.B * right));
         }
     }
 
