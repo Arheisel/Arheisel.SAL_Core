@@ -106,6 +106,12 @@
       <DependentUpon>CurvePlot.cs</DependentUpon>
     </Compile>
     <Compile Include="Design.cs" />
+    <Compile Include="Knob.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Knob.Designer.cs">
+      <DependentUpon>Knob.cs</DependentUpon>
+    </Compile>
     <Compile Include="MainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -120,6 +126,12 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RoundedCheckBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RoundedCheckBox.Designer.cs">
+      <DependentUpon>RoundedCheckBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="UCEffects.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -183,6 +195,9 @@
     <EmbeddedResource Include="CurvePlot.resx">
       <DependentUpon>CurvePlot.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Knob.resx">
+      <DependentUpon>Knob.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
     </EmbeddedResource>
@@ -198,6 +213,9 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="RoundedCheckBox.resx">
+      <DependentUpon>RoundedCheckBox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UCEffects.resx">
       <DependentUpon>UCEffects.cs</DependentUpon>
     </EmbeddedResource>

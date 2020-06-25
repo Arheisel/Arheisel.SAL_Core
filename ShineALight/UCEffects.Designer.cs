@@ -37,15 +37,12 @@
             this.stepsLabel = new System.Windows.Forms.Label();
             this.stepsTrackbar = new System.Windows.Forms.TrackBar();
             this.label4 = new System.Windows.Forms.Label();
-            this.holdLabel = new System.Windows.Forms.Label();
-            this.holdTrackbar = new System.Windows.Forms.TrackBar();
-            this.label5 = new System.Windows.Forms.Label();
             this.editBtn = new System.Windows.Forms.Button();
             this.label3 = new System.Windows.Forms.Label();
-            this.revCheck = new System.Windows.Forms.CheckBox();
+            this.holdingKnob = new ShineALight.Knob();
+            this.revCheckBox = new ShineALight.RoundedCheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.speedTrackbar)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.stepsTrackbar)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.holdTrackbar)).BeginInit();
             this.SuspendLayout();
             // 
             // label1
@@ -131,39 +128,6 @@
             this.label4.TabIndex = 5;
             this.label4.Text = "Steps:";
             // 
-            // holdLabel
-            // 
-            this.holdLabel.AutoSize = true;
-            this.holdLabel.Location = new System.Drawing.Point(49, 177);
-            this.holdLabel.Name = "holdLabel";
-            this.holdLabel.Size = new System.Drawing.Size(19, 13);
-            this.holdLabel.TabIndex = 10;
-            this.holdLabel.Text = "50";
-            // 
-            // holdTrackbar
-            // 
-            this.holdTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.holdTrackbar.Location = new System.Drawing.Point(157, 153);
-            this.holdTrackbar.Maximum = 100;
-            this.holdTrackbar.Name = "holdTrackbar";
-            this.holdTrackbar.Orientation = System.Windows.Forms.Orientation.Vertical;
-            this.holdTrackbar.Size = new System.Drawing.Size(45, 166);
-            this.holdTrackbar.TabIndex = 9;
-            this.holdTrackbar.TickFrequency = 10;
-            this.holdTrackbar.TickStyle = System.Windows.Forms.TickStyle.Both;
-            this.holdTrackbar.Value = 50;
-            this.holdTrackbar.Scroll += new System.EventHandler(this.HoldTrackbar_Scroll);
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(3, 154);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(62, 13);
-            this.label5.TabIndex = 8;
-            this.label5.Text = "Hold Steps:";
-            // 
             // editBtn
             // 
             this.editBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -184,26 +148,41 @@
             this.label3.TabIndex = 12;
             this.label3.Text = "Reverse:";
             // 
-            // revCheck
+            // holdingKnob
             // 
-            this.revCheck.AutoSize = true;
-            this.revCheck.Location = new System.Drawing.Point(77, 210);
-            this.revCheck.Name = "revCheck";
-            this.revCheck.Size = new System.Drawing.Size(15, 14);
-            this.revCheck.TabIndex = 13;
-            this.revCheck.UseVisualStyleBackColor = true;
-            this.revCheck.CheckedChanged += new System.EventHandler(this.RevCheck_CheckedChanged);
+            this.holdingKnob.BackColor = System.Drawing.SystemColors.Control;
+            this.holdingKnob.DrawTitle = true;
+            this.holdingKnob.DrawValue = true;
+            this.holdingKnob.ForeColor = System.Drawing.SystemColors.ControlText;
+            this.holdingKnob.ImeMode = System.Windows.Forms.ImeMode.NoControl;
+            this.holdingKnob.Location = new System.Drawing.Point(198, 152);
+            this.holdingKnob.Max = 100;
+            this.holdingKnob.Min = 0;
+            this.holdingKnob.Name = "holdingKnob";
+            this.holdingKnob.Size = new System.Drawing.Size(101, 124);
+            this.holdingKnob.Step = 1;
+            this.holdingKnob.TabIndex = 14;
+            this.holdingKnob.Title = "Hold Steps";
+            this.holdingKnob.Value = 0;
+            this.holdingKnob.ValueChanged += new System.EventHandler<System.EventArgs>(this.HoldingKnob_ValueChanged);
+            // 
+            // revCheckBox
+            // 
+            this.revCheckBox.Checked = false;
+            this.revCheckBox.Location = new System.Drawing.Point(77, 193);
+            this.revCheckBox.Name = "revCheckBox";
+            this.revCheckBox.Size = new System.Drawing.Size(27, 44);
+            this.revCheckBox.TabIndex = 15;
+            this.revCheckBox.CheckedStateChanged += new System.EventHandler<System.EventArgs>(this.RevCheckBox_CheckedStateChanged);
             // 
             // UCEffects
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.revCheck);
+            this.Controls.Add(this.revCheckBox);
+            this.Controls.Add(this.holdingKnob);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.editBtn);
-            this.Controls.Add(this.holdLabel);
-            this.Controls.Add(this.holdTrackbar);
-            this.Controls.Add(this.label5);
             this.Controls.Add(this.stepsLabel);
             this.Controls.Add(this.stepsTrackbar);
             this.Controls.Add(this.label4);
@@ -216,7 +195,6 @@
             this.Size = new System.Drawing.Size(372, 347);
             ((System.ComponentModel.ISupportInitialize)(this.speedTrackbar)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.stepsTrackbar)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.holdTrackbar)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -233,11 +211,9 @@
         private System.Windows.Forms.Label stepsLabel;
         private System.Windows.Forms.TrackBar stepsTrackbar;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label holdLabel;
-        private System.Windows.Forms.TrackBar holdTrackbar;
-        private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Button editBtn;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.CheckBox revCheck;
+        private Knob holdingKnob;
+        private RoundedCheckBox revCheckBox;
     }
 }

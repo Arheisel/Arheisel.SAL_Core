@@ -81,8 +81,13 @@ namespace ShineALight
 
         private void HoldTrackbar_Scroll(object sender, EventArgs e)
         {
-            effects.HoldSteps = holdTrackbar.Value;
-            holdLabel.Text = holdTrackbar.Value.ToString();
+            //effects.HoldSteps = holdTrackbar.Value;
+            //holdLabel.Text = holdTrackbar.Value.ToString();
+        }
+
+        private void HoldingKnob_ValueChanged(object sender, EventArgs e)
+        {
+            effects.HoldSteps = holdingKnob.Value;
         }
 
         private void UpdateScrollbars()
@@ -95,10 +100,10 @@ namespace ShineALight
             stepsTrackbar.Value = preset.TotalSteps;
             stepsLabel.Text = stepsTrackbar.Value.ToString();
 
-            holdTrackbar.Value = preset.HoldingSteps;
-            holdLabel.Text = holdTrackbar.Value.ToString();
+            //holdTrackbar.Value = preset.HoldingSteps;
+            holdingKnob.Value = preset.HoldingSteps;
 
-            revCheck.Checked = preset.Reverse;
+            revCheckBox.Checked = preset.Reverse;
         }
 
         private void EditBtn_Click(object sender, EventArgs e)
@@ -130,10 +135,10 @@ namespace ShineALight
             }
         }
 
-        private void RevCheck_CheckedChanged(object sender, EventArgs e)
+        private void RevCheckBox_CheckedStateChanged(object sender, EventArgs e)
         {
             if (effects.Settings.CurrentPreset != null)
-                effects.Settings.CurrentPreset.Reverse = revCheck.Checked;
+                effects.Settings.CurrentPreset.Reverse = revCheckBox.Checked;
         }
     }
 }
