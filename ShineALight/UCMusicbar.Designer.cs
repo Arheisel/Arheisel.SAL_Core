@@ -30,7 +30,6 @@
         {
             this.vuMeter1 = new ShineALight.VUMeter();
             this.autoscalerControl1 = new ShineALight.AutoscalerControl();
-            this.curvePlot1 = new ShineALight.CurvePlot();
             this.slopeTrackbar = new System.Windows.Forms.TrackBar();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.slopeLabel = new System.Windows.Forms.Label();
@@ -57,23 +56,13 @@
             this.autoscalerControl1.Size = new System.Drawing.Size(418, 96);
             this.autoscalerControl1.TabIndex = 2;
             // 
-            // curvePlot1
-            // 
-            this.curvePlot1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.curvePlot1.Function = null;
-            this.curvePlot1.Location = new System.Drawing.Point(40, 4);
-            this.curvePlot1.Name = "curvePlot1";
-            this.curvePlot1.Size = new System.Drawing.Size(381, 173);
-            this.curvePlot1.TabIndex = 3;
-            // 
-            // trackBar1
+            // slopeTrackbar
             // 
             this.slopeTrackbar.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.slopeTrackbar.Location = new System.Drawing.Point(27, 28);
             this.slopeTrackbar.Maximum = 40;
-            this.slopeTrackbar.Name = "trackBar1";
+            this.slopeTrackbar.Name = "slopeTrackbar";
             this.slopeTrackbar.Size = new System.Drawing.Size(348, 45);
             this.slopeTrackbar.TabIndex = 4;
             this.slopeTrackbar.Value = 10;
@@ -101,15 +90,14 @@
             this.slopeLabel.TabIndex = 5;
             this.slopeLabel.Text = "10";
             // 
-            // UCMusic
+            // UCMusicbar
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.curvePlot1);
             this.Controls.Add(this.autoscalerControl1);
             this.Controls.Add(this.vuMeter1);
-            this.Name = "UCMusic";
+            this.Name = "UCMusicbar";
             this.Size = new System.Drawing.Size(425, 371);
             this.Load += new System.EventHandler(this.UCMusic_Load);
             ((System.ComponentModel.ISupportInitialize)(this.slopeTrackbar)).EndInit();
@@ -122,7 +110,6 @@
         #endregion
         private VUMeter vuMeter1;
         private AutoscalerControl autoscalerControl1;
-        private CurvePlot curvePlot1;
         private System.Windows.Forms.TrackBar slopeTrackbar;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label slopeLabel;

@@ -14,8 +14,8 @@ namespace ShineALight
 {
     public partial class UCMusicbar : CustomUserControl
     {
-        private readonly Music music;
-        private delegate void UpdateDelegate(MusicDataAvailableArgs e);
+        private readonly Audio audio;
+        private delegate void UpdateDelegate(AudioDataAvailableArgs e);
 
         private readonly ArduinoCollection arduinoCollection;
 
@@ -23,37 +23,55 @@ namespace ShineALight
         private int current = 0;
         private bool currentSet = false;
 
-        public UCMusicbar(ArduinoCollection collection, MusicSettings settings)
+        public UCMusicbar(ArduinoCollection collection, VSettings settings)
         {
             InitializeComponent();
             arduinoCollection = collection;
             colorList = new List<SAL_Core.Color> { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK };
             try
             {
-                music = new Music(settings);
-                autoscalerControl1.AutoScaler = music.AutoScaler;
+                audio = new Audio(settings);
+                audio.Channels = 1;
+                autoscalerControl1.AutoScaler = audio.autoScaler;
                 autoscalerControl1.UpdateValues();
-                music.DataAvailable += Music_DataAvailable;
-                music.Run();
+                audio.DataAvailable += Audio_DataAvailable;
+                audio.StartCapture();
             }
             catch (Exception ex)
             {
-                Log.Write(Log.TYPE_ERROR, "UCMusic :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                Log.Write(Log.TYPE_ERROR, "UCMusicBar :: " + ex.Message + Environment.NewLine + ex.StackTrace);
                 MessageBox.Show("ERROR: " + ex.Message);
             }
 
-            curvePlot1.Function = music.Curve;
-            slopeTrackbar.Value = music.Settings.Slope;
+            slopeTrackbar.Value = audio.Slope;
             slopeLabel.Text = slopeTrackbar.Value.ToString();
-            curvePlot1.Refresh();
+        }
+
+        private void Audio_DataAvailable(object sender, AudioDataAvailableArgs e)
+        {
+            if (e.Peak >= 0.85 && !currentSet)
+            {
+                if (current >= colorList.Count - 1) current = 0;
+                else current++;
+                currentSet = true;
+            }
+            if (e.Peak < 0.75 && currentSet) currentSet = false;
+
+            double div = 1.0 / (double)arduinoCollection.ChannelCount;
+            for (int i = 0; i < arduinoCollection.ChannelCount; i++)
+            {
+                if (e.Peak > div * i) arduinoCollection.SetColor(i + 1, colorList[current] * e.Peak);
+                else arduinoCollection.SetColor(i + 1, Colors.OFF);
+            }
+            UIUpdate(e);
         }
 
         public override void DisposeDeferred()
         {
             try
             {
-                music.DataAvailable -= Music_DataAvailable;
-                music.Stop();
+                audio.DataAvailable -= Audio_DataAvailable;
+                audio.StopCapture();
                 autoscalerControl1.AutoScaler.Stop();
             }
             catch (Exception ex)
@@ -65,26 +83,7 @@ namespace ShineALight
             Dispose();
         }
 
-        private void Music_DataAvailable(object sender, MusicDataAvailableArgs e)
-        {
-            if(e.Sample >= 0.9 && !currentSet)
-            {
-                if (current >= colorList.Count - 1) current = 0;
-                else current++;
-                currentSet = true;
-            }
-            if (e.Sample < 0.7 && currentSet) currentSet = false;
-
-            double div = 1.0 / (double)arduinoCollection.ChannelCount;
-            for(int i = 0; i < arduinoCollection.ChannelCount; i++)
-            {
-                if(e.Sample > div*i) arduinoCollection.SetColor(i + 1, colorList[current] * e.Sample);
-                else arduinoCollection.SetColor(i + 1, Colors.OFF);
-            }
-            UIUpdate(e);
-        }
-
-        private void UIUpdate(MusicDataAvailableArgs e)
+        private void UIUpdate(AudioDataAvailableArgs e)
         {
             if (InvokeRequired)
             {
@@ -97,7 +96,7 @@ namespace ShineALight
             }
             else
             {
-                vuMeter1.Value = e.Sample;
+                vuMeter1.Value = e.Peak;
                 autoscalerControl1.UpdateValues();
             }
         }
@@ -109,9 +108,8 @@ namespace ShineALight
 
         private void slopeTrackbar_Scroll(object sender, EventArgs e)
         {
-            music.Settings.Slope = slopeTrackbar.Value;
+            audio.Slope = slopeTrackbar.Value;
             slopeLabel.Text = slopeTrackbar.Value.ToString();
-            curvePlot1.Refresh();
         }
     }
 }

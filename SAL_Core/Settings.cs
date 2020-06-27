@@ -21,9 +21,9 @@ namespace SAL_Core
 
         public VSettings Visualizer { get; set; } = new VSettings();
 
-        public MusicSettings Musicbar { get; set; } = new MusicSettings();
+        public VSettings Musicbar { get; set; } = new VSettings();
 
-        public MusicSettings Musicbar2 { get; set; } = new MusicSettings();
+        public VSettings Musicbar2 { get; set; } = new VSettings();
 
         public VSettings EffectsVisualizer { get; set; } = new VSettings();
 

@@ -267,7 +267,7 @@ namespace SAL_Core
                 int startingPoint = 0;
 
                 double octave = _octave;
-                double avgPeak = 0;
+                double peak = 0;
 
                 for (int i = 0; i < _channels; i++)
                 {
@@ -279,7 +279,7 @@ namespace SAL_Core
                     }
                     octave *= _octaveDist;
                     //channelMagnitudes[i] = max;
-                    avgPeak += max;
+                    peak += max;
 
                     double x = Convert.ToDouble(max * autoScaler.Scale);
                     double res = Curve(x);
@@ -287,10 +287,10 @@ namespace SAL_Core
                     if (res > 1) res = 1;
                     else if (res < 0) res = 0;
                     channelMagnitudes[i] = res;
+                    if (res > peak) peak = res;
                 }
-                avgPeak /= _channels;
 
-                DataAvailable?.Invoke(this, new AudioDataAvailableArgs(avgPeak, channelMagnitudes));
+                DataAvailable?.Invoke(this, new AudioDataAvailableArgs(peak, channelMagnitudes));
             }
             catch (Exception ex)
             {
@@ -424,13 +424,13 @@ namespace SAL_Core
 
     public class AudioDataAvailableArgs : EventArgs
     {
-        public AudioDataAvailableArgs(double avgPeak, double[] channelMagnitudes)
+        public AudioDataAvailableArgs(double peak, double[] channelMagnitudes)
         {
-            AvgPeak = avgPeak;
+            Peak = peak;
             ChannelMagnitudes = channelMagnitudes;
         }
 
-        public double AvgPeak { get; }
+        public double Peak { get; }
         public double[] ChannelMagnitudes { get; }
     }
 }

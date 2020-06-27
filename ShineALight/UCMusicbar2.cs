@@ -14,42 +14,52 @@ namespace ShineALight
 {
     public partial class UCMusicbar2 : CustomUserControl
     {
-        private readonly Music music;
-        private delegate void UpdateDelegate(MusicDataAvailableArgs e);
+        private readonly Audio audio;
+        private delegate void UpdateDelegate(AudioDataAvailableArgs e);
 
         private readonly ArduinoCollection arduinoCollection;
 
-        public UCMusicbar2(ArduinoCollection collection, MusicSettings settings)
+        public UCMusicbar2(ArduinoCollection collection, VSettings settings)
         {
             InitializeComponent();
             arduinoCollection = collection;
 
             try
             {
-                music = new Music(settings);
-                autoscalerControl1.AutoScaler = music.AutoScaler;
+                audio = new Audio(settings);
+                audio.Channels = 1;
+                autoscalerControl1.AutoScaler = audio.autoScaler;
                 autoscalerControl1.UpdateValues();
-                music.DataAvailable += Music_DataAvailable;
-                music.Run();
+                audio.DataAvailable += Audio_DataAvailable;
+                audio.StartCapture();
             }
             catch (Exception ex)
             {
-                Log.Write(Log.TYPE_ERROR, "UCMusic :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                Log.Write(Log.TYPE_ERROR, "UCMusicBar2 :: " + ex.Message + Environment.NewLine + ex.StackTrace);
                 MessageBox.Show("ERROR: " + ex.Message);
             }
 
-            curvePlot1.Function = music.Curve;
-            slopeTrackbar.Value = music.Settings.Slope;
+            slopeTrackbar.Value = audio.Slope;
             slopeLabel.Text = slopeTrackbar.Value.ToString();
-            curvePlot1.Refresh();
+        }
+
+        private void Audio_DataAvailable(object sender, AudioDataAvailableArgs e)
+        {
+            double div = 1.0 / (double)arduinoCollection.ChannelCount;
+            for (int i = 0; i < arduinoCollection.ChannelCount; i++)
+            {
+                if (e.Peak > div * i) arduinoCollection.SetColor(i + 1, Maps.EncodeRGB(e.Peak >= div * (i + 1) ? div * (i + 1) : e.Peak));
+                else arduinoCollection.SetColor(i + 1, Colors.OFF);
+            }
+            UIUpdate(e);
         }
 
         public override void DisposeDeferred()
         {
             try
             {
-                music.DataAvailable -= Music_DataAvailable;
-                music.Stop();
+                audio.DataAvailable -= Audio_DataAvailable;
+                audio.StopCapture();
                 autoscalerControl1.AutoScaler.Stop();
             }
             catch (Exception ex)
@@ -61,18 +71,7 @@ namespace ShineALight
             Dispose();
         }
 
-        private void Music_DataAvailable(object sender, MusicDataAvailableArgs e)
-        {
-            double div = 1.0 / (double)arduinoCollection.ChannelCount;
-            for(int i = 0; i < arduinoCollection.ChannelCount; i++)
-            {
-                if(e.Sample > div*i) arduinoCollection.SetColor(i + 1, Maps.EncodeRGB(e.Sample >= div * (i + 1) ? div*(i + 1):e.Sample));
-                else arduinoCollection.SetColor(i + 1, Colors.OFF);
-            }
-            UIUpdate(e);
-        }
-
-        private void UIUpdate(MusicDataAvailableArgs e)
+        private void UIUpdate(AudioDataAvailableArgs e)
         {
             if (InvokeRequired)
             {
@@ -85,7 +84,7 @@ namespace ShineALight
             }
             else
             {
-                vuMeter1.Value = e.Sample;
+                vuMeter1.Value = e.Peak;
                 autoscalerControl1.UpdateValues();
             }
         }
@@ -97,9 +96,8 @@ namespace ShineALight
 
         private void slopeTrackbar_Scroll(object sender, EventArgs e)
         {
-            music.Settings.Slope = slopeTrackbar.Value;
+            audio.Slope = slopeTrackbar.Value;
             slopeLabel.Text = slopeTrackbar.Value.ToString();
-            curvePlot1.Refresh();
         }
     }
 }
