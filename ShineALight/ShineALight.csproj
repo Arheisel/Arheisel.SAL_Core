@@ -81,35 +81,53 @@
     <Compile Include="AddArduino.Designer.cs">
       <DependentUpon>AddArduino.cs</DependentUpon>
     </Compile>
-    <Compile Include="AddArduinoSerial.cs">
+    <Compile Include="Controls\AddArduinoSerial.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AddArduinoSerial.Designer.cs">
+    <Compile Include="Controls\AddArduinoSerial.Designer.cs">
       <DependentUpon>AddArduinoSerial.cs</DependentUpon>
     </Compile>
-    <Compile Include="AddArduinoUDP.cs">
+    <Compile Include="Controls\AddArduinoUDP.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AddArduinoUDP.Designer.cs">
+    <Compile Include="Controls\AddArduinoUDP.Designer.cs">
       <DependentUpon>AddArduinoUDP.cs</DependentUpon>
     </Compile>
-    <Compile Include="AutoscalerControl.cs">
+    <Compile Include="Controls\AudioControls.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AutoscalerControl.Designer.cs">
+    <Compile Include="Controls\AudioControls.Designer.cs">
+      <DependentUpon>AudioControls.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AudioUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\AudioUI.Designer.cs">
+      <DependentUpon>AudioUI.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\AutoscalerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\AutoscalerControl.Designer.cs">
       <DependentUpon>AutoscalerControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="CurvePlot.cs">
+    <Compile Include="Controls\CurvePlot.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CurvePlot.Designer.cs">
+    <Compile Include="Controls\CurvePlot.Designer.cs">
       <DependentUpon>CurvePlot.cs</DependentUpon>
     </Compile>
-    <Compile Include="Design.cs" />
-    <Compile Include="Knob.cs">
+    <Compile Include="Controls\VUPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Knob.Designer.cs">
+    <Compile Include="Controls\VUPanel.Designer.cs">
+      <DependentUpon>VUPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Design.cs" />
+    <Compile Include="Controls\Knob.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\Knob.Designer.cs">
       <DependentUpon>Knob.cs</DependentUpon>
     </Compile>
     <Compile Include="MainWindow.cs">
@@ -126,77 +144,86 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RoundedCheckBox.cs">
+    <Compile Include="Controls\RoundedCheckBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="RoundedCheckBox.Designer.cs">
+    <Compile Include="Controls\RoundedCheckBox.Designer.cs">
       <DependentUpon>RoundedCheckBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="UCEffects.cs">
+    <Compile Include="Modes\UCEffects.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UCEffects.Designer.cs">
+    <Compile Include="Modes\UCEffects.Designer.cs">
       <DependentUpon>UCEffects.cs</DependentUpon>
     </Compile>
-    <Compile Include="UCMusicbar2.cs">
+    <Compile Include="Modes\UCMusicbar2.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UCMusicbar2.Designer.cs">
+    <Compile Include="Modes\UCMusicbar2.Designer.cs">
       <DependentUpon>UCMusicbar2.cs</DependentUpon>
     </Compile>
-    <Compile Include="UCMusicbar.cs">
+    <Compile Include="Modes\UCMusicbar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UCMusicbar.Designer.cs">
+    <Compile Include="Modes\UCMusicbar.Designer.cs">
       <DependentUpon>UCMusicbar.cs</DependentUpon>
     </Compile>
-    <Compile Include="UCMusic.cs">
+    <Compile Include="Modes\UCMusic.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UCMusic.Designer.cs">
+    <Compile Include="Modes\UCMusic.Designer.cs">
       <DependentUpon>UCMusic.cs</DependentUpon>
     </Compile>
-    <Compile Include="UCEffectsVisualizer.cs">
+    <Compile Include="Modes\UCEffectsVisualizer.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UCEffectsVisualizer.Designer.cs">
+    <Compile Include="Modes\UCEffectsVisualizer.Designer.cs">
       <DependentUpon>UCEffectsVisualizer.cs</DependentUpon>
     </Compile>
-    <Compile Include="UCVisualizer.cs">
+    <Compile Include="Modes\UCVisualizer.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UCVisualizer.Designer.cs">
+    <Compile Include="Modes\UCVisualizer.Designer.cs">
       <DependentUpon>UCVisualizer.cs</DependentUpon>
     </Compile>
-    <Compile Include="UCRGBVisualizer.cs">
+    <Compile Include="Modes\UCRGBVisualizer.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="UCRGBVisualizer.Designer.cs">
+    <Compile Include="Modes\UCRGBVisualizer.Designer.cs">
       <DependentUpon>UCRGBVisualizer.cs</DependentUpon>
     </Compile>
-    <Compile Include="VUMeter.cs">
+    <Compile Include="Controls\VUMeter.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="VUMeter.Designer.cs">
+    <Compile Include="Controls\VUMeter.Designer.cs">
       <DependentUpon>VUMeter.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="AddArduino.resx">
       <DependentUpon>AddArduino.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AddArduinoSerial.resx">
+    <EmbeddedResource Include="Controls\AddArduinoSerial.resx">
       <DependentUpon>AddArduinoSerial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AddArduinoUDP.resx">
+    <EmbeddedResource Include="Controls\AddArduinoUDP.resx">
       <DependentUpon>AddArduinoUDP.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AutoscalerControl.resx">
+    <EmbeddedResource Include="Controls\AudioControls.resx">
+      <DependentUpon>AudioControls.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\AudioUI.resx">
+      <DependentUpon>AudioUI.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\AutoscalerControl.resx">
       <DependentUpon>AutoscalerControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CurvePlot.resx">
+    <EmbeddedResource Include="Controls\CurvePlot.resx">
       <DependentUpon>CurvePlot.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Knob.resx">
+    <EmbeddedResource Include="Controls\Knob.resx">
       <DependentUpon>Knob.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\VUPanel.resx">
+      <DependentUpon>VUPanel.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainWindow.resx">
       <DependentUpon>MainWindow.cs</DependentUpon>
@@ -213,34 +240,34 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="RoundedCheckBox.resx">
+    <EmbeddedResource Include="Controls\RoundedCheckBox.resx">
       <DependentUpon>RoundedCheckBox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UCEffects.resx">
+    <EmbeddedResource Include="Modes\UCEffects.resx">
       <DependentUpon>UCEffects.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UCMusicbar2.resx">
+    <EmbeddedResource Include="Modes\UCMusicbar2.resx">
       <DependentUpon>UCMusicbar2.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UCMusicbar.resx">
+    <EmbeddedResource Include="Modes\UCMusicbar.resx">
       <DependentUpon>UCMusicbar.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UCMusic.resx">
+    <EmbeddedResource Include="Modes\UCMusic.resx">
       <DependentUpon>UCMusic.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="UCEffectsVisualizer.resx">
+    <EmbeddedResource Include="Modes\UCEffectsVisualizer.resx">
       <DependentUpon>UCEffectsVisualizer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UCVisualizer.resx">
+    <EmbeddedResource Include="Modes\UCVisualizer.resx">
       <DependentUpon>UCVisualizer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UCRGBVisualizer.resx">
+    <EmbeddedResource Include="Modes\UCRGBVisualizer.resx">
       <DependentUpon>UCRGBVisualizer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VUMeter.resx">
+    <EmbeddedResource Include="Controls\VUMeter.resx">
       <DependentUpon>VUMeter.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">

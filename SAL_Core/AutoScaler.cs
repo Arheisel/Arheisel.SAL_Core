@@ -70,7 +70,7 @@ namespace SAL_Core
 
         public void Sample(double value)
         {
-            if (value == 0) return;
+            if (value <= 0) return;
             if(value > Peak)
             {
                 Peak = value;

@@ -13,46 +13,18 @@ using Damez.Log;
 namespace ShineALight
 {
 
-    public partial class UCEffectsVisualizer : CustomUserControl
+    public partial class UCRGBVisualizer : CustomUserControl
     {
         private readonly Audio audio;
-        private readonly Effects effects;
         private delegate void UpdateDelegate(AudioDataAvailableArgs e);
         private readonly ArduinoCollection collection;
-        private readonly VUMeter[] meters;
-        private readonly SAL_Core.Color[] effColors;
-
-        public UCEffectsVisualizer(ArduinoCollection collection, VSettings settings, EffectSettings effectSettings)
+        public UCRGBVisualizer(ArduinoCollection collection, AudioSettings settings)
         {
             InitializeComponent();
-
-            var channels = collection.ChannelCount;
-            meters = new VUMeter[channels];
-            var margin = 5;
-            var totalWidth = vuPanel.Size.Width - margin;
-            var channelWidth = totalWidth / channels;
-            var meterWidth = channelWidth - margin;
-            var height = vuPanel.Size.Height;
-            for(int i = 0; i < channels; i++)
-            {
-                var meter = new VUMeter
-                {
-                    Size = new Size(meterWidth, height),
-                    Location = new Point((channelWidth * i) + margin, 0)
-                };
-                vuPanel.Controls.Add(meter);
-                meters[i] = meter;
-            }
-
-            effColors = new SAL_Core.Color[channels];
-
             try
             {
-                effects = new Effects(collection, effectSettings);
-                effects.DataAvailable += Effects_DataAvailable;
-
                 audio = new Audio(settings);
-                audio.Channels = channels;
+                audio.Channels = 3;
                 autoscalerControl.AutoScaler = audio.autoScaler;
                 autoscalerControl.UpdateValues();
                 audio.DataAvailable += Audio_DataAvailable;
@@ -60,19 +32,19 @@ namespace ShineALight
             }
             catch (Exception ex)
             {
-                Log.Write(Log.TYPE_ERROR, "UCVisualizer :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                Log.Write(Log.TYPE_ERROR, "UCRGBVisualizer :: " + ex.Message + Environment.NewLine + ex.StackTrace);
                 MessageBox.Show("ERROR: " + ex.Message);
             }
 
-            foreach (string name in effects.Settings.PresetList.Keys)
-            {
-                currentSelect.Items.Add(name);
-            }
-            currentSelect.SelectedItem = effects.Current;
-
-            //curvePlot1.Function = audio.Curve;
+            
             this.collection = collection;
-            audio.MaxFreq = 4100;
+            chLabel.Text = audio.AudioChannels.ToString();
+            vuMeterR.Color = Brushes.Red;
+            vuMeterR.PeakColor = Brushes.Red;
+            vuMeterB.Color = Brushes.Blue;
+            vuMeterB.PeakColor = Brushes.Blue;
+            vuMeterG.Color = Brushes.Green;
+            vuMeterG.PeakColor = Brushes.Green;
 
             slopeTrackbar.Value = audio.Slope;
             slopeLabel.Text = slopeTrackbar.Value.ToString();
@@ -86,43 +58,30 @@ namespace ShineALight
             minFreqTrackbar.Maximum = audio.MaxFreq / 2;
         }
 
-        private void Effects_DataAvailable(object sender, EffectDataAvailableArgs e)
-        {
-            foreach(var chColor in e.Colors)
-            {
-                if(chColor.Channel == 0)
-                {
-                    for (int i = 0; i < effColors.Length; i++) effColors[i] = chColor.Color;
-                }
-                else
-                {
-                    effColors[chColor.Channel - 1] = chColor.Color;
-                }
-            }
-        }
-
         public override void DisposeDeferred()
         {
             try
             {
                 audio.DataAvailable -= Audio_DataAvailable;
                 audio.StopCapture();
-                autoscalerControl.AutoScaler.Stop();
+                audio.autoScaler.Stop();
+                audio.Dispose();
             }
             catch (Exception ex)
             {
-                Log.Write(Log.TYPE_ERROR, "UCVisualizer :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                Log.Write(Log.TYPE_ERROR, "UCRGBVisualizer :: " + ex.Message + Environment.NewLine + ex.StackTrace);
                 MessageBox.Show("ERROR: " + ex.Message);
             }
+
             Dispose();
         }
 
         private void Audio_DataAvailable(object sender, AudioDataAvailableArgs e)
         {
-            for(int i = 0; i < e.ChannelMagnitudes.Length; i++)
-            {
-                collection.SetColor(i + 1, effColors[i] * e.ChannelMagnitudes[i]);
-            }
+            int r = (int) Math.Round(e.ChannelMagnitudes[0] * 255);
+            int b = (int) Math.Round(e.ChannelMagnitudes[1] * 255);
+            int g = (int) Math.Round(e.ChannelMagnitudes[2] * 255);
+            collection.SetColor(new SAL_Core.Color(r, g, b));
             UIUpdate(e);
         }
 
@@ -139,10 +98,9 @@ namespace ShineALight
             }
             else
             {
-                for (int i = 0; i < e.ChannelMagnitudes.Length; i++)
-                {
-                    meters[i].Value = e.ChannelMagnitudes[i];
-                }
+                vuMeterR.Value = e.ChannelMagnitudes[0];
+                vuMeterB.Value = e.ChannelMagnitudes[1];
+                vuMeterG.Value = e.ChannelMagnitudes[2];
                 autoscalerControl.UpdateValues();
             }
         }
@@ -166,19 +124,6 @@ namespace ShineALight
             audio.MaxFreq = maxFreqTrackbar.Value;
             maxFreqLabel.Text = maxFreqTrackbar.Value.ToString();
             minFreqTrackbar.Maximum = audio.MaxFreq / 2;
-        }
-
-        private void CurrentSelect_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                effects.Current = currentSelect.Text;
-            }
-            catch (Exception ex)
-            {
-                Log.Write(Log.TYPE_ERROR, "UCEffectsVisualizer :: " + ex.Message + Environment.NewLine + ex.StackTrace);
-                MessageBox.Show("ERROR: " + ex.Message);
-            }
         }
     }
 }

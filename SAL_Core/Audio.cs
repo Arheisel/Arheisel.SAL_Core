@@ -24,7 +24,7 @@ namespace SAL_Core
         private BufferedWaveProvider waveBuffer = null;
         private WaveFormat waveFormat = null;
         private int bytesPerFrame = 1;
-        private readonly VSettings Settings;
+        private readonly AudioSettings Settings;
 
         public readonly AutoScaler autoScaler;
 
@@ -135,7 +135,7 @@ namespace SAL_Core
             }
         }
 
-        public Audio(VSettings settings)
+        public Audio(AudioSettings settings)
         {
             try
             {

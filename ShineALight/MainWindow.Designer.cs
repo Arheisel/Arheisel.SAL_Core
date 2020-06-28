@@ -240,6 +240,8 @@
             this.ClientSize = new System.Drawing.Size(800, 450);
             this.Controls.Add(this.Main);
             this.Controls.Add(this.menuStrip1);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "MainWindow";
             this.Text = "Shine a Light";
             this.Load += new System.EventHandler(this.MainWindow_Load);

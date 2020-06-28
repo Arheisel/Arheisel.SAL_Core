@@ -513,6 +513,19 @@ namespace SAL_Core
             }
         }
 
+        public int Multiplier
+        {
+            get
+            {
+                if (ChannelCount <= 1) return 12;
+                else if (ChannelCount == 2) return 6;
+                else if (ChannelCount == 3) return 4;
+                else if (ChannelCount == 4) return 3;
+                else if (ChannelCount >= 5 && ChannelCount <= 8) return 2;
+                else return 1;
+            }
+        }
+
         private bool _disposed = false;
 
         public void Dispose()

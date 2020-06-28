@@ -15,17 +15,17 @@ namespace SAL_Core
         public int CurrentMode { get; set; } = 0;
         public EffectSettings Effects { get; set; } = new EffectSettings();
 
-        public MusicSettings Music { get; set; } = new MusicSettings();
+        public AudioSettings Music { get; set; } = new AudioSettings();
 
-        public VSettings RGBVisualizer { get; set; } = new VSettings();
+        public AudioSettings RGBVisualizer { get; set; } = new AudioSettings();
 
-        public VSettings Visualizer { get; set; } = new VSettings();
+        public AudioSettings Visualizer { get; set; } = new AudioSettings();
 
-        public VSettings Musicbar { get; set; } = new VSettings();
+        public AudioSettings Musicbar { get; set; } = new AudioSettings();
 
-        public VSettings Musicbar2 { get; set; } = new VSettings();
+        public AudioSettings Musicbar2 { get; set; } = new AudioSettings();
 
-        public VSettings EffectsVisualizer { get; set; } = new VSettings();
+        public AudioSettings EffectsVisualizer { get; set; } = new AudioSettings();
 
         public void AddArduino(Arduino arduino)
         {
@@ -301,7 +301,7 @@ namespace SAL_Core
     }
 
     [Serializable]
-    public class VSettings
+    public class AudioSettings
     {
         public int Slope { get; set; } = 10;
 

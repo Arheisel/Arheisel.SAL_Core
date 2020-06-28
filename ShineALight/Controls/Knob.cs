@@ -34,7 +34,6 @@ namespace ShineALight
                 if (value >= _min && value <= _max)
                 {
                     _value = value;
-                    ValueChanged?.Invoke(this, new EventArgs());
                     Refresh();
                 }
             }
@@ -148,6 +147,7 @@ namespace ShineALight
             if (delta == 0) return;
 
             Value = dragStartingVal + delta;
+            ValueChanged?.Invoke(this, new EventArgs());
         }
 
         private void Knob_MouseWheel(object sender, MouseEventArgs e)
@@ -155,12 +155,14 @@ namespace ShineALight
             if (!Enabled) return;
 
             Value += e.Delta / 120 * Step;
+            ValueChanged?.Invoke(this, new EventArgs());
         }
 
         private void Knob_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Left || e.KeyCode == Keys.Down) Value -= Step;
             else if(e.KeyCode == Keys.Right || e.KeyCode == Keys.Up) Value += Step;
+            ValueChanged?.Invoke(this, new EventArgs());
         }
     }
 }
