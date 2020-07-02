@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO.Ports;
@@ -329,7 +330,7 @@ namespace SAL_Core
         }
     }
 
-    public class ArduinoCollection : IDisposable
+    public class ArduinoCollection : IDisposable, IList<Arduino>
     {
         private readonly List<Arduino> collection = new List<Arduino>();
         private readonly ConcurrentQueue<ChColor> queue;
@@ -427,9 +428,13 @@ namespace SAL_Core
             {
                 return collection[index];
             }
+            set
+            {
+                collection[index] = value;
+            }
         }
 
-        public Arduino FindByName(string name)
+        public Arduino IndexOf(string name)
         {
             for(int i = 0; i < collection.Count; i++)
             {
@@ -438,12 +443,17 @@ namespace SAL_Core
             return null;
         }
 
-        public bool ContainsArduino(string name)
+        public int IndexOf(Arduino arduino)
         {
-            return FindByName(name) != null;
+            return collection.IndexOf(arduino);
         }
 
-        public bool ContainsArduino(Arduino arduino)
+        public bool Contains(string name)
+        {
+            return IndexOf(name) != null;
+        }
+
+        public bool Contains(Arduino arduino)
         {
             return collection.Contains(arduino);
         }
@@ -452,7 +462,7 @@ namespace SAL_Core
         {
             try
             {
-                if (ContainsArduino(arduino)) return;
+                if (Contains(arduino)) return;
                 collection.Add(arduino);
                 ChannelCount += arduino.Channels;
             }
@@ -462,14 +472,56 @@ namespace SAL_Core
             }
         }
 
-        public void Remove(Arduino arduino)
+        public void Insert(int i, Arduino arduino)
         {
-            if (ContainsArduino(arduino))
+            try
+            {
+                if (Contains(arduino)) return;
+                collection.Insert(i, arduino);
+                ChannelCount += arduino.Channels;
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + e.Message + Environment.NewLine + e.StackTrace);
+            }
+        }
+
+        public void ShiftUp(Arduino arduino)
+        {
+            collection.Shift(arduino, -1);
+        }
+
+        public void ShiftDown(Arduino arduino)
+        {
+            collection.Shift(arduino, 1);
+        }
+
+        public bool Remove(Arduino arduino)
+        {
+            if (Contains(arduino))
             {
                 collection.Remove(arduino);
                 arduino.Dispose();
                 CalculateChannels();
+                return true;
             }
+            return false;
+        }
+
+        public void RemoveAt(int i)
+        {
+            if (i < collection.Count)
+            {
+                var arduino = collection[i];
+                collection.RemoveAt(i);
+                arduino.Dispose();
+                CalculateChannels();
+            }
+        }
+
+        public void Clear()
+        {
+            foreach (Arduino arduino in collection) Remove(arduino);
         }
 
         private void CalculateChannels()
@@ -523,6 +575,34 @@ namespace SAL_Core
                 else if (ChannelCount == 4) return 3;
                 else if (ChannelCount >= 5 && ChannelCount <= 8) return 2;
                 else return 1;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return this.GetEnumerator();
+        }
+
+        public IEnumerator<Arduino> GetEnumerator()
+        {
+            return collection.GetEnumerator();
+        }
+
+        public void CopyTo(Arduino[] array)
+        {
+            collection.CopyTo(array);
+        }
+
+        public void CopyTo(Arduino[] array, int i)
+        {
+            collection.CopyTo(array, i);
+        }
+
+        public bool IsReadOnly
+        {
+            get
+            {
+                return false;
             }
         }
 

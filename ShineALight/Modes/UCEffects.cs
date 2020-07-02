@@ -24,19 +24,13 @@ namespace ShineALight
                 arduinoCollection = collection;
                 effects = new Effects(collection, settings);
                 effects.DataAvailable += Effects_DataAvailable;
+                effectsControl.Effects = effects;
             }
             catch (Exception ex)
             {
                 Log.Write(Log.TYPE_ERROR, "UCEffects :: " + ex.Message + Environment.NewLine + ex.StackTrace);
                 MessageBox.Show("ERROR: " + ex.Message);
             }
-
-            foreach(string name in effects.Settings.PresetList.Keys)
-            {
-                currentSelect.Items.Add(name);
-            }
-            currentSelect.SelectedItem = effects.Current;
-            UpdateScrollbars();
         }
 
         private void Effects_DataAvailable(object sender, EffectDataAvailableArgs e)
@@ -50,95 +44,8 @@ namespace ShineALight
         public override void DisposeDeferred()
         {
             effects.Stop();
+            effects.Dispose();
             Dispose();
-        }
-
-        private void CurrentSelect_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                effects.Current = currentSelect.Text;
-                UpdateScrollbars();
-            }
-            catch (Exception ex)
-            {
-                Log.Write(Log.TYPE_ERROR, "UCEffects :: " + ex.Message + Environment.NewLine + ex.StackTrace);
-                MessageBox.Show("ERROR: " + ex.Message);
-            }
-        }
-
-        private void SpeedTrackbar_Scroll(object sender, EventArgs e)
-        {
-            effects.Speed = speedTrackbar.Value;
-            speedLabel.Text = speedTrackbar.Value.ToString();
-        }
-
-        private void StepsTrackbar_Scroll(object sender, EventArgs e)
-        {
-            effects.Steps = stepsTrackbar.Value;
-            stepsLabel.Text = stepsTrackbar.Value.ToString();
-        }
-
-        private void HoldTrackbar_Scroll(object sender, EventArgs e)
-        {
-            //effects.HoldSteps = holdTrackbar.Value;
-            //holdLabel.Text = holdTrackbar.Value.ToString();
-        }
-
-        private void HoldingKnob_ValueChanged(object sender, EventArgs e)
-        {
-            effects.HoldSteps = holdingKnob.Value;
-        }
-
-        private void UpdateScrollbars()
-        {
-            var preset = effects.Settings.CurrentPreset;
-
-            speedTrackbar.Value = preset.Speed;
-            speedLabel.Text = speedTrackbar.Value.ToString();
-
-            stepsTrackbar.Value = preset.TotalSteps;
-            stepsLabel.Text = stepsTrackbar.Value.ToString();
-
-            //holdTrackbar.Value = preset.HoldingSteps;
-            holdingKnob.Value = preset.HoldingSteps;
-
-            revCheckBox.Checked = preset.Reverse;
-        }
-
-        private void EditBtn_Click(object sender, EventArgs e)
-        {
-            using (PresetsEdit dialog = new PresetsEdit(effects.Settings.PresetList))
-            {
-                dialog.ShowDialog(this);
-                if(dialog.DialogResult == DialogResult.OK)
-                {
-                    effects.Settings.PresetList = dialog.PresetList;
-                    effects.Current = effects.Settings.PresetList.First().Key;
-                    currentSelect.Items.Clear();
-                    foreach (string name in effects.Settings.PresetList.Keys)
-                    {
-                        currentSelect.Items.Add(name);
-                    }
-                    currentSelect.SelectedItem = effects.Current;
-                    UpdateScrollbars();
-                    try
-                    {
-                        Program.settings.Save();
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Write(Log.TYPE_ERROR, "UCEffects :: " + ex.Message + Environment.NewLine + ex.StackTrace);
-                        MessageBox.Show(ex.Message, "ERROR");
-                    }
-                }
-            }
-        }
-
-        private void RevCheckBox_CheckedStateChanged(object sender, EventArgs e)
-        {
-            if (effects.Settings.CurrentPreset != null)
-                effects.Settings.CurrentPreset.Reverse = revCheckBox.Checked;
         }
     }
 }

@@ -30,6 +30,7 @@
         {
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.amp = new ShineALight.Knob();
             this.enabled = new ShineALight.RoundedCheckBox();
             this.scale = new ShineALight.Knob();
             this.groupBox1.SuspendLayout();
@@ -37,13 +38,14 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.amp);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.enabled);
             this.groupBox1.Controls.Add(this.scale);
             this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.groupBox1.Location = new System.Drawing.Point(0, 0);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(161, 130);
+            this.groupBox1.Size = new System.Drawing.Size(244, 130);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Autoscaler";
@@ -58,10 +60,25 @@
             this.label1.TabIndex = 4;
             this.label1.Text = "Enabled";
             // 
+            // amp
+            // 
+            this.amp.DrawTitle = true;
+            this.amp.DrawValue = true;
+            this.amp.Location = new System.Drawing.Point(162, 14);
+            this.amp.Max = 10;
+            this.amp.Min = 1;
+            this.amp.Name = "amp";
+            this.amp.Size = new System.Drawing.Size(81, 109);
+            this.amp.Step = 1;
+            this.amp.TabIndex = 5;
+            this.amp.Title = "Amp";
+            this.amp.Value = 1;
+            this.amp.ValueChanged += new System.EventHandler<System.EventArgs>(this.Amp_ValueChanged);
+            // 
             // enabled
             // 
             this.enabled.Checked = false;
-            this.enabled.Location = new System.Drawing.Point(30, 45);
+            this.enabled.Location = new System.Drawing.Point(31, 35);
             this.enabled.Name = "enabled";
             this.enabled.Size = new System.Drawing.Size(25, 48);
             this.enabled.TabIndex = 3;
@@ -88,7 +105,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.groupBox1);
             this.Name = "AutoscalerControl";
-            this.Size = new System.Drawing.Size(161, 130);
+            this.Size = new System.Drawing.Size(244, 130);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
@@ -101,5 +118,6 @@
         private Knob scale;
         private System.Windows.Forms.Label label1;
         private RoundedCheckBox enabled;
+        private Knob amp;
     }
 }

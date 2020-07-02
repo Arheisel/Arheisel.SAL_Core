@@ -23,11 +23,7 @@ namespace ShineALight
         public MainWindow()
         {
             InitializeComponent();
-            //BackColor = Design.BgColor;
-            //Main.Panel1.BackColor = Design.BgColor;
-            ///menuStrip1.BackColor = Design.BgColor;
-            ApplyBG(this);
-            //FormBorderStyle = FormBorderStyle.None;
+            Design.Apply(this);
 
             arduinoCollection = Program.arduinoCollection;
             arduinoCollection.OnError += ArduinoCollection_OnError;
@@ -48,42 +44,8 @@ namespace ShineALight
             MoveDown.Enabled = false;
             RemoveArduino.Enabled = false;
             AddArduino.Enabled = false;
-            ArduinoList.Items.Add("Connecting...", false);
+            arduinoList.Items.Add("Connecting...");
             background.RunWorkerAsync();
-        }
-
-        private void ApplyBG(Control control)
-        {
-            if (control is Button)
-            {
-                var c = control as Button;
-                c.BackColor = Design.BtnColor;
-                c.ForeColor = Design.TextColor;
-                c.FlatStyle = FlatStyle.Flat;
-                c.FlatAppearance.BorderColor = Design.TextColorAlt;
-                c.FlatAppearance.BorderSize = 1;
-            }
-            else if (control is TrackBar)
-            {
-                var c = control as TrackBar;
-                c.BackColor = Design.BgColor;
-            }
-            else if(control is ComboBox)
-            {
-                var c = control as ComboBox;
-                c.BackColor = Design.BtnColor;
-                c.ForeColor = Design.TextColor;
-                c.FlatStyle = FlatStyle.Flat;
-            }
-            else
-            {
-                control.BackColor = Design.BgColor;
-                control.ForeColor = Design.TextColor;
-            }
-            foreach (Control ctrl in control.Controls)
-            {
-                ApplyBG(ctrl);
-            }
         }
 
         private void ArduinoCollection_OnError(object sender, ArduinoExceptionArgs e)
@@ -105,7 +67,8 @@ namespace ShineALight
             }
             else
             {
-                ArduinoList.Refresh();
+                arduinoList.Items.Clear();
+                foreach (Arduino a in arduinoCollection) arduinoList.Items.Add(a);
             }
         }
 
@@ -189,7 +152,7 @@ namespace ShineALight
                         break;
                 }
                 settings.CurrentMode = ModeSelect.SelectedIndex;
-                ApplyBG(Main.Panel2.Controls[0]);
+                Design.Apply(Main.Panel2.Controls[0]);
             }
             catch(Exception ex)
             {
@@ -206,7 +169,7 @@ namespace ShineALight
                 if (dialog.DialogResult == DialogResult.OK)
                 {
                     arduinoCollection.Add(dialog.arduino);
-                    ArduinoList.Items.Add(dialog.arduino, false);
+                    arduinoList.Items.Add(dialog.arduino);
                     settings.AddArduino(dialog.arduino);
                 }
             }
@@ -260,21 +223,21 @@ namespace ShineALight
             {
                 Log.Write(Log.TYPE_ERROR, "MainWindow :: " + e.Error.Message + Environment.NewLine + e.Error.StackTrace);
                 MessageBox.Show(e.Error.Message, "ERROR");
-                ArduinoList.Items.Clear();
-                ArduinoList.Items.Add(e.Error.Message, false);
+                arduinoList.Items.Clear();
+                arduinoList.Items.Add(e.Error.Message);
             }
             else if (e.Cancelled)
             {
-                ArduinoList.Items.Clear();
-                ArduinoList.Items.Add("Cancelled", false);
+                arduinoList.Items.Clear();
+                arduinoList.Items.Add("Cancelled");
             }
             else
             {
-                ArduinoList.Items.Clear();
+                arduinoList.Items.Clear();
                 var result = (List<Arduino>)e.Result;
                 foreach (Arduino arduino in result)
                 {
-                    ArduinoList.Items.Add(arduino);
+                    arduinoList.Items.Add(arduino);
                 }
                 Reverse.Enabled = true;
                 MoveUp.Enabled = true;
@@ -316,7 +279,7 @@ namespace ShineALight
                         Log.Write(Log.TYPE_ERROR, "MainWindow :: " + ex.Message + Environment.NewLine + ex.StackTrace);
                     }
                 }
-                else if (!Program.arduinoCollection.ContainsArduino(arduino.COM))
+                else if (!Program.arduinoCollection.Contains(arduino.COM))
                 {
                     arduinoCollection.Add(Program.COMArduinos[arduino.COM]);
                 }
@@ -330,23 +293,55 @@ namespace ShineALight
 
         private void Reverse_Click(object sender, EventArgs e)
         {
-            foreach(Arduino arduino in ArduinoList.CheckedItems.OfType<Arduino>())
-            {
-                arduino.Settings.Reverse = !arduino.Settings.Reverse;
-            }
-            ArduinoList.Refresh();
+            if (arduinoList.SelectedItem == null) return;
+            Arduino arduino = arduinoList.SelectedItem as Arduino;
+            arduino.Settings.Reverse = !arduino.Settings.Reverse;
+            arduinoList.Items.Clear();
+            foreach (Arduino a in arduinoCollection) arduinoList.Items.Add(a);
+            arduinoList.SelectedItem = arduino;
+            settings.Save();
         }
 
         private void RemoveArduino_Click(object sender, EventArgs e)
         {
-            foreach (Arduino arduino in ArduinoList.CheckedItems.OfType<Arduino>().ToList())
+            if (arduinoList.SelectedItem == null) return;
+            Arduino arduino = arduinoList.SelectedItem as Arduino;
+
+            var dialog = MessageBox.Show("Are you sure you want to delete " + arduino.Name + "?", "Confirm Delete", MessageBoxButtons.YesNo);
+
+            if(dialog == DialogResult.Yes)
             {
-                ArduinoList.Items.Remove(arduino);
-                if(arduino.Settings.ConnectionType == ConnectionType.Serial) Program.COMArduinos.Remove(arduino.Settings.COM);
+                arduinoList.Items.Remove(arduino);
+                if (arduino.Settings.ConnectionType == ConnectionType.Serial) Program.COMArduinos.Remove(arduino.Settings.COM);
                 arduinoCollection.Remove(arduino);
                 settings.Arduinos.Remove(arduino.Settings);
+                settings.Save();
             }
-            ArduinoList.Refresh();
+            
+        }
+
+        private void MoveUp_Click(object sender, EventArgs e)
+        {
+            if (arduinoList.SelectedItem == null) return;
+            Arduino arduino = arduinoList.SelectedItem as Arduino;
+            arduinoCollection.ShiftUp(arduino);
+            settings.Arduinos.Shift(arduino.Settings, -1);
+            arduinoList.Items.Clear();
+            foreach(Arduino a in arduinoCollection) arduinoList.Items.Add(a);
+            arduinoList.SelectedItem = arduino;
+            settings.Save();
+        }
+
+        private void MoveDown_Click(object sender, EventArgs e)
+        {
+            if (arduinoList.SelectedItem == null) return;
+            Arduino arduino = arduinoList.SelectedItem as Arduino;
+            arduinoCollection.ShiftDown(arduino);
+            settings.Arduinos.Shift(arduino.Settings, 1);
+            arduinoList.Items.Clear();
+            foreach (Arduino a in arduinoCollection) arduinoList.Items.Add(a);
+            arduinoList.SelectedItem = arduino;
+            settings.Save();
         }
     }
 
@@ -354,7 +349,8 @@ namespace ShineALight
     {
         public virtual void DisposeDeferred()
         {
-            
+            int a = 2;
+            a.Mod(2);
         }
 
     }

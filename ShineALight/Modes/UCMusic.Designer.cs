@@ -37,7 +37,7 @@
             this.audioUI.Audio = null;
             this.audioUI.Location = new System.Drawing.Point(0, 0);
             this.audioUI.Name = "audioUI";
-            this.audioUI.Size = new System.Drawing.Size(448, 400);
+            this.audioUI.Size = new System.Drawing.Size(534, 400);
             this.audioUI.TabIndex = 0;
             // 
             // UCMusic
@@ -46,7 +46,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.audioUI);
             this.Name = "UCMusic";
-            this.Size = new System.Drawing.Size(466, 410);
+            this.Size = new System.Drawing.Size(534, 400);
             this.ResumeLayout(false);
 
         }

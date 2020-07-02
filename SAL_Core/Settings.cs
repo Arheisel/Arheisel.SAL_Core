@@ -316,8 +316,10 @@ namespace SAL_Core
     [Serializable]
     public class AutoscalerSettings
     {
-        public bool Enabled { get; set; } = false;
+        public bool Enabled { get; set; } = true;
 
         public double Scale { get; set; } = 1.0;
+
+        public int Amp { get; set; } = 1;
     }
 }

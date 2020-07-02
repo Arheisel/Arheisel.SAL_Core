@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.Main = new System.Windows.Forms.SplitContainer();
+            this.arduinoList = new System.Windows.Forms.ListBox();
             this.Reverse = new System.Windows.Forms.Button();
             this.MoveDown = new System.Windows.Forms.Button();
             this.MoveUp = new System.Windows.Forms.Button();
@@ -36,7 +37,6 @@
             this.label2 = new System.Windows.Forms.Label();
             this.RemoveArduino = new System.Windows.Forms.Button();
             this.AddArduino = new System.Windows.Forms.Button();
-            this.ArduinoList = new System.Windows.Forms.CheckedListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.ModeSelect = new System.Windows.Forms.ComboBox();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
@@ -61,6 +61,7 @@
             // Main.Panel1
             // 
             this.Main.Panel1.BackColor = System.Drawing.SystemColors.Control;
+            this.Main.Panel1.Controls.Add(this.arduinoList);
             this.Main.Panel1.Controls.Add(this.Reverse);
             this.Main.Panel1.Controls.Add(this.MoveDown);
             this.Main.Panel1.Controls.Add(this.MoveUp);
@@ -68,13 +69,22 @@
             this.Main.Panel1.Controls.Add(this.label2);
             this.Main.Panel1.Controls.Add(this.RemoveArduino);
             this.Main.Panel1.Controls.Add(this.AddArduino);
-            this.Main.Panel1.Controls.Add(this.ArduinoList);
             this.Main.Panel1.Controls.Add(this.label1);
             this.Main.Panel1.Controls.Add(this.ModeSelect);
             this.Main.Panel1MinSize = 200;
             this.Main.Size = new System.Drawing.Size(800, 426);
             this.Main.SplitterDistance = 200;
             this.Main.TabIndex = 0;
+            // 
+            // arduinoList
+            // 
+            this.arduinoList.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
+            this.arduinoList.FormattingEnabled = true;
+            this.arduinoList.Location = new System.Drawing.Point(15, 82);
+            this.arduinoList.Name = "arduinoList";
+            this.arduinoList.Size = new System.Drawing.Size(163, 264);
+            this.arduinoList.TabIndex = 10;
             // 
             // Reverse
             // 
@@ -96,6 +106,7 @@
             this.MoveDown.TabIndex = 8;
             this.MoveDown.Text = "▼";
             this.MoveDown.UseVisualStyleBackColor = true;
+            this.MoveDown.Click += new System.EventHandler(this.MoveDown_Click);
             // 
             // MoveUp
             // 
@@ -106,6 +117,7 @@
             this.MoveUp.TabIndex = 7;
             this.MoveUp.Text = "▲";
             this.MoveUp.UseVisualStyleBackColor = true;
+            this.MoveUp.Click += new System.EventHandler(this.MoveUp_Click);
             // 
             // progressBar1
             // 
@@ -144,17 +156,6 @@
             this.AddArduino.Text = "Add";
             this.AddArduino.UseVisualStyleBackColor = true;
             this.AddArduino.Click += new System.EventHandler(this.AddArduino_Click);
-            // 
-            // ArduinoList
-            // 
-            this.ArduinoList.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ArduinoList.FormattingEnabled = true;
-            this.ArduinoList.Location = new System.Drawing.Point(15, 82);
-            this.ArduinoList.Name = "ArduinoList";
-            this.ArduinoList.Size = new System.Drawing.Size(163, 259);
-            this.ArduinoList.TabIndex = 2;
             // 
             // label1
             // 
@@ -269,13 +270,13 @@
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.Button RemoveArduino;
         private System.Windows.Forms.Button AddArduino;
-        private System.Windows.Forms.CheckedListBox ArduinoList;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Button Reverse;
         private System.Windows.Forms.Button MoveDown;
         private System.Windows.Forms.Button MoveUp;
+        private System.Windows.Forms.ListBox arduinoList;
     }
 }
 

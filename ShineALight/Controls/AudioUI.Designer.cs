@@ -39,7 +39,7 @@
             this.autoscalerControl.AutoScaler = null;
             this.autoscalerControl.Location = new System.Drawing.Point(283, 267);
             this.autoscalerControl.Name = "autoscalerControl";
-            this.autoscalerControl.Size = new System.Drawing.Size(161, 130);
+            this.autoscalerControl.Size = new System.Drawing.Size(244, 130);
             this.autoscalerControl.TabIndex = 2;
             // 
             // audioControls
@@ -59,7 +59,7 @@
             this.vuPanel.Channels = 0;
             this.vuPanel.Location = new System.Drawing.Point(3, 3);
             this.vuPanel.Name = "vuPanel";
-            this.vuPanel.Size = new System.Drawing.Size(441, 258);
+            this.vuPanel.Size = new System.Drawing.Size(524, 258);
             this.vuPanel.TabIndex = 0;
             // 
             // AudioUI
@@ -70,7 +70,7 @@
             this.Controls.Add(this.audioControls);
             this.Controls.Add(this.vuPanel);
             this.Name = "AudioUI";
-            this.Size = new System.Drawing.Size(448, 400);
+            this.Size = new System.Drawing.Size(534, 400);
             this.ResumeLayout(false);
 
         }

@@ -117,6 +117,12 @@
     <Compile Include="Controls\CurvePlot.Designer.cs">
       <DependentUpon>CurvePlot.cs</DependentUpon>
     </Compile>
+    <Compile Include="Controls\EffectsControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Controls\EffectsControl.Designer.cs">
+      <DependentUpon>EffectsControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\VUPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -218,6 +224,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\CurvePlot.resx">
       <DependentUpon>CurvePlot.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Controls\EffectsControl.resx">
+      <DependentUpon>EffectsControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\Knob.resx">
       <DependentUpon>Knob.cs</DependentUpon>

@@ -33,11 +33,11 @@
             // 
             // audioUI1
             // 
-            this.audioUI1.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.audioUI1.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.audioUI1.Audio = null;
-            this.audioUI1.Location = new System.Drawing.Point(40, 3);
+            this.audioUI1.Location = new System.Drawing.Point(0, 0);
             this.audioUI1.Name = "audioUI1";
-            this.audioUI1.Size = new System.Drawing.Size(448, 400);
+            this.audioUI1.Size = new System.Drawing.Size(534, 400);
             this.audioUI1.TabIndex = 0;
             // 
             // UCVisualizer
@@ -46,7 +46,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.audioUI1);
             this.Name = "UCVisualizer";
-            this.Size = new System.Drawing.Size(547, 490);
+            this.Size = new System.Drawing.Size(534, 400);
             this.ResumeLayout(false);
 
         }

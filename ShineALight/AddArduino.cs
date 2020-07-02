@@ -20,6 +20,7 @@ namespace ShineALight
         public AddArduino()
         {
             InitializeComponent();
+            Design.Apply(this);
             serial = new AddArduinoSerial();
             tableLayoutPanel1.Controls.Add(serial);
             serial.Dock = DockStyle.Fill;

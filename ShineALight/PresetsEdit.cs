@@ -22,6 +22,7 @@ namespace ShineALight
         public PresetsEdit(Dictionary<string, EffectPreset> presetList)
         {
             InitializeComponent();
+            Design.Apply(this);
             PresetList = new Dictionary<string, EffectPreset>(presetList);
             foreach (var name in Enum.GetNames(typeof(EffectTypes))) typeSelect.Items.Add(name);
             FillListBox();

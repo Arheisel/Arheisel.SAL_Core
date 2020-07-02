@@ -43,12 +43,7 @@ namespace ShineALight
                 Log.Write(Log.TYPE_ERROR, "UCVisualizer :: " + ex.Message + Environment.NewLine + ex.StackTrace);
                 MessageBox.Show("ERROR: " + ex.Message);
             }
-
-            foreach (string name in effects.Settings.PresetList.Keys)
-            {
-                currentSelect.Items.Add(name);
-            }
-            currentSelect.SelectedItem = effects.Current;
+            effectsControl1.Effects = effects;
 
             this.collection = collection;
         }
@@ -95,19 +90,6 @@ namespace ShineALight
                     if (e.ChannelMagnitudes[i * collection.Multiplier + j] > peak) peak = e.ChannelMagnitudes[i * collection.Multiplier + j];
                 }
                 collection.SetColor(i + 1, effColors[i] * peak);
-            }
-        }
-
-        private void CurrentSelect_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                effects.Current = currentSelect.Text;
-            }
-            catch (Exception ex)
-            {
-                Log.Write(Log.TYPE_ERROR, "UCEffectsVisualizer :: " + ex.Message + Environment.NewLine + ex.StackTrace);
-                MessageBox.Show("ERROR: " + ex.Message);
             }
         }
     }

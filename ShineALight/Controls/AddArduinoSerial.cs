@@ -22,6 +22,7 @@ namespace ShineALight
         public AddArduinoSerial()
         {
             InitializeComponent();
+            Design.Apply(this);
             background = new BackgroundWorker();
             background.WorkerReportsProgress = true;
             background.WorkerSupportsCancellation = true;
@@ -115,7 +116,7 @@ namespace ShineALight
                 {
                     taskList.Add(Task.Run(() => DiscoverPort(name)));
                 }
-                else if (!Program.arduinoCollection.ContainsArduino(name))
+                else if (!Program.arduinoCollection.Contains(name))
                 {
                     list.Add(name);
                 }

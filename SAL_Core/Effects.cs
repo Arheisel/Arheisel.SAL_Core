@@ -317,11 +317,11 @@ namespace SAL_Core
                 channels = arduino.ChannelCount;
                 for(int i = 0; i < channels; i++)
                 {
-                    transitions[i] = new Transition(Preset.ColorList[MathH.Mod(count - i, Preset.ColorList.Count)], Preset.ColorList[MathH.Mod(count - i + 1, Preset.ColorList.Count)], Preset.TotalSteps);
+                    transitions[i] = new Transition(Preset.ColorList[(count - i).Mod(Preset.ColorList.Count)], Preset.ColorList[(count - i + 1).Mod(Preset.ColorList.Count)], Preset.TotalSteps);
                     if (Preset.Reverse)
-                        colors.Add(new ChColor(channels - i, Preset.ColorList[MathH.Mod(count - i, Preset.ColorList.Count)]));
+                        colors.Add(new ChColor(channels - i, Preset.ColorList[(count - i).Mod(Preset.ColorList.Count)]));
                     else
-                        colors.Add(new ChColor(i + 1, Preset.ColorList[MathH.Mod(count - i, Preset.ColorList.Count)]));
+                        colors.Add(new ChColor(i + 1, Preset.ColorList[(count - i).Mod(Preset.ColorList.Count)]));
                 }
                 if (count >= Preset.ColorList.Count - 1) count = 0;
                 else count++;
@@ -361,7 +361,7 @@ namespace SAL_Core
             if (arduino.ChannelCount == 0) return colors;
             if (step == 0)
             {
-                transition = new Transition(Preset.ColorList[count], Preset.ColorList[MathH.Mod(count + 1, Preset.ColorList.Count)], Preset.TotalSteps);
+                transition = new Transition(Preset.ColorList[count], Preset.ColorList[(count + 1).Mod(Preset.ColorList.Count)], Preset.TotalSteps);
                 colors.Add(new ChColor(0, Preset.ColorList[count]));
 
                 if (count >= Preset.ColorList.Count - 1) count = 0;
@@ -561,7 +561,7 @@ namespace SAL_Core
                 channels = arduino.ChannelCount;
                 if(currentChannel == 1)
                 {
-                    transition = new Transition(Preset.ColorList[count], Preset.ColorList[MathH.Mod(count + 1, Preset.ColorList.Count)], Preset.TotalSteps);
+                    transition = new Transition(Preset.ColorList[count], Preset.ColorList[(count + 1).Mod(Preset.ColorList.Count)], Preset.TotalSteps);
                     colors.Add(new ChColor(0, Preset.ColorList[count]));
                     if (count >= Preset.ColorList.Count - 1) count = 0;
                     else count++;

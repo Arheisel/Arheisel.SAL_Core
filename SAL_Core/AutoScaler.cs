@@ -49,6 +49,18 @@ namespace SAL_Core
             }
         }
 
+        public int Amp
+        {
+            get
+            {
+                return Settings.Amp;
+            }
+            set
+            {
+                Settings.Amp = value;
+            }
+        }
+
         public void Stop()
         {
             timer.Stop();

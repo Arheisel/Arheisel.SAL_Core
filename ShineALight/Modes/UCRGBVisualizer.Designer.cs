@@ -83,7 +83,7 @@
             this.autoscalerControl.AutoScaler = null;
             this.autoscalerControl.Location = new System.Drawing.Point(3, 272);
             this.autoscalerControl.Name = "autoscalerControl";
-            this.autoscalerControl.Size = new System.Drawing.Size(175, 128);
+            this.autoscalerControl.Size = new System.Drawing.Size(251, 128);
             this.autoscalerControl.TabIndex = 3;
             // 
             // groupBox1

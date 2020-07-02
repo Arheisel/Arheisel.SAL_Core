@@ -17,6 +17,7 @@ namespace ShineALight
         public AddArduinoUDP()
         {
             InitializeComponent();
+            Design.Apply(this);
         }
 
         private void TextBox1_TextChanged(object sender, EventArgs e)
