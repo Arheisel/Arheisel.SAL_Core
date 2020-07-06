@@ -98,15 +98,21 @@ namespace SAL_Core
                 };
 
                 serial.Open();
-                byte[] dataArr = { 242, 1, 1 };
+                byte[] dataArr = { 252, 1, 1 }; //get model
                 serial.Write(dataArr, 0, dataArr.Length);
-                if(serial.ReadByte() == 250)
-                    Channels = serial.ReadByte();
+                var id = Receive();
+                if(id.Length == 2 && id[0] == 250)
+                    Channels = id[1];
                 else throw new Exception("Failed at getting device Model");
             }
             catch (TimeoutException)
             {
-                if (retryCount < 10 && Online) StartSerial(com, ++retryCount);
+                if (retryCount < 10 && Online)
+                {
+                    serial.Close();
+                    Thread.Sleep(250);
+                    StartSerial(com, ++retryCount);
+                }
                 else
                 {
                     Online = false;
@@ -148,15 +154,20 @@ namespace SAL_Core
 
         public int Channels { get; private set; } = 1;
 
-        public void SetColor(int R, int G, int B)
+        public void SetColor(Color color)
         {
-            SetColor(0, R, G, B);
+            SetColor(0, color);
         }
 
-        public void SetColor(int channel, int R, int G, int B)
+        public void SetColor(int channel, Color color)
         {
+            if (channel <= 0 || channel > Channels)
+            {
+                return;
+            }
+
             int ch = 100;
-            if(Channels != 1 && channel > 0 && channel <= Channels)
+            if (Channels != 1 && channel > 0)
             {
                 if (Settings.Reverse)
                     ch += Channels - channel + 1;
@@ -164,11 +175,40 @@ namespace SAL_Core
                     ch += channel;
             }
 
-            R = NormalizeColor(R);
-            G = NormalizeColor(G);
-            B = NormalizeColor(B);
+            var R = NormalizeColor(color.R);
+            var G = NormalizeColor(color.G);
+            var B = NormalizeColor(color.B);
 
             byte[] data = { (byte)ch, (byte)R, (byte)G, (byte)B };
+            Send(data);
+        }
+
+        public void SetColor(Color[] colors)
+        {
+            if (colors.Length != Channels) return;
+
+            byte[] data = new byte[Channels * 3 + 1];
+            data[0] = 99;
+
+            if (Settings.Reverse)
+            {
+                for (int i = 0; i < Channels; i++)
+                {
+                    data[i * 3 + 1] = (byte)NormalizeColor(colors[Channels - i - 1].R);
+                    data[i * 3 + 2] = (byte)NormalizeColor(colors[Channels - i - 1].G);
+                    data[i * 3 + 3] = (byte)NormalizeColor(colors[Channels - i - 1].B);
+                }
+            }
+            else
+            {
+                for (int i = 0; i < Channels; i++)
+                {
+                    data[i * 3 + 1] = (byte)NormalizeColor(colors[i].R);
+                    data[i * 3 + 2] = (byte)NormalizeColor(colors[i].G);
+                    data[i * 3 + 3] = (byte)NormalizeColor(colors[i].B);
+                }
+            }
+            
             Send(data);
         }
 
@@ -193,30 +233,6 @@ namespace SAL_Core
             return c;
         }
 
-        //private Color _color = Colors.NONE;
-        public void SetColor(Color color)
-        {
-            //if (color == _color) return;
-            //_color = color;
-            SetColor(0, color.R, color.G, color.B);
-        }
-
-        //private Color[] _colors = { Colors.NONE, Colors.NONE, Colors.NONE, Colors.NONE };
-        public void SetColor(int channel, Color color)
-        {
-            if(channel <= 0 || channel > 4)
-            {
-                SetColor(color);
-            }
-            else
-            {
-                //if (color == _colors[channel - 1]) return;
-                //_colors[channel - 1] = color;
-                SetColor(channel, color.R, color.G, color.B);
-            }
-        }
-
-
         private void Send(byte[] data)
         {
             try
@@ -233,18 +249,22 @@ namespace SAL_Core
             catch (TimeoutException e)
             {
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
-                Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Attempting to reopen port");
-                try
+                if(Settings.ConnectionType == ConnectionType.Serial)
                 {
-                    serial.Close();
-                    StartSerial(Name);
-                    Send(data);
-                }
-                catch (Exception ex)
-                {
-                    Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + ex.Message + Environment.NewLine + ex.StackTrace);
-                    Online = false;
-                    throw;
+                    Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Attempting to reopen port");
+                    try
+                    {
+                        serial.Close();
+                        Thread.Sleep(250);
+                        StartSerial(Name);
+                        Send(data);
+                    }
+                    catch (Exception ex)
+                    {
+                        Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                        Online = false;
+                        throw;
+                    }
                 }
             }
             catch (Exception e)
@@ -357,6 +377,7 @@ namespace SAL_Core
         private readonly Thread thread;
         //private Color _color = Colors.NONE;
         private readonly Color[] _chColor = new Color[100];
+        public int ChannelCount { get; private set; } = 0;
 
         public event EventHandler<ArduinoExceptionArgs> OnError;
 
@@ -384,16 +405,16 @@ namespace SAL_Core
                 {
                     if (queue.TryDequeue(out ChColor chColor))
                     {
-                        int channel = chColor.Channel;
-                        if (channel == 0)
+                        if(chColor.Colors != null)
                         {
+                            int i = 0;
                             foreach (Arduino arduino in collection)
                             {
                                 if (arduino.Online)
                                 {
                                     try
                                     {
-                                        arduino.SetColor(chColor.Color);
+                                        arduino.SetColor(chColor.Colors.Splice(i, arduino.Channels));
                                     }
                                     catch (Exception e)
                                     {
@@ -401,21 +422,21 @@ namespace SAL_Core
                                         throw;
                                     }
                                 }
-                                
+                                i += arduino.Channels;
                             }
                         }
                         else
                         {
-
-                            foreach (Arduino arduino in collection)
+                            int channel = chColor.Channel;
+                            if (channel == 0)
                             {
-                                if (channel - arduino.Channels <= 0)
+                                foreach (Arduino arduino in collection)
                                 {
                                     if (arduino.Online)
                                     {
                                         try
                                         {
-                                            arduino.SetColor(channel, chColor.Color);
+                                            arduino.SetColor(chColor.Color);
                                         }
                                         catch (Exception e)
                                         {
@@ -423,15 +444,37 @@ namespace SAL_Core
                                             throw;
                                         }
                                     }
-                                    break;
+
                                 }
-                                else
+                            }
+                            else
+                            {
+
+                                foreach (Arduino arduino in collection)
                                 {
-                                    channel -= arduino.Channels;
+                                    if (channel - arduino.Channels <= 0)
+                                    {
+                                        if (arduino.Online)
+                                        {
+                                            try
+                                            {
+                                                arduino.SetColor(channel, chColor.Color);
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                OnError?.Invoke(this, new ArduinoExceptionArgs(arduino, e));
+                                                throw;
+                                            }
+                                        }
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        channel -= arduino.Channels;
+                                    }
                                 }
                             }
                         }
-
                     }
                     Thread.Sleep(1);
                 }
@@ -571,10 +614,6 @@ namespace SAL_Core
             } 
         }
 
-        public int ChannelCount { get; private set; } = 0;
-
-        
-
         public void SetColor(int channel, Color color)
         {
             if (channel >= 0 && channel <= ChannelCount && (color != _chColor[channel] || (_chColor[0] != Colors.NONE && channel != 0)))
@@ -583,6 +622,12 @@ namespace SAL_Core
                 if (channel != 0) _chColor[0] = Colors.NONE;
                 queue.Enqueue(new ChColor(channel, color));
             }
+        }
+
+        public void SetColor(Color[] colors)
+        {
+            if (colors.Length != ChannelCount) return;
+            queue.Enqueue(new ChColor(colors));
         }
 
         public int Multiplier
@@ -731,11 +776,20 @@ namespace SAL_Core
     {
         public readonly Color Color;
         public readonly int Channel;
+        public readonly Color[] Colors;
 
         public ChColor(int channel, Color color)
         {
             Color = color;
             Channel = channel;
+            Colors = null;
+        }
+
+        public ChColor(Color[] colors)
+        {
+            Color = SAL_Core.Colors.NONE;
+            Channel = 0;
+            Colors = colors;
         }
     }
 

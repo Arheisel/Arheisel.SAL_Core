@@ -17,9 +17,9 @@ namespace SAL_Core
         {
             var len = list.Count();
             if (count == 0) return;
-            else if(count > 0)
+            else if (count > 0)
             {
-                for(int i = list.IndexOf(item); i < len - 1 && count > 0; i++, count--)
+                for (int i = list.IndexOf(item); i < len - 1 && count > 0; i++, count--)
                 {
                     list.Swap(i, i + 1);
                 }
@@ -48,6 +48,13 @@ namespace SAL_Core
             Array.Resize<T>(ref x, x.Length + y.Length);
             Array.Copy(y, 0, x, oldLen, y.Length);
             return x;
+        }
+
+        public static T[] Splice<T>(this T[] array, int startIndex, int length)
+        {
+            var ret = new T[length];
+            Array.Copy(array, startIndex, ret, 0, length);
+            return ret;
         }
     }
 

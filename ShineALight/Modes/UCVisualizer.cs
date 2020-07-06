@@ -59,6 +59,7 @@ namespace ShineALight
 
         private void Audio_DataAvailable(object sender, AudioDataAvailableArgs e)
         {
+            var colors = new SAL_Core.Color[collection.ChannelCount];
             for (int i = 0; i < collection.ChannelCount; i++)
             {
                 double peak = 0;
@@ -66,8 +67,10 @@ namespace ShineALight
                 {
                     if (e.ChannelMagnitudes[i * collection.Multiplier + j] > peak) peak = e.ChannelMagnitudes[i * collection.Multiplier + j];
                 }
-                collection.SetColor(i + 1, Maps.EncodeRGB(peak));
+                colors[i] = Maps.EncodeRGB(peak);
+                //collection.SetColor(i + 1, Maps.EncodeRGB(peak));
             }
+            collection.SetColor(colors);
         }
     }
 }
