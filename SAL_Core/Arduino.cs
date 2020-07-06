@@ -14,7 +14,7 @@ namespace SAL_Core
     public class Arduino : IDisposable
     {
         private SerialPort serial;
-        private readonly byte[] dataArr = new byte[1];
+        //private readonly byte[] dataArr = new byte[1];
         private UDPCLient udp = null;
         private static int port = 9050;
 
@@ -86,7 +86,7 @@ namespace SAL_Core
                 serial = new SerialPort
                 {
                     PortName = Name,
-                    BaudRate = 9600,
+                    BaudRate = 115200,
                     Parity = Parity.None,
                     DataBits = 8,
                     StopBits = StopBits.One,
@@ -98,9 +98,11 @@ namespace SAL_Core
                 };
 
                 serial.Open();
-                dataArr[0] = 242;
+                byte[] dataArr = { 242, 1, 1 };
                 serial.Write(dataArr, 0, dataArr.Length);
-                Channels = serial.ReadByte();
+                if(serial.ReadByte() == 250)
+                    Channels = serial.ReadByte();
+                else throw new Exception("Failed at getting device Model");
             }
             catch (TimeoutException)
             {
@@ -153,13 +155,13 @@ namespace SAL_Core
 
         public void SetColor(int channel, int R, int G, int B)
         {
-            int ch = 252;
-            if(Channels != 1 && channel > 0 && channel <= 4)
+            int ch = 100;
+            if(Channels != 1 && channel > 0 && channel <= Channels)
             {
                 if (Settings.Reverse)
-                    ch -= (5 - channel) * 2;
+                    ch += Channels - channel + 1;
                 else
-                    ch -= channel * 2;
+                    ch += channel;
             }
 
             R = NormalizeColor(R);
@@ -219,6 +221,9 @@ namespace SAL_Core
         {
             try
             {
+                if (data.Length > 255) return;
+                byte[] header = { 252, (byte)data.Length };
+                data = header.Concat(data);
                 if (Settings.ConnectionType == ConnectionType.UDP) udp.Send(data);
                 else
                 {
@@ -250,11 +255,26 @@ namespace SAL_Core
             }
         }
 
-        private int Receive()
+        private byte[] Receive(bool wait = false)
         {
             try
-            {
-                return serial.ReadByte();
+            { 
+                if (wait)
+                {
+                    while (serial.BytesToRead == 0) Thread.Sleep(10);
+                }
+
+                if(serial.ReadByte() == 252)
+                {
+                    var len = serial.ReadByte();
+                    byte[] data = new byte[len];
+                    serial.Read(data, 0, len);
+                    return data;
+                }
+                else
+                {
+                    return new byte[0];
+                }
             }
             catch (Exception e)
             {
@@ -263,11 +283,11 @@ namespace SAL_Core
             }
         }
 
-        public bool TryReceive(out int data)
+        /*public bool TryReceive(out byte[] data)
         {
             try
             {
-                data = 0;
+                data = new byte[0];
                 if (Settings.ConnectionType == ConnectionType.Serial && serial.BytesToRead > 0)
                 {
                     data = Receive();
@@ -280,7 +300,7 @@ namespace SAL_Core
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
                 throw;
             }
-        }
+        }*/
 
         private void StartUDPClient(string ip, int dstPort)
         {
