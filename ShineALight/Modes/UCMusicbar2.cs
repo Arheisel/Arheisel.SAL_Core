@@ -41,11 +41,13 @@ namespace ShineALight
         private void Audio_DataAvailable(object sender, AudioDataAvailableArgs e)
         {
             double div = 1.0 / (double)arduinoCollection.ChannelCount;
+            var colors = new SAL_Core.Color[arduinoCollection.ChannelCount];
             for (int i = 0; i < arduinoCollection.ChannelCount; i++)
             {
-                if (e.Peak > div * i) arduinoCollection.SetColor(i + 1, Maps.EncodeRGB(e.Peak >= div * (i + 1) ? div * (i + 1) : e.Peak));
-                else arduinoCollection.SetColor(i + 1, Colors.OFF);
+                if (e.Peak > div * i) colors[i] = Maps.EncodeRGB(e.Peak >= div * (i + 1) ? div * (i + 1) : e.Peak);
+                else colors[i] = Colors.OFF;
             }
+            arduinoCollection.SetColor(colors);
         }
 
         public override void DisposeDeferred()

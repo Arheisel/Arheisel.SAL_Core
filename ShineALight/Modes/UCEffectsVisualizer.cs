@@ -82,15 +82,17 @@ namespace ShineALight
 
         private void Audio_DataAvailable(object sender, AudioDataAvailableArgs e)
         {
-            for(int i = 0; i < collection.ChannelCount; i++)
+            var colors = new SAL_Core.Color[collection.ChannelCount];
+            for (int i = 0; i < collection.ChannelCount; i++)
             {
                 double peak = 0;
                 for(int j = 0; j < collection.Multiplier; j++)
                 {
                     if (e.ChannelMagnitudes[i * collection.Multiplier + j] > peak) peak = e.ChannelMagnitudes[i * collection.Multiplier + j];
                 }
-                collection.SetColor(i + 1, effColors[i] * peak);
+                colors[i] = effColors[i] * peak;
             }
+            collection.SetColor(colors);
         }
     }
 }

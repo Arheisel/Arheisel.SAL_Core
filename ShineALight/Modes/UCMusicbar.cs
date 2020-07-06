@@ -53,11 +53,13 @@ namespace ShineALight
             if (e.Peak < 0.75 && currentSet) currentSet = false;
 
             double div = 1.0 / (double)arduinoCollection.ChannelCount;
+            var colors = new SAL_Core.Color[arduinoCollection.ChannelCount];
             for (int i = 0; i < arduinoCollection.ChannelCount; i++)
             {
-                if (e.Peak > div * i) arduinoCollection.SetColor(i + 1, colorList[current] * e.Peak);
-                else arduinoCollection.SetColor(i + 1, Colors.OFF);
+                if (e.Peak > div * i) colors[i] = colorList[current] * e.Peak;
+                else colors[i] = Colors.OFF;
             }
+            arduinoCollection.SetColor(colors);
         }
 
         public override void DisposeDeferred()
