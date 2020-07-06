@@ -161,7 +161,7 @@ namespace SAL_Core
 
         public void SetColor(int channel, Color color)
         {
-            if (channel <= 0 || channel > Channels)
+            if (channel < 0 || channel > Channels)
             {
                 return;
             }
