@@ -26,7 +26,7 @@ namespace ShineALight
         {
             InitializeComponent();
             arduinoCollection = collection;
-            colorList = new List<SAL_Core.Color> { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.LYME, Colors.GREEN, Colors.AQGREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK };
+            colorList = new List<SAL_Core.Color> { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.GREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK };
             try
             {
                 audio = new Audio(settings);
@@ -44,13 +44,13 @@ namespace ShineALight
 
         private void Audio_DataAvailable(object sender, AudioDataAvailableArgs e)
         {
-            if (e.Peak >= 0.85 && !currentSet)
+            if (e.Peak >= 0.95 && !currentSet)
             {
                 if (current >= colorList.Count - 1) current = 0;
                 else current++;
                 currentSet = true;
             }
-            if (e.Peak < 0.75 && currentSet) currentSet = false;
+            if (e.Peak < 0.90 && currentSet) currentSet = false;
 
             double div = 1.0 / (double)arduinoCollection.ChannelCount;
             var colors = new SAL_Core.Color[arduinoCollection.ChannelCount];

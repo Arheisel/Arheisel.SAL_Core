@@ -278,8 +278,6 @@ namespace SAL_Core
                         startingPoint++;
                     }
                     octave *= _octaveDist;
-                    //channelMagnitudes[i] = max;
-                    peak += max;
 
                     double x = Convert.ToDouble(max * autoScaler.Scale);
                     double res = Curve(x);
@@ -289,7 +287,6 @@ namespace SAL_Core
                     channelMagnitudes[i] = res;
                     if (res > peak) peak = res;
                 }
-
                 DataAvailable?.Invoke(this, new AudioDataAvailableArgs(peak, channelMagnitudes));
             }
             catch (Exception ex)
