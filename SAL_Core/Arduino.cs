@@ -216,7 +216,7 @@ namespace SAL_Core
         {
             if(c < 0) c = 0;
             else if (c > 255) c = 255;
-            else
+            /*else
             {
                 switch (c)
                 {
@@ -229,7 +229,7 @@ namespace SAL_Core
                         c++;
                         break;
                 }
-            }
+            }*/
             return c;
         }
 
