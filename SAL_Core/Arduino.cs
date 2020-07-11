@@ -142,14 +142,34 @@ namespace SAL_Core
             }
         }
 
+        private void StartUDPClient(string ip, int dstPort)
+        {
+            udp = new UDPCLient(ip, dstPort, port++);
+            SetColor(Colors.RED);
+        }
+
+        public void StopUDPClient()
+        {
+            try
+            {
+                udp.Dispose();
+                udp = null;
+                Online = false;
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+            }
+        }
+
         public override string ToString()
         {
             if (Online)
             {
-                if(Settings.Reverse) return Name + " - Reversed";
-                else return Name;
+                if(Settings.Reverse) return Name + " - " + Channels + "CH - Reversed";
+                else return Name + " - " + Channels + "CH";
             }
-            else return Name + " - Offline";
+            else return Name + " - " + Channels + "CH - Offline";
         }
 
         public int Channels { get; private set; } = 1;
@@ -216,20 +236,6 @@ namespace SAL_Core
         {
             if(c < 0) c = 0;
             else if (c > 255) c = 255;
-            /*else
-            {
-                switch (c)
-                {
-                    case 252:
-                    case 250:
-                    case 248:
-                    case 246:
-                    case 244:
-                    case 242:
-                        c++;
-                        break;
-                }
-            }*/
             return c;
         }
 
@@ -275,6 +281,21 @@ namespace SAL_Core
             }
         }
 
+        private void Send(int command, string data)
+        {
+            if (command < 0 || command > 255) return;
+            byte[] dataArr = new byte[] { (byte)command };
+            Send(dataArr.Concat(Encoding.ASCII.GetBytes(data)));
+        }
+
+        private void Send(int command)
+        {
+            if (command < 0 || command > 255) return;
+            byte[] data = new byte[] { (byte)command };
+            Send(data);
+        }
+
+
         private byte[] Receive(bool wait = false)
         {
             try
@@ -303,44 +324,52 @@ namespace SAL_Core
             }
         }
 
-        /*public bool TryReceive(out byte[] data)
+        private string ReceiveString(bool wait = false)
         {
-            try
-            {
-                data = new byte[0];
-                if (Settings.ConnectionType == ConnectionType.Serial && serial.BytesToRead > 0)
-                {
-                    data = Receive();
-                    return true;
-                }
-                return false;
-            }
-            catch (Exception e)
-            {
-                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
-                throw;
-            }
-        }*/
-
-        private void StartUDPClient(string ip, int dstPort)
-        {
-            udp = new UDPCLient(ip, dstPort, port++);
-            SetColor(Colors.RED);
+            return Encoding.ASCII.GetString(Receive(wait));
         }
 
-        public void StopUDPClient()
+        public List<string> ScanNetworks()
         {
-            try
+            var result = new List<string>();
+
+            Send(2); //scan command
+            int len = Receive(true)[0];
+            for(int i = 0; i < len; i++)
             {
-                udp.Dispose();
-                udp = null;
-                Online = false;
+                result.Add(ReceiveString(true));
             }
-            catch (Exception e)
-            {
-                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
-            }
+
+            return result;
         }
+
+        public string GetIPAddress()
+        {
+            Send(4);
+            return ReceiveString(true);
+        }
+
+        public string GetMACAddress()
+        {
+            Send(5);
+            return ReceiveString(true);
+        }
+
+        public void SetWifi(string SSID, string password, byte[] ip, byte[] gateway, byte[] mask)
+        {
+            var data = new byte[2];
+            data[0] = 3;
+            data[1] = (byte)SSID.Length;
+            data.Concat(Encoding.ASCII.GetBytes(SSID));
+            data.Concat(new byte[] { (byte)password.Length });
+            data.Concat(Encoding.ASCII.GetBytes(password));
+            data.Concat(ip);
+            data.Concat(gateway);
+            data.Concat(mask);
+            Send(data);
+        }
+
+        
 
         private bool _disposed = false;
 
