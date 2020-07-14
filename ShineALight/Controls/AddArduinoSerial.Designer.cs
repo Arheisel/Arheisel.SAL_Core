@@ -32,10 +32,13 @@
             this.label1 = new System.Windows.Forms.Label();
             this.statusLabel = new System.Windows.Forms.Label();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
+            this.wifiSetupBtn = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // comboBox1
             // 
+            this.comboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBox1.FormattingEnabled = true;
             this.comboBox1.Location = new System.Drawing.Point(38, 32);
@@ -76,16 +79,30 @@
             this.progressBar1.Style = System.Windows.Forms.ProgressBarStyle.Continuous;
             this.progressBar1.TabIndex = 3;
             // 
+            // wifiSetupBtn
+            // 
+            this.wifiSetupBtn.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.wifiSetupBtn.Enabled = false;
+            this.wifiSetupBtn.Location = new System.Drawing.Point(38, 59);
+            this.wifiSetupBtn.Name = "wifiSetupBtn";
+            this.wifiSetupBtn.Size = new System.Drawing.Size(150, 23);
+            this.wifiSetupBtn.TabIndex = 4;
+            this.wifiSetupBtn.Text = "Setup Wi-Fi";
+            this.wifiSetupBtn.UseVisualStyleBackColor = true;
+            this.wifiSetupBtn.Click += new System.EventHandler(this.WifiSetupBtn_Click);
+            // 
             // AddArduinoSerial
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.wifiSetupBtn);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.statusLabel);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.comboBox1);
             this.Name = "AddArduinoSerial";
-            this.Size = new System.Drawing.Size(200, 57);
+            this.Size = new System.Drawing.Size(200, 87);
             this.Load += new System.EventHandler(this.AddArduinoSerial_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -98,5 +115,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label statusLabel;
         private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.Button wifiSetupBtn;
     }
 }

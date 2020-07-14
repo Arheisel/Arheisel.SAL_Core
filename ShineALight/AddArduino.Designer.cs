@@ -72,12 +72,12 @@ namespace ShineALight
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(200, 61);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(221, 96);
             this.tableLayoutPanel1.TabIndex = 2;
             // 
             // OKButton
             // 
-            this.OKButton.Location = new System.Drawing.Point(57, 104);
+            this.OKButton.Location = new System.Drawing.Point(78, 139);
             this.OKButton.Name = "OKButton";
             this.OKButton.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.OKButton.Size = new System.Drawing.Size(75, 23);
@@ -89,7 +89,7 @@ namespace ShineALight
             // PopupCancelButton
             // 
             this.PopupCancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.PopupCancelButton.Location = new System.Drawing.Point(138, 104);
+            this.PopupCancelButton.Location = new System.Drawing.Point(159, 139);
             this.PopupCancelButton.Name = "PopupCancelButton";
             this.PopupCancelButton.Size = new System.Drawing.Size(75, 23);
             this.PopupCancelButton.TabIndex = 4;
@@ -105,7 +105,7 @@ namespace ShineALight
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.CancelButton = this.PopupCancelButton;
-            this.ClientSize = new System.Drawing.Size(222, 134);
+            this.ClientSize = new System.Drawing.Size(243, 174);
             this.ControlBox = false;
             this.Controls.Add(this.PopupCancelButton);
             this.Controls.Add(this.OKButton);

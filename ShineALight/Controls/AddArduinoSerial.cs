@@ -84,6 +84,7 @@ namespace ShineALight
                     port = comboBox1.Text;
                     statusLabel.Text = "Ready";
                     comboBox1.Enabled = true;
+                    wifiSetupBtn.Enabled = true;
                 }
                 else
                 {
@@ -168,6 +169,14 @@ namespace ShineALight
             catch
             {
                 return null;
+            }
+        }
+
+        private void WifiSetupBtn_Click(object sender, EventArgs e)
+        {
+            using (var dialog = new WiFiSetup(Program.COMArduinos[port]))
+            {
+                dialog.ShowDialog(this);
             }
         }
     }

@@ -309,7 +309,10 @@ namespace SAL_Core
                 {
                     var len = serial.ReadByte();
                     byte[] data = new byte[len];
-                    serial.Read(data, 0, len);
+                    for(int i = 0; i < len; i++)
+                    {
+                        data[i] = (byte)serial.ReadByte();
+                    }
                     return data;
                 }
                 else
@@ -332,7 +335,7 @@ namespace SAL_Core
         public List<string> ScanNetworks()
         {
             var result = new List<string>();
-
+            if(Settings.ConnectionType == ConnectionType.Serial) serial.DiscardInBuffer();
             Send(2); //scan command
             int len = Receive(true)[0];
             for(int i = 0; i < len; i++)
@@ -345,12 +348,14 @@ namespace SAL_Core
 
         public string GetIPAddress()
         {
+            if (Settings.ConnectionType == ConnectionType.Serial) serial.DiscardInBuffer();
             Send(4);
             return ReceiveString(true);
         }
 
         public string GetMACAddress()
         {
+            if (Settings.ConnectionType == ConnectionType.Serial) serial.DiscardInBuffer();
             Send(5);
             return ReceiveString(true);
         }
@@ -360,12 +365,12 @@ namespace SAL_Core
             var data = new byte[2];
             data[0] = 3;
             data[1] = (byte)SSID.Length;
-            data.Concat(Encoding.ASCII.GetBytes(SSID));
-            data.Concat(new byte[] { (byte)password.Length });
-            data.Concat(Encoding.ASCII.GetBytes(password));
-            data.Concat(ip);
-            data.Concat(gateway);
-            data.Concat(mask);
+            data = data.Concat(Encoding.ASCII.GetBytes(SSID));
+            data = data.Concat(new byte[] { (byte)password.Length });
+            data = data.Concat(Encoding.ASCII.GetBytes(password));
+            data = data.Concat(ip);
+            data = data.Concat(gateway);
+            data = data.Concat(mask);
             Send(data);
         }
 
