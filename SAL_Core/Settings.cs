@@ -121,7 +121,7 @@ namespace SAL_Core
 
         public ArduinoSettings(string ip, int port)
         {
-            ConnectionType = ConnectionType.UDP;
+            ConnectionType = ConnectionType.TCP;
             IP = ip;
             Port = port;
         }

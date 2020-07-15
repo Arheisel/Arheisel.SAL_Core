@@ -260,7 +260,7 @@ namespace ShineALight
                     e.Cancel = true;
                     break;
                 }
-                if (arduino.ConnectionType == ConnectionType.UDP) continue;
+                if (arduino.ConnectionType == ConnectionType.TCP) continue;
 
                 if (!Program.COMArduinos.ContainsKey(arduino.COM))
                 {

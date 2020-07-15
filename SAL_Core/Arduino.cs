@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO.Ports;
 using System.Linq;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -15,8 +16,8 @@ namespace SAL_Core
     {
         private SerialPort serial;
         //private readonly byte[] dataArr = new byte[1];
-        private UDPCLient udp = null;
-        private static int port = 9050;
+        private TcpClient tcp = null;
+        private NetworkStream stream = null;
 
         public string Name { get; private set; }
 
@@ -47,7 +48,7 @@ namespace SAL_Core
                 Name = Settings.IP + ":" + Settings.Port;
                 try
                 {
-                    StartUDPClient(Settings.IP, Settings.Port);
+                    StartTCPClient(Settings.IP, Settings.Port);
                 }
                 catch (Exception e)
                 {
@@ -133,7 +134,7 @@ namespace SAL_Core
             Settings.Reverse = reverse;
             try
             {
-                StartUDPClient(ip, dstPort);
+                StartTCPClient(ip, dstPort);
             }
             catch (Exception e)
             {
@@ -142,18 +143,38 @@ namespace SAL_Core
             }
         }
 
-        private void StartUDPClient(string ip, int dstPort)
+        private void StartTCPClient(string ip, int dstPort)
         {
-            udp = new UDPCLient(ip, dstPort, port++);
-            SetColor(Colors.RED);
+            tcp = new TcpClient(ip, dstPort);
+            tcp.NoDelay = true;
+            tcp.Client.NoDelay = true;
+            tcp.SendTimeout = 500;
+            tcp.ReceiveTimeout = 500;
+            if (tcp.Connected)
+            {
+                stream = tcp.GetStream();
+                byte[] dataArr = { 252, 1, 1 }; //get model
+                stream.Write(dataArr, 0, dataArr.Length);
+                var id = Receive();
+                if (id.Length == 2 && id[0] == 250)
+                    Channels = id[1];
+                else throw new Exception("Failed at getting device Model");
+                SetColor(Colors.RED);
+            }
+            else
+                throw new Exception("Connection failed.");            
         }
 
-        public void StopUDPClient()
+        public void StopTCPClient()
         {
             try
             {
-                udp.Dispose();
-                udp = null;
+                stream.Close();
+                stream.Dispose();
+                tcp.Close();
+                tcp.Dispose();
+                tcp = null;
+                stream = null;
                 Online = false;
             }
             catch (Exception e)
@@ -241,36 +262,71 @@ namespace SAL_Core
 
         private void Send(byte[] data)
         {
+            if (data.Length > 255) return;
+            byte[] header = { 252, (byte)data.Length };
+            data = header.Concat(data);
+            if (Settings.ConnectionType == ConnectionType.TCP)
+                SendTCP(data);
+            else
+                SendSerial(data);
+        }
+
+        private void SendSerial(byte[] data)
+        {
             try
             {
-                if (data.Length > 255) return;
-                byte[] header = { 252, (byte)data.Length };
-                data = header.Concat(data);
-                if (Settings.ConnectionType == ConnectionType.UDP) udp.Send(data);
-                else
-                {
-                    serial.Write(data, 0, data.Length);
-                }
+                serial.Write(data, 0, data.Length);
             }
             catch (TimeoutException e)
             {
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
-                if(Settings.ConnectionType == ConnectionType.Serial)
+
+                Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Attempting to reopen port");
+                try
                 {
-                    Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Attempting to reopen port");
-                    try
-                    {
-                        serial.Close();
-                        Thread.Sleep(250);
-                        StartSerial(Name);
-                        Send(data);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + ex.Message + Environment.NewLine + ex.StackTrace);
-                        Online = false;
-                        throw;
-                    }
+                    serial.Close();
+                    Thread.Sleep(250);
+                    StartSerial(Settings.COM);
+                    Send(data);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                    Online = false;
+                    throw;
+                }
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+                Online = false;
+                throw;
+            }
+        }
+
+        private void SendTCP(byte[] data)
+        {
+            try
+            {
+                stream.Write(data, 0, data.Length);
+            }
+            catch (TimeoutException e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+
+                Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Attempting to reopen port");
+                try
+                {
+                    StopTCPClient();
+                    Thread.Sleep(250);
+                    StartTCPClient(Settings.IP, Settings.Port);
+                    Send(data);
+                }
+                catch (Exception ex)
+                {
+                    Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                    Online = false;
+                    throw;
                 }
             }
             catch (Exception e)
@@ -295,8 +351,15 @@ namespace SAL_Core
             Send(data);
         }
 
-
         private byte[] Receive(bool wait = false)
+        {
+            if (Settings.ConnectionType == ConnectionType.TCP)
+                return ReceiveTCP(wait);
+            else
+                return ReceiveSerial(wait);
+        }
+
+        private byte[] ReceiveSerial(bool wait = false)
         {
             try
             { 
@@ -317,6 +380,7 @@ namespace SAL_Core
                 }
                 else
                 {
+                    serial.DiscardInBuffer();
                     return new byte[0];
                 }
             }
@@ -325,6 +389,57 @@ namespace SAL_Core
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
                 throw;
             }
+        }
+
+        private byte[] ReceiveTCP(bool wait = false)
+        {
+            try
+            {
+                if (ReceiveTCPByte(wait) == 252)
+                {
+                    var len = ReceiveTCPByte(wait);
+                    byte[] data = new byte[len];
+                    for (int i = 0; i < len; i++)
+                    {
+                        data[i] = ReceiveTCPByte(wait);
+                    }
+                    return data;
+                }
+                else
+                {
+                    //discard all data
+                    var buffer = new byte[4096];
+                    while (stream.DataAvailable)
+                    {
+                        stream.Read(buffer, 0, buffer.Length);
+                    }
+                    return new byte[0];
+                }
+            }
+            catch(Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
+                throw;
+            }
+        }
+
+        private byte ReceiveTCPByte(bool wait = false)
+        {
+            /// Getto timeout
+            var time = DateTime.Now;
+            var diff = new TimeSpan(0, 0, 10);
+            while (!stream.DataAvailable)
+            {
+                if ((DateTime.Now - time) > diff && !wait)
+                {
+                    throw new Exception("E_TCP_TIMEOUT: La conexion TCP excedio el tiempo de espera.");
+                }
+                Thread.Sleep(20);
+            }
+
+            var msg = new byte[1];
+            stream.Read(msg, 0, 1);
+            return msg[0];
         }
 
         private string ReceiveString(bool wait = false)
@@ -841,6 +956,6 @@ namespace SAL_Core
     public enum ConnectionType
     {
         Serial = 0,
-        UDP = 1
+        TCP = 1
     }
 }
