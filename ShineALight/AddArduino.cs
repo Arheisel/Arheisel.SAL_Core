@@ -16,7 +16,7 @@ namespace ShineALight
     {
         public Arduino arduino = null;
         private AddArduinoSerial serial;
-        private AddArduinoUDP udp;
+        private AddArduinoTCP udp;
         public AddArduino()
         {
             InitializeComponent();
@@ -73,7 +73,7 @@ namespace ShineALight
             if (UDPRadio.Checked)
             {
                 serial.StopDiscover();
-                udp = new AddArduinoUDP();
+                udp = new AddArduinoTCP();
                 tableLayoutPanel1.Controls[0].Dispose();
                 tableLayoutPanel1.Controls.Clear();
                 tableLayoutPanel1.Controls.Add(udp);

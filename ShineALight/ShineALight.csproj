@@ -87,11 +87,11 @@
     <Compile Include="Controls\AddArduinoSerial.Designer.cs">
       <DependentUpon>AddArduinoSerial.cs</DependentUpon>
     </Compile>
-    <Compile Include="Controls\AddArduinoUDP.cs">
+    <Compile Include="Controls\AddArduinoTCP.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Controls\AddArduinoUDP.Designer.cs">
-      <DependentUpon>AddArduinoUDP.cs</DependentUpon>
+    <Compile Include="Controls\AddArduinoTCP.Designer.cs">
+      <DependentUpon>AddArduinoTCP.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\AudioControls.cs">
       <SubType>UserControl</SubType>
@@ -216,8 +216,8 @@
     <EmbeddedResource Include="Controls\AddArduinoSerial.resx">
       <DependentUpon>AddArduinoSerial.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Controls\AddArduinoUDP.resx">
-      <DependentUpon>AddArduinoUDP.cs</DependentUpon>
+    <EmbeddedResource Include="Controls\AddArduinoTCP.resx">
+      <DependentUpon>AddArduinoTCP.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\AudioControls.resx">
       <DependentUpon>AudioControls.cs</DependentUpon>

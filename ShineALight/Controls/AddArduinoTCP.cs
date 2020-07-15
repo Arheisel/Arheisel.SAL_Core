@@ -10,11 +10,11 @@ using System.Windows.Forms;
 
 namespace ShineALight
 {
-    public partial class AddArduinoUDP : UserControl
+    public partial class AddArduinoTCP : UserControl
     {
         public string ip = "";
-        public int port = 9090;
-        public AddArduinoUDP()
+        public int port = 7990;
+        public AddArduinoTCP()
         {
             InitializeComponent();
             Design.Apply(this);

@@ -1,6 +1,6 @@
 ﻿namespace ShineALight
 {
-    partial class AddArduinoUDP
+    partial class AddArduinoTCP
     {
         /// <summary> 
         /// Required designer variable.
@@ -82,13 +82,13 @@
             this.numericUpDown1.Size = new System.Drawing.Size(141, 20);
             this.numericUpDown1.TabIndex = 3;
             this.numericUpDown1.Value = new decimal(new int[] {
-            9090,
+            7990,
             0,
             0,
             0});
             this.numericUpDown1.ValueChanged += new System.EventHandler(this.NumericUpDown1_ValueChanged);
             // 
-            // AddArduinoUDP
+            // AddArduinoTCP
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -96,7 +96,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.textBox1);
-            this.Name = "AddArduinoUDP";
+            this.Name = "AddArduinoTCP";
             this.Size = new System.Drawing.Size(200, 61);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
