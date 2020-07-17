@@ -69,6 +69,7 @@ namespace ShineALight
             {
                 arduinoList.Items.Clear();
                 foreach (Arduino a in arduinoCollection) arduinoList.Items.Add(a);
+                ModeSelect_SelectedIndexChanged(this, new EventArgs());
             }
         }
 
@@ -260,16 +261,13 @@ namespace ShineALight
                     e.Cancel = true;
                     break;
                 }
-                if (arduino.ConnectionType == ConnectionType.TCP) continue;
-
-                if (!Program.COMArduinos.ContainsKey(arduino.COM))
+                if (arduino.ConnectionType == ConnectionType.TCP)
                 {
                     try
                     {
                         var dev = new Arduino(arduino, true);
                         if (dev.Online)
                         {
-                            Program.COMArduinos.Add(dev.Name, dev);
                             arduinoCollection.Add(dev);
                         }
                         list.Add(dev);
@@ -279,11 +277,31 @@ namespace ShineALight
                         Log.Write(Log.TYPE_ERROR, "MainWindow :: " + ex.Message + Environment.NewLine + ex.StackTrace);
                     }
                 }
-                else if (!Program.arduinoCollection.Contains(arduino.COM))
+                else
                 {
-                    arduinoCollection.Add(Program.COMArduinos[arduino.COM]);
+                    if (!Program.COMArduinos.ContainsKey(arduino.COM))
+                    {
+                        try
+                        {
+                            var dev = new Arduino(arduino, true);
+                            if (dev.Online)
+                            {
+                                Program.COMArduinos.Add(dev.Name, dev);
+                                arduinoCollection.Add(dev);
+                            }
+                            list.Add(dev);
+                        }
+                        catch (Exception ex)
+                        {
+                            Log.Write(Log.TYPE_ERROR, "MainWindow :: " + ex.Message + Environment.NewLine + ex.StackTrace);
+                        }
+                    }
+                    else if (!Program.arduinoCollection.Contains(arduino.COM))
+                    {
+                        arduinoCollection.Add(Program.COMArduinos[arduino.COM]);
+                    }
                 }
-
+                
                 worker.ReportProgress((++count * 100) / settings.Arduinos.Count);
             }
 

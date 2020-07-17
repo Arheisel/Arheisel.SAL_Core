@@ -18,10 +18,15 @@ namespace SAL_Core
         //private readonly byte[] dataArr = new byte[1];
         private TcpClient tcp = null;
         private NetworkStream stream = null;
+        private Task sendTask = null;
+
+        public event EventHandler<ArduinoExceptionArgs> OnError;
 
         public string Name { get; private set; }
 
         public bool Online { get; private set; } = true;
+
+        public int Channels { get; private set; } = 0;
 
         public ArduinoSettings Settings { get; private set; } = null;
 
@@ -105,6 +110,7 @@ namespace SAL_Core
                 if(id.Length == 2 && id[0] == 250)
                     Channels = id[1];
                 else throw new Exception("Failed at getting device Model");
+                Online = true;
             }
             catch (TimeoutException)
             {
@@ -143,36 +149,57 @@ namespace SAL_Core
             }
         }
 
-        private void StartTCPClient(string ip, int dstPort)
+        private void StartTCPClient(string ip, int dstPort, bool retry = false, int retryCount = 0)
         {
-            tcp = new TcpClient(ip, dstPort);
-            tcp.NoDelay = true;
-            tcp.Client.NoDelay = true;
-            tcp.SendTimeout = 500;
-            tcp.ReceiveTimeout = 500;
-            if (tcp.Connected)
+            try
             {
-                stream = tcp.GetStream();
-                byte[] dataArr = { 252, 1, 1 }; //get model
-                stream.Write(dataArr, 0, dataArr.Length);
-                var id = Receive();
-                if (id.Length == 2 && id[0] == 250)
-                    Channels = id[1];
-                else throw new Exception("Failed at getting device Model");
-                SetColor(Colors.RED);
+                tcp = new TcpClient(ip, dstPort);
+                tcp.NoDelay = true;
+                tcp.Client.NoDelay = true;
+                tcp.SendTimeout = 500;
+                tcp.ReceiveTimeout = 500;
+                if (tcp.Connected)
+                {
+                    stream = tcp.GetStream();
+                    byte[] dataArr = { 252, 1, 1 }; //get model
+                    stream.Write(dataArr, 0, dataArr.Length);
+                    var id = Receive();
+                    if (id.Length == 2 && id[0] == 250)
+                        Channels = id[1];
+                    else throw new Exception("Failed at getting device Model");
+                    SetColor(Colors.RED);
+                }
+                else
+                    throw new Exception("Connection failed.");
+                Online = true;
             }
-            else
-                throw new Exception("Connection failed.");            
+            catch
+            {
+                if(retry && retryCount < 10)
+                {
+                    StartTCPClient(ip, dstPort, retry, ++retryCount);
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         public void StopTCPClient()
         {
             try
             {
-                stream.Close();
-                stream.Dispose();
-                tcp.Close();
-                tcp.Dispose();
+                if(stream != null)
+                {
+                    stream.Close();
+                    stream.Dispose();
+                }
+                if(tcp != null)
+                {
+                    tcp.Close();
+                    tcp.Dispose();
+                }
                 tcp = null;
                 stream = null;
                 Online = false;
@@ -192,8 +219,6 @@ namespace SAL_Core
             }
             else return Name + " - " + Channels + "CH - Offline";
         }
-
-        public int Channels { get; private set; } = 1;
 
         public void SetColor(Color color)
         {
@@ -262,6 +287,8 @@ namespace SAL_Core
 
         private void Send(byte[] data)
         {
+            if (!Online) return;
+
             if (data.Length > 255) return;
             byte[] header = { 252, (byte)data.Length };
             data = header.Concat(data);
@@ -306,34 +333,33 @@ namespace SAL_Core
 
         private void SendTCP(byte[] data)
         {
+            if(sendTask == null || sendTask.IsCompleted)
+            {
+                sendTask = Task.Run(() => SendTCPTask(data));
+            }
+        }
+
+        private void SendTCPTask(byte[] data)
+        {
             try
             {
                 stream.Write(data, 0, data.Length);
             }
-            catch (TimeoutException e)
+            catch (Exception e)
             {
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
 
-                Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Attempting to reopen port");
+                Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Attempting to reopen connection");
                 try
                 {
                     StopTCPClient();
-                    Thread.Sleep(250);
-                    StartTCPClient(Settings.IP, Settings.Port);
-                    Send(data);
+                    StartTCPClient(Settings.IP, Settings.Port, true);
                 }
                 catch (Exception ex)
                 {
                     Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + ex.Message + Environment.NewLine + ex.StackTrace);
-                    Online = false;
-                    throw;
+                    OnError?.Invoke(this, new ArduinoExceptionArgs(this, ex));
                 }
-            }
-            catch (Exception e)
-            {
-                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
-                Online = false;
-                throw;
             }
         }
 
@@ -513,6 +539,10 @@ namespace SAL_Core
                     serial.Close();
                     serial.Dispose();
                 }
+                else
+                {
+                    StopTCPClient();
+                }
             }
 
             _disposed = true;
@@ -567,6 +597,7 @@ namespace SAL_Core
                                     }
                                     catch (Exception e)
                                     {
+                                        CalculateChannels();
                                         OnError?.Invoke(this, new ArduinoExceptionArgs(arduino, e));
                                         throw;
                                     }
@@ -589,11 +620,11 @@ namespace SAL_Core
                                         }
                                         catch (Exception e)
                                         {
+                                            CalculateChannels();
                                             OnError?.Invoke(this, new ArduinoExceptionArgs(arduino, e));
                                             throw;
                                         }
                                     }
-
                                 }
                             }
                             else
@@ -676,12 +707,19 @@ namespace SAL_Core
             {
                 if (Contains(arduino)) return;
                 collection.Add(arduino);
-                ChannelCount += arduino.Channels;
+                CalculateChannels();
+                arduino.OnError += Arduino_OnError;
             }
             catch (Exception e)
             {
                 Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + e.Message + Environment.NewLine + e.StackTrace);
             }
+        }
+
+        private void Arduino_OnError(object sender, ArduinoExceptionArgs e)
+        {
+            CalculateChannels();
+            OnError?.Invoke(this, new ArduinoExceptionArgs(e.Arduino, e.Exception));
         }
 
         public void Insert(int i, Arduino arduino)
@@ -741,7 +779,7 @@ namespace SAL_Core
             var count = 0;
             foreach(var arduino in collection)
             {
-                count += arduino.Channels;
+                if(arduino.Online) count += arduino.Channels;
             }
             ChannelCount = count;
         }

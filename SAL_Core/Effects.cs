@@ -304,6 +304,7 @@ namespace SAL_Core
     {
         private int channels = 0;
         private readonly Transition[] transitions = new Transition[100];
+        private int stage = 0;
         public Rainbow(ArduinoCollection collection, EffectPreset settings) : base(collection, settings)
         {
         }
@@ -314,17 +315,21 @@ namespace SAL_Core
             if (arduino.ChannelCount == 0) return colors;
             if(step == 0)
             {
-                channels = arduino.ChannelCount;
-                for(int i = 0; i < channels; i++)
+                if(stage == 0)
                 {
-                    transitions[i] = new Transition(Preset.ColorList[(count - i).Mod(Preset.ColorList.Count)], Preset.ColorList[(count - i + 1).Mod(Preset.ColorList.Count)], Preset.TotalSteps);
-                    if (Preset.Reverse)
-                        colors.Add(new ChColor(channels - i, Preset.ColorList[(count - i).Mod(Preset.ColorList.Count)]));
-                    else
-                        colors.Add(new ChColor(i + 1, Preset.ColorList[(count - i).Mod(Preset.ColorList.Count)]));
+                    channels = arduino.ChannelCount;
+                    for (int i = 0; i < channels; i++)
+                    {
+                        transitions[i] = new Transition(Preset.ColorList[(count - i).Mod(Preset.ColorList.Count)], Preset.ColorList[(count - i + 1).Mod(Preset.ColorList.Count)], Preset.TotalSteps);
+                        if (Preset.Reverse)
+                            colors.Add(new ChColor(channels - i, Preset.ColorList[(count - i).Mod(Preset.ColorList.Count)]));
+                        else
+                            colors.Add(new ChColor(i + 1, Preset.ColorList[(count - i).Mod(Preset.ColorList.Count)]));
+                    }
+                    if (count >= Preset.ColorList.Count - 1) count = 0;
+                    else count++;
                 }
-                if (count >= Preset.ColorList.Count - 1) count = 0;
-                else count++;
+                
                 step++;
             }
             else
