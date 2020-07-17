@@ -665,6 +665,28 @@ namespace SAL_Core
             }
         }
 
+        public void TurnOff()
+        {
+            while (!queue.IsEmpty) Thread.Sleep(20);
+
+            foreach (Arduino arduino in collection)
+            {
+                if (arduino.Online)
+                {
+                    try
+                    {
+                        arduino.SetColor(Colors.OFF);
+                    }
+                    catch (Exception e)
+                    {
+                        Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + e.Message + Environment.NewLine + e.StackTrace);
+                    }
+                }
+            }
+
+            Thread.Sleep(50);
+        }
+
         public Arduino this[int index]
         {
             get
@@ -875,6 +897,7 @@ namespace SAL_Core
 
             if (disposing)
             {
+                thread.Abort();
                 foreach (Arduino arduino in collection) arduino.Dispose();
             }
 

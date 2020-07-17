@@ -82,9 +82,15 @@ namespace ShineALight
                     background.CancelAsync();
                     while (background.IsBusy) Thread.Sleep(1);
                 }
+
                 settings.Save();
-                arduinoCollection.SetColor(Colors.OFF);
-                Thread.Sleep(10);
+                if (Main.Panel2.Controls.Count > 0)
+                {
+                    CustomUserControl cuc = (CustomUserControl)Main.Panel2.Controls[0];
+                    cuc.DisposeDeferred();
+                }
+                Main.Panel2.Controls.Clear();
+                arduinoCollection.TurnOff();
                 arduinoCollection.Dispose();
             }
             catch (Exception ex)
