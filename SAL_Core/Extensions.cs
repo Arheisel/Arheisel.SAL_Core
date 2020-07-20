@@ -13,6 +13,16 @@ namespace SAL_Core
             return (x % m + m) % m;
         }
 
+        public static bool Even(this int i)
+        {
+            return i % 2 == 0;
+        }
+
+        public static bool Odd(this int i)
+        {
+            return !i.Even();
+        }
+
         public static void Shift<T>(this IList<T> list, T item, int count)
         {
             var len = list.Count();

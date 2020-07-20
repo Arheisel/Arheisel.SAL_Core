@@ -126,6 +126,11 @@ namespace SAL_Core
                     throw new Exception("Failed at getting device Model");
                 }
             }
+            catch (Exception)
+            {
+                Online = false;
+                throw;
+            }
         }
 
         /// <summary>
@@ -181,6 +186,7 @@ namespace SAL_Core
                 }
                 else
                 {
+                    Online = false;
                     throw;
                 }
             }
@@ -217,7 +223,7 @@ namespace SAL_Core
                 if(Settings.Reverse) return Name + " - " + Channels + "CH - Reversed";
                 else return Name + " - " + Channels + "CH";
             }
-            else return Name + " - " + Channels + "CH - Offline";
+            else return Name + " - Offline";
         }
 
         public void SetColor(Color color)
@@ -333,6 +339,11 @@ namespace SAL_Core
 
         private void SendTCP(byte[] data)
         {
+            if(stream == null)
+            {
+                Online = false;
+                return;
+            }
             if(sendTask == null || sendTask.IsCompleted)
             {
                 sendTask = Task.Run(() => SendTCPTask(data));
@@ -558,6 +569,8 @@ namespace SAL_Core
         private readonly Color[] _chColor = new Color[100];
         public int ChannelCount { get; private set; } = 0;
 
+        public bool Enabled { get; set; } = true;
+
         public event EventHandler<ArduinoExceptionArgs> OnError;
 
         public ArduinoCollection()
@@ -579,7 +592,7 @@ namespace SAL_Core
         private void Worker()
         {
             while (true)
-            {
+            { 
                 try
                 {
                     if (queue.TryDequeue(out ChColor chColor))
@@ -667,6 +680,7 @@ namespace SAL_Core
 
         public void TurnOff()
         {
+            Enabled = false;
             while (!queue.IsEmpty) Thread.Sleep(20);
 
             foreach (Arduino arduino in collection)
@@ -816,6 +830,7 @@ namespace SAL_Core
 
         public void SetColor(Color color)
         {
+            if (!Enabled) return;
             if (_chColor[0] != color)
             {
                 _chColor[0] = color;
@@ -825,6 +840,7 @@ namespace SAL_Core
 
         public void SetColor(int channel, Color color)
         {
+            if (!Enabled) return;
             if (channel >= 0 && channel <= ChannelCount && (color != _chColor[channel] || (_chColor[0] != Colors.NONE && channel != 0)))
             {
                 _chColor[channel] = color;
@@ -835,6 +851,7 @@ namespace SAL_Core
 
         public void SetColor(Color[] colors)
         {
+            if (!Enabled) return;
             if (colors.Length != ChannelCount) return;
             queue.Enqueue(new ChColor(colors));
         }
