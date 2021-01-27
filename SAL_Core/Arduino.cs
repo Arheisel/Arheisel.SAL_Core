@@ -933,7 +933,7 @@ namespace SAL_Core
         public static Color YELLOW { get; } = new Color(255, 255, 0);
         public static Color MAGENTA { get; } = new Color(255, 0, 255);
         public static Color CYAN { get; } = new Color(0, 255, 255);
-        public static Color ORANGE { get; } = new Color(255, 127, 0);
+        public static Color ORANGE { get; } = new Color(255, 65, 0);
         public static Color LYME { get; } = new Color(127, 255, 0);
         public static Color PURPLE { get; } = new Color(127, 0, 255);
         public static Color PINK { get; } = new Color(255, 0, 127);
