@@ -32,10 +32,9 @@ namespace ShineALight.Controls
                 _channels = value;
                 panel.Controls.Clear();
                 meters = new VUMeter[_channels];
-                var margin = 5;
-                var totalWidth = panel.Size.Width - margin;
-                var channelWidth = totalWidth / _channels;
-                var meterWidth = channelWidth - margin;
+                var margin = panel.Size.Width / _channels > 10 ? 5:0;
+                var channelWidth = (panel.Size.Width - margin) / _channels;
+                var meterWidth = channelWidth - margin > 0 ? channelWidth - margin:1;
                 var height = panel.Size.Height;
                 for (int i = 0; i < _channels; i++)
                 {

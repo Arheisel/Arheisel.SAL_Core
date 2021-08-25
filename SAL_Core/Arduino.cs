@@ -104,7 +104,7 @@ namespace SAL_Core
                 };
 
                 serial.Open();
-                byte[] dataArr = { 252, 1, 1 }; //get model
+                byte[] dataArr = { 252, 0, 1, 1 }; //get model
                 serial.Write(dataArr, 0, dataArr.Length);
                 var id = Receive();
                 if(id.Length == 2 && id[0] == 250)
@@ -166,7 +166,7 @@ namespace SAL_Core
                 if (tcp.Connected)
                 {
                     stream = tcp.GetStream();
-                    byte[] dataArr = { 252, 1, 1 }; //get model
+                    byte[] dataArr = { 252, 0, 1, 1 }; //get model
                     stream.Write(dataArr, 0, dataArr.Length);
                     var id = Receive();
                     if (id.Length == 2 && id[0] == 250)
@@ -295,8 +295,8 @@ namespace SAL_Core
         {
             if (!Online) return;
 
-            if (data.Length > 255) return;
-            byte[] header = { 252, (byte)data.Length };
+            if (data.Length > 65535) return;
+            byte[] header = { 252, (byte)(data.Length/256), (byte)(data.Length%256)}; //not pretty but endian independent
             data = header.Concat(data);
             if (Settings.ConnectionType == ConnectionType.TCP)
                 SendTCP(data);
@@ -678,6 +678,7 @@ namespace SAL_Core
             }
         }
 
+        
         public void TurnOff()
         {
             Enabled = false;
@@ -699,6 +700,7 @@ namespace SAL_Core
             }
 
             Thread.Sleep(50);
+            Enabled = true;
         }
 
         public Arduino this[int index]

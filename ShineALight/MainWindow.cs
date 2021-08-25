@@ -111,7 +111,7 @@ namespace ShineALight
                     cuc.DisposeDeferred();
                 }
                 Main.Panel2.Controls.Clear();
-                arduinoCollection.SetColor(Colors.OFF);
+                arduinoCollection.TurnOff();
                 Control control;
                 switch (ModeSelect.Text)
                 {
