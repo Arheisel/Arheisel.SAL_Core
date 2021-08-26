@@ -14,6 +14,8 @@ namespace SAL_Core
 {
     public class Arduino : IDisposable
     {
+        private const int recvbuffersize = 1024;
+
         private SerialPort serial;
         //private readonly byte[] dataArr = new byte[1];
         private TcpClient tcp = null;
@@ -24,7 +26,7 @@ namespace SAL_Core
 
         public string Name { get; private set; }
 
-        public bool Online { get; private set; } = true;
+        public bool Online { get; private set; } = false;
 
         public int Channels { get; private set; } = 0;
 
@@ -295,7 +297,7 @@ namespace SAL_Core
         {
             if (!Online) return;
 
-            if (data.Length > 65535) return;
+            if (data.Length > recvbuffersize) return;
             byte[] header = { 252, (byte)(data.Length/256), (byte)(data.Length%256)}; //not pretty but endian independent
             data = header.Concat(data);
             if (Settings.ConnectionType == ConnectionType.TCP)
@@ -682,7 +684,7 @@ namespace SAL_Core
         public void TurnOff()
         {
             Enabled = false;
-            while (!queue.IsEmpty) Thread.Sleep(20);
+            while (!queue.IsEmpty) queue.TryDequeue(out _);
 
             foreach (Arduino arduino in collection)
             {

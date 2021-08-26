@@ -317,7 +317,7 @@ namespace SAL_Core
 
                     startingPointLast = startingPoint;
 
-                    double x = Convert.ToDouble(max * autoScaler.Scale);
+                    double x = max * autoScaler.Scale;
                     double res = Curve(x);
                     autoScaler.Sample(res);
                     if (res > 1)
@@ -435,13 +435,13 @@ namespace SAL_Core
             }
 
             int G;
-            if(num < 0.2)
+            if(num < 0.4)
             {
-                y = 5.0 * num;
+                y = 2.5 * num;
             }
             else
             {
-                y = -1.81 * num + 1.36;
+                y = -5 * num + 3;
             }
             G = (int)Math.Round(y * 255.0);
 
