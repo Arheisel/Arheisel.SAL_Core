@@ -48,7 +48,7 @@ namespace ShineALight
                 {
                     try
                     {
-                        arduino = new Arduino(udp.ip, udp.port);
+                        arduino = new Arduino(new ArduinoSettings(udp.ip, udp.port));
                         DialogResult = DialogResult.OK;
                         Close();
                     }

@@ -27,6 +27,7 @@ namespace SAL_Core
         private readonly AudioSettings Settings;
 
         public readonly AutoScaler autoScaler;
+        private readonly EqualizerSettings Equalizer = new EqualizerSettings() { High = 10, Mid = 2, Low = 1 };
 
         private int _channels = 8;
 
@@ -34,7 +35,6 @@ namespace SAL_Core
         private double _octave = 0;
         private double _octaveDist = 1.5;
 
-        //private double _curve_cutoff;
         private double _curve_cutoff;
 
         public int Channels
@@ -300,6 +300,28 @@ namespace SAL_Core
                 double startingFreq = step * offset; //theoretical frecuency of transform[0]
                 double octave = _octave;
                 double peak = 0;
+
+                // EQUALIZER
+                for(int j = 0; j < transform.Length; j++)
+                {
+                    var freq = j * step + startingFreq;
+
+                    if(freq < 300)
+                    {
+                        transform[j] *= Equalizer.Low;
+                    }
+                    else
+                    {
+                        if(freq < 5000)
+                        {
+                            transform[j] *= Equalizer.Mid;
+                        }
+                        else
+                        {
+                            transform[j] *= Equalizer.High;
+                        }
+                    }
+                }
 
                 for (int i = 0; i < _channels; i++)
                 {

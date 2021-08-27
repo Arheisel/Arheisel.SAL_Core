@@ -14,13 +14,12 @@ namespace SAL_Core
 {
     public class Arduino : IDisposable
     {
-        private const int recvbuffersize = 1024;
+        private const int arduinobuffersize = 1024;
+        private Color[] colorCache;
 
         private SerialPort serial;
-        //private readonly byte[] dataArr = new byte[1];
         private TcpClient tcp = null;
         private NetworkStream stream = null;
-        private Task sendTask = null;
 
         public event EventHandler<ArduinoExceptionArgs> OnError;
 
@@ -28,66 +27,51 @@ namespace SAL_Core
 
         public bool Online { get; private set; } = false;
 
-        public int Channels { get; private set; } = 0;
+        private int _channels = 0;
+        public int Channels {
+            get
+            {
+                return _channels;
+            }
+            private set
+            {
+                if(value > 0 && value <= 255)
+                {
+                    _channels = value;
+                    colorCache = new Color[value];
+                    colorCache.Populate(Colors.OFF);
+                }
+            }
+        }
 
         public ArduinoSettings Settings { get; private set; } = null;
 
         public Arduino(ArduinoSettings settings, bool muteExceptions = false)
         {
             Settings = settings;
-            if(settings.ConnectionType == ConnectionType.Serial)
-            {
-                Name = settings.COM;
-                try
-                {
-                    StartSerial(settings.COM);
-                    SetColor(Colors.RED);
-                }
-                catch (Exception e)
-                {
-                    serial.Close();
-                    Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
-                    if (!muteExceptions) throw;
-                }
-            }
-            else
-            {
-                Name = Settings.IP + ":" + Settings.Port;
-                try
-                {
-                    StartTCPClient(Settings.IP, Settings.Port);
-                }
-                catch (Exception e)
-                {
-                    Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
-                    if (!muteExceptions) throw;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Initializes a Serial Arduino Connection
-        /// </summary>
-        /// <param name="com">COM Port Name</param>
-        public Arduino(string com, bool reverse = false, bool muteExceptions = false)
-        {
-            Name = com;
-            Settings = new ArduinoSettings(com);
-            Settings.Reverse = reverse;
             try
             {
-                StartSerial(com);
+                if (settings.ConnectionType == ConnectionType.Serial)
+                {
+                    Name = settings.COM;
+                    StartSerial(settings.COM);
+                }
+                else
+                {
+                    Name = Settings.IP + ":" + Settings.Port;
+                    StartTCPClient(Settings.IP, Settings.Port);
+                }
                 SetColor(Colors.RED);
+                Show();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                serial.Close();
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
-                if(!muteExceptions) throw;
+                if (!muteExceptions) throw;
             }
         }
 
-        public void StartSerial(string com, int retryCount = 0)
+        public void StartSerial(string com, bool retry = false, int retryCount = 0)
         {
             try
             {
@@ -106,21 +90,22 @@ namespace SAL_Core
                 };
 
                 serial.Open();
-                byte[] dataArr = { 252, 0, 1, 1 }; //get model
-                serial.Write(dataArr, 0, dataArr.Length);
-                var id = Receive();
-                if(id.Length == 2 && id[0] == 250)
-                    Channels = id[1];
+                Send(1, true); //get Model
+                var data = Receive();
+                if(data.Length == 2 && data[0] == 250)
+                {
+                    Channels = data[1];
+                }     
                 else throw new Exception("Failed at getting device Model");
                 Online = true;
             }
             catch (TimeoutException)
             {
-                if (retryCount < 10 && Online)
+                if (retryCount < 10 && retry)
                 {
                     serial.Close();
                     Thread.Sleep(250);
-                    StartSerial(com, ++retryCount);
+                    StartSerial(com, true, ++retryCount);
                 }
                 else
                 {
@@ -135,46 +120,24 @@ namespace SAL_Core
             }
         }
 
-        /// <summary>
-        /// Initializes an IP Arduino Connection
-        /// </summary>
-        /// <param name="ip">IP of the Receiver</param>
-        /// <param name="dstPort">Receiver Port</param>
-        public Arduino(string ip, int dstPort, bool reverse = false, bool muteExceptions = false)
-        {
-            Name = ip + ":" + dstPort;
-            Settings = new ArduinoSettings(ip, dstPort);
-            Settings.Reverse = reverse;
-            try
-            {
-                StartTCPClient(ip, dstPort);
-            }
-            catch (Exception e)
-            {
-                Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
-                if(!muteExceptions) throw;
-            }
-        }
-
         private void StartTCPClient(string ip, int dstPort, bool retry = false, int retryCount = 0)
         {
             try
             {
                 tcp = new TcpClient(ip, dstPort);
                 tcp.NoDelay = true;
-                tcp.Client.NoDelay = true;
                 tcp.SendTimeout = 500;
                 tcp.ReceiveTimeout = 500;
                 if (tcp.Connected)
                 {
                     stream = tcp.GetStream();
-                    byte[] dataArr = { 252, 0, 1, 1 }; //get model
-                    stream.Write(dataArr, 0, dataArr.Length);
-                    var id = Receive();
-                    if (id.Length == 2 && id[0] == 250)
-                        Channels = id[1];
+                    Send(1, true); //get Model
+                    var data = Receive();
+                    if (data.Length == 2 && data[0] == 250)
+                    {
+                        Channels = data[1];
+                    }         
                     else throw new Exception("Failed at getting device Model");
-                    SetColor(Colors.RED);
                 }
                 else
                     throw new Exception("Connection failed.");
@@ -230,7 +193,7 @@ namespace SAL_Core
 
         public void SetColor(Color color)
         {
-            SetColor(0, color);
+            colorCache.Populate(color);
         }
 
         public void SetColor(int channel, Color color)
@@ -240,27 +203,21 @@ namespace SAL_Core
                 return;
             }
 
-            int ch = 100;
-            if (Channels != 1 && channel > 0)
-            {
-                if (Settings.Reverse)
-                    ch += Channels - channel + 1;
-                else
-                    ch += channel;
-            }
-
-            var R = NormalizeColor(color.R);
-            var G = NormalizeColor(color.G);
-            var B = NormalizeColor(color.B);
-
-            byte[] data = { (byte)ch, (byte)R, (byte)G, (byte)B };
-            Send(data);
+            colorCache[channel - 1] = color;
         }
 
         public void SetColor(Color[] colors)
         {
             if (colors.Length != Channels) return;
 
+            colorCache = colors;
+        }
+
+        /// <summary>
+        /// Sends the colorCache to the arduino
+        /// </summary>
+        public void Show()
+        {
             byte[] data = new byte[Channels * 3 + 1];
             data[0] = 99;
 
@@ -268,36 +225,44 @@ namespace SAL_Core
             {
                 for (int i = 0; i < Channels; i++)
                 {
-                    data[i * 3 + 1] = (byte)NormalizeColor(colors[Channels - i - 1].R);
-                    data[i * 3 + 2] = (byte)NormalizeColor(colors[Channels - i - 1].G);
-                    data[i * 3 + 3] = (byte)NormalizeColor(colors[Channels - i - 1].B);
+                    data[i * 3 + 1] = (byte)NormalizeColor(colorCache[Channels - i - 1].R);
+                    data[i * 3 + 2] = (byte)NormalizeColor(colorCache[Channels - i - 1].G);
+                    data[i * 3 + 3] = (byte)NormalizeColor(colorCache[Channels - i - 1].B);
                 }
             }
             else
             {
                 for (int i = 0; i < Channels; i++)
                 {
-                    data[i * 3 + 1] = (byte)NormalizeColor(colors[i].R);
-                    data[i * 3 + 2] = (byte)NormalizeColor(colors[i].G);
-                    data[i * 3 + 3] = (byte)NormalizeColor(colors[i].B);
+                    data[i * 3 + 1] = (byte)NormalizeColor(colorCache[i].R);
+                    data[i * 3 + 2] = (byte)NormalizeColor(colorCache[i].G);
+                    data[i * 3 + 3] = (byte)NormalizeColor(colorCache[i].B);
                 }
             }
-            
+
             Send(data);
         }
 
         private int NormalizeColor(int c)
         {
-            if(c < 0) c = 0;
+            if (c < 0) c = 0;
             else if (c > 255) c = 255;
             return c;
         }
 
-        private void Send(byte[] data)
-        {
-            if (!Online) return;
 
-            if (data.Length > recvbuffersize) return;
+        private void Send(int command, bool force = false)
+        {
+            if (command < 0 || command > 255) return;
+            byte[] data = new byte[] { (byte)command };
+            Send(data, force);
+        }
+
+        private void Send(byte[] data, bool force = false)
+        {
+            if (!(Online || force)) return;
+
+            if (data.Length > arduinobuffersize) return;
             byte[] header = { 252, (byte)(data.Length/256), (byte)(data.Length%256)}; //not pretty but endian independent
             data = header.Concat(data);
             if (Settings.ConnectionType == ConnectionType.TCP)
@@ -321,8 +286,7 @@ namespace SAL_Core
                 {
                     serial.Close();
                     Thread.Sleep(250);
-                    StartSerial(Settings.COM);
-                    Send(data);
+                    StartSerial(Settings.COM, true);
                 }
                 catch (Exception ex)
                 {
@@ -346,14 +310,6 @@ namespace SAL_Core
                 Online = false;
                 return;
             }
-            if(sendTask == null || sendTask.IsCompleted)
-            {
-                sendTask = Task.Run(() => SendTCPTask(data));
-            }
-        }
-
-        private void SendTCPTask(byte[] data)
-        {
             try
             {
                 stream.Write(data, 0, data.Length);
@@ -374,20 +330,6 @@ namespace SAL_Core
                     OnError?.Invoke(this, new ArduinoExceptionArgs(this, ex));
                 }
             }
-        }
-
-        private void Send(int command, string data)
-        {
-            if (command < 0 || command > 255) return;
-            byte[] dataArr = new byte[] { (byte)command };
-            Send(dataArr.Concat(Encoding.ASCII.GetBytes(data)));
-        }
-
-        private void Send(int command)
-        {
-            if (command < 0 || command > 255) return;
-            byte[] data = new byte[] { (byte)command };
-            Send(data);
         }
 
         private byte[] Receive(bool wait = false)
@@ -430,7 +372,7 @@ namespace SAL_Core
             }
         }
 
-        private byte[] ReceiveTCP(bool wait = false)
+        private byte[] ReceiveTCP(bool wait = false) //This function is absolutely atrocious, but for what is needed it's suitable
         {
             try
             {
@@ -567,8 +509,7 @@ namespace SAL_Core
         private readonly List<Arduino> collection = new List<Arduino>();
         private readonly ConcurrentQueue<ChColor> queue;
         private readonly Thread thread;
-        //private Color _color = Colors.NONE;
-        private readonly Color[] _chColor = new Color[100];
+
         public int ChannelCount { get; private set; } = 0;
 
         public bool Enabled { get; set; } = true;
@@ -577,8 +518,6 @@ namespace SAL_Core
 
         public ArduinoCollection()
         {
-            for (int i = 0; i < _chColor.Length; i++) _chColor[i] = Colors.NONE;
-
             try
             {
                 thread = new Thread(new ThreadStart(Worker));
@@ -597,7 +536,7 @@ namespace SAL_Core
             { 
                 try
                 {
-                    if (queue.TryDequeue(out ChColor chColor))
+                    while (queue.TryDequeue(out ChColor chColor))
                     {
                         if(chColor.Colors != null)
                         {
@@ -606,16 +545,7 @@ namespace SAL_Core
                             {
                                 if (arduino.Online)
                                 {
-                                    try
-                                    {
-                                        arduino.SetColor(chColor.Colors.Splice(i, arduino.Channels));
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        CalculateChannels();
-                                        OnError?.Invoke(this, new ArduinoExceptionArgs(arduino, e));
-                                        throw;
-                                    }
+                                    arduino.SetColor(chColor.Colors.Splice(i, arduino.Channels));
                                 }
                                 i += arduino.Channels;
                             }
@@ -629,37 +559,19 @@ namespace SAL_Core
                                 {
                                     if (arduino.Online)
                                     {
-                                        try
-                                        {
-                                            arduino.SetColor(chColor.Color);
-                                        }
-                                        catch (Exception e)
-                                        {
-                                            CalculateChannels();
-                                            OnError?.Invoke(this, new ArduinoExceptionArgs(arduino, e));
-                                            throw;
-                                        }
+                                        arduino.SetColor(chColor.Color);
                                     }
                                 }
                             }
                             else
                             {
-
                                 foreach (Arduino arduino in collection)
                                 {
                                     if (channel - arduino.Channels <= 0)
                                     {
                                         if (arduino.Online)
                                         {
-                                            try
-                                            {
-                                                arduino.SetColor(channel, chColor.Color);
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                OnError?.Invoke(this, new ArduinoExceptionArgs(arduino, e));
-                                                throw;
-                                            }
+                                            arduino.SetColor(channel, chColor.Color);
                                         }
                                         break;
                                     }
@@ -671,7 +583,19 @@ namespace SAL_Core
                             }
                         }
                     }
-                    Thread.Sleep(1);
+                    Parallel.ForEach(collection, arduino => 
+                    {
+                        try
+                        {
+                            arduino.Show();
+                        }
+                        catch (Exception e)
+                        {
+                            OnError?.Invoke(this, new ArduinoExceptionArgs(arduino, e));
+                            throw;
+                        }
+                    });
+                    Thread.Sleep(15);
                 }
                 catch (Exception e)
                 {
@@ -693,6 +617,7 @@ namespace SAL_Core
                     try
                     {
                         arduino.SetColor(Colors.OFF);
+                        arduino.Show();
                     }
                     catch (Exception e)
                     {
@@ -835,20 +760,15 @@ namespace SAL_Core
         public void SetColor(Color color)
         {
             if (!Enabled) return;
-            if (_chColor[0] != color)
-            {
-                _chColor[0] = color;
-                queue.Enqueue(new ChColor(0, color));
-            } 
+
+            queue.Enqueue(new ChColor(0, color));
         }
 
         public void SetColor(int channel, Color color)
         {
             if (!Enabled) return;
-            if (channel >= 0 && channel <= ChannelCount && (color != _chColor[channel] || (_chColor[0] != Colors.NONE && channel != 0)))
+            if (channel >= 0 && channel <= ChannelCount)
             {
-                _chColor[channel] = color;
-                if (channel != 0) _chColor[0] = Colors.NONE;
                 queue.Enqueue(new ChColor(channel, color));
             }
         }

@@ -164,7 +164,7 @@ namespace ShineALight
         {
             try
             {
-                return new Arduino(port);
+                return new Arduino(new ArduinoSettings(port));
             }
             catch
             {

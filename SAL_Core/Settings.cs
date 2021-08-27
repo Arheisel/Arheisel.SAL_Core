@@ -37,14 +37,14 @@ namespace SAL_Core
                     {
                         if (arduino.Settings.COM == Arduinos[i].COM)
                         {
-                            Arduinos[i] = arduino.Settings;
+                            Arduinos.RemoveAt(i);
                         }
                     }
                     else
                     {
                         if (arduino.Settings.IP == Arduinos[i].IP && arduino.Settings.Port == Arduinos[i].Port)
                         {
-                            Arduinos[i] = arduino.Settings;
+                            Arduinos.RemoveAt(i);
                         }
                     }
                 }
@@ -322,4 +322,13 @@ namespace SAL_Core
 
         public int Amp { get; set; } = 1;
     }
+
+    [Serializable]
+    public class EqualizerSettings
+    {
+        public double High { get; set; } = 1;
+        public double Mid { get; set; } = 1;
+        public double Low { get; set; } = 1;
+    }
+
 }

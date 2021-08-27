@@ -40,7 +40,12 @@ namespace ShineALight
 
         private void Effects_DataAvailable(object sender, EffectDataAvailableArgs e)
         {
-            if (e.Colors.Count == 1)
+            foreach (var color in e.Colors)
+            {
+                arduinoCollection.SetColor(color.Channel, color.Color); //colorBuffer[color.Channel - 1] = color.Color;
+            }
+
+            /*if (e.Colors.Count == 1)
             {
                 arduinoCollection.SetColor(e.Colors[0].Channel, e.Colors[0].Color);
             }
@@ -50,8 +55,8 @@ namespace ShineALight
                 {
                     colorBuffer[color.Channel - 1] = color.Color;
                 }
-                arduinoCollection.SetColor(colorBuffer);
-            }
+                //arduinoCollection.SetColor(colorBuffer);
+            }*/
         }
 
         public override void DisposeDeferred()
