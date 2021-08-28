@@ -60,6 +60,15 @@ namespace SAL_Core
             return x;
         }
 
+        public static T[] Concat<T>(this T[] x, T y)
+        {
+            if (x == null) throw new ArgumentNullException("x");
+            if (y == null) throw new ArgumentNullException("y");
+            Array.Resize<T>(ref x, x.Length + 1);
+            x[x.Length - 1] = y;
+            return x;
+        }
+
         public static T[] Splice<T>(this T[] array, int startIndex, int length)
         {
             var ret = new T[length];

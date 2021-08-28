@@ -261,8 +261,8 @@ namespace SAL_Core
         private void Send(byte[] data, bool force = false)
         {
             if (!(Online || force)) return;
-
             if (data.Length > arduinobuffersize) return;
+
             byte[] header = { 252, (byte)(data.Length/256), (byte)(data.Length%256)}; //not pretty but endian independent
             data = header.Concat(data);
             if (Settings.ConnectionType == ConnectionType.TCP)
