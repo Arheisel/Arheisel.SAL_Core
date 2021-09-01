@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SAL_Core;
-using Damez.Log;
+using Arheisel.Log;
 
 namespace ShineALight.Controls
 {

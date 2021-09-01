@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Damez.Log;
+using Arheisel.Log;
 using SAL_Core;
 using System.Net;
 

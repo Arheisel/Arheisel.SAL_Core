@@ -4,11 +4,12 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace SAL_Core
 {
-    public class UDPServer
+    public class UDPServer : IDisposable
     {
         private readonly IPEndPoint ip;
         private readonly UdpClient sock;
@@ -17,13 +18,25 @@ namespace SAL_Core
         {
             ip = new IPEndPoint(IPAddress.Any, port);
             sock = new UdpClient(ip);
+            sock.EnableBroadcast = true;
         }
 
-        public byte Receive()
+        public byte[] Receive(out IPEndPoint endPoint, bool wait = false)
         {
-            var endp = new IPEndPoint(IPAddress.Any, 0);
-            var data = sock.Receive(ref endp);
-            return data[0];
+            var time = DateTime.Now;
+            var diff = new TimeSpan(0, 0, 10);
+            while (sock.Available == 0)
+            {
+                if ((DateTime.Now - time) > diff && !wait)
+                {
+                    throw new Exception("E_UDP_TIMEOUT: No se han recibido datos.");
+                }
+                Thread.Sleep(20);
+            }
+
+            endPoint = new IPEndPoint(IPAddress.Any, 0);
+            var data = sock.Receive(ref endPoint);
+            return data;
         }
 
         public void Dispose()

@@ -8,7 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using Damez.Log;
+using Arheisel.Log;
 
 namespace SAL_Core
 {
@@ -595,7 +595,7 @@ namespace SAL_Core
                             throw;
                         }
                     });
-                    Thread.Sleep(15);
+                    Thread.Sleep(20);
                 }
                 catch (Exception e)
                 {

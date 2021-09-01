@@ -8,14 +8,13 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using SAL_Core;
-using Damez.Log;
+using Arheisel.Log;
 
 namespace ShineALight
 {
     public partial class UCMusic : CustomUserControl
     {
         private readonly Audio audio;
-        private delegate void UpdateDelegate(MusicDataAvailableArgs e);
 
         private readonly ArduinoCollection arduinoCollection;
 

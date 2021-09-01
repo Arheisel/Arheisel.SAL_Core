@@ -9,14 +9,15 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO.Ports;
 using SAL_Core;
-using Damez.Log;
+using Arheisel.Log;
 using System.Threading;
+using System.Collections.Concurrent;
 
 namespace ShineALight
 {
     public partial class AddArduinoSerial : UserControl
     {
-        public string port = "";
+        public string Port { get; private set; } = "";
 
         private readonly BackgroundWorker background;
         public AddArduinoSerial()
@@ -81,7 +82,7 @@ namespace ShineALight
                 {
                     comboBox1.DataSource = result;
                     comboBox1.SelectedIndex = 0;
-                    port = comboBox1.Text;
+                    Port = comboBox1.Text;
                     statusLabel.Text = "Ready";
                     comboBox1.Enabled = true;
                     wifiSetupBtn.Enabled = true;
@@ -95,7 +96,7 @@ namespace ShineALight
 
         private void ComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            port = comboBox1.Text;
+            Port = comboBox1.Text;
         }
 
         private void AddArduinoSerial_Load(object sender, EventArgs e)
@@ -111,6 +112,7 @@ namespace ShineALight
             var names = SerialPort.GetPortNames();
             var taskList = new List<Task<Arduino>>();
             var completedTasks = new List<Task<Arduino>>();
+
             foreach (string name in names)
             {
                 if (!Program.COMArduinos.ContainsKey(name))
@@ -140,7 +142,7 @@ namespace ShineALight
                         }
                         else if (task.Result != null)
                         {
-                            Program.COMArduinos.Add(task.Result.Name, task.Result);
+                            Program.COMArduinos.Add(task.Result.Settings.COM, task.Result);
                             list.Add(task.Result.Name);
                         }
                         completedTasks.Add(task);
@@ -155,7 +157,7 @@ namespace ShineALight
                 if (taskList.Count == 0) break;
                 Thread.Sleep(10);
             }
-            
+
             Log.Write(Log.TYPE_INFO, "AddArduinoSerial :: Serial discovery ended");
             return list;
         }
@@ -174,7 +176,7 @@ namespace ShineALight
 
         private void WifiSetupBtn_Click(object sender, EventArgs e)
         {
-            using (var dialog = new WiFiSetup(Program.COMArduinos[port]))
+            using (var dialog = new WiFiSetup(Program.COMArduinos[Port]))
             {
                 dialog.ShowDialog(this);
             }

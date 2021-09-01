@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using NAudio.CoreAudioApi;
 using NAudio.Wave;
 using AForge.Math;
-using Damez.Log;
+using Arheisel.Log;
 
 namespace SAL_Core
 {

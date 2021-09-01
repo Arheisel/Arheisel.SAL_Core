@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading;
-using Damez.Log;
+using Arheisel.Log;
 
 namespace SAL_Core
 {

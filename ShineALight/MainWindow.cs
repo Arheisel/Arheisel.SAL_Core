@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SAL_Core;
-using Damez.Log;
+using Arheisel.Log;
 using System.Threading;
 
 namespace ShineALight
@@ -175,9 +175,9 @@ namespace ShineALight
                 dialog.ShowDialog(this);
                 if (dialog.DialogResult == DialogResult.OK)
                 {
-                    arduinoCollection.Add(dialog.arduino);
-                    arduinoList.Items.Add(dialog.arduino);
-                    settings.AddArduino(dialog.arduino);
+                    arduinoCollection.Add(dialog.Arduino);
+                    arduinoList.Items.Add(dialog.Arduino);
+                    settings.AddArduino(dialog.Arduino);
                 }
             }
         }

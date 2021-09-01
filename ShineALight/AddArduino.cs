@@ -8,15 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using SAL_Core;
-using Damez.Log;
+using Arheisel.Log;
 
 namespace ShineALight
 {
     public partial class AddArduino : Form
     {
-        public Arduino arduino = null;
+        public Arduino Arduino { get; private set; } = null;
         private AddArduinoSerial serial;
-        private AddArduinoTCP udp;
+        private AddArduinoTCP tcp;
         public AddArduino()
         {
             InitializeComponent();
@@ -31,9 +31,9 @@ namespace ShineALight
         {
             if (SerialRadio.Checked)
             {
-                if (!String.IsNullOrWhiteSpace(serial.port))
+                if (!String.IsNullOrWhiteSpace(serial.Port))
                 {
-                    arduino = Program.COMArduinos[serial.port];
+                    Arduino = Program.COMArduinos[serial.Port];
                     DialogResult = DialogResult.OK;
                     Close();
                 }
@@ -44,11 +44,11 @@ namespace ShineALight
             }
             else if (UDPRadio.Checked)
             {
-                if (!String.IsNullOrWhiteSpace(udp.ip))
+                if (!String.IsNullOrWhiteSpace(tcp.ip))
                 {
                     try
                     {
-                        arduino = new Arduino(new ArduinoSettings(udp.ip, udp.port));
+                        Arduino = new Arduino(new ArduinoSettings(tcp.ip, tcp.port));
                         DialogResult = DialogResult.OK;
                         Close();
                     }
@@ -73,12 +73,12 @@ namespace ShineALight
             if (UDPRadio.Checked)
             {
                 serial.StopDiscover();
-                udp = new AddArduinoTCP();
+                tcp = new AddArduinoTCP();
                 tableLayoutPanel1.Controls[0].Dispose();
                 tableLayoutPanel1.Controls.Clear();
-                tableLayoutPanel1.Controls.Add(udp);
-                udp.Dock = DockStyle.Fill;
-                udp.Show();
+                tableLayoutPanel1.Controls.Add(tcp);
+                tcp.Dock = DockStyle.Fill;
+                tcp.Show();
             }
         }
 

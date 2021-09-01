@@ -43,10 +43,10 @@ namespace ShineALight
             this.SerialRadio.Checked = true;
             this.SerialRadio.Location = new System.Drawing.Point(13, 13);
             this.SerialRadio.Name = "SerialRadio";
-            this.SerialRadio.Size = new System.Drawing.Size(51, 17);
+            this.SerialRadio.Size = new System.Drawing.Size(47, 17);
             this.SerialRadio.TabIndex = 0;
             this.SerialRadio.TabStop = true;
-            this.SerialRadio.Text = "Serial";
+            this.SerialRadio.Text = "USB";
             this.SerialRadio.UseVisualStyleBackColor = true;
             this.SerialRadio.CheckedChanged += new System.EventHandler(this.SerialRadio_CheckedChanged);
             // 
@@ -55,9 +55,9 @@ namespace ShineALight
             this.UDPRadio.AutoSize = true;
             this.UDPRadio.Location = new System.Drawing.Point(102, 13);
             this.UDPRadio.Name = "UDPRadio";
-            this.UDPRadio.Size = new System.Drawing.Size(35, 17);
+            this.UDPRadio.Size = new System.Drawing.Size(49, 17);
             this.UDPRadio.TabIndex = 1;
-            this.UDPRadio.Text = "IP";
+            this.UDPRadio.Text = "Wi-Fi";
             this.UDPRadio.UseVisualStyleBackColor = true;
             this.UDPRadio.CheckedChanged += new System.EventHandler(this.UDPRadio_CheckedChanged);
             // 
@@ -72,12 +72,12 @@ namespace ShineALight
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(221, 96);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(221, 159);
             this.tableLayoutPanel1.TabIndex = 2;
             // 
             // OKButton
             // 
-            this.OKButton.Location = new System.Drawing.Point(78, 139);
+            this.OKButton.Location = new System.Drawing.Point(78, 202);
             this.OKButton.Name = "OKButton";
             this.OKButton.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.OKButton.Size = new System.Drawing.Size(75, 23);
@@ -89,7 +89,7 @@ namespace ShineALight
             // PopupCancelButton
             // 
             this.PopupCancelButton.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.PopupCancelButton.Location = new System.Drawing.Point(159, 139);
+            this.PopupCancelButton.Location = new System.Drawing.Point(159, 202);
             this.PopupCancelButton.Name = "PopupCancelButton";
             this.PopupCancelButton.Size = new System.Drawing.Size(75, 23);
             this.PopupCancelButton.TabIndex = 4;
@@ -105,7 +105,7 @@ namespace ShineALight
             this.AutoSize = true;
             this.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.CancelButton = this.PopupCancelButton;
-            this.ClientSize = new System.Drawing.Size(243, 174);
+            this.ClientSize = new System.Drawing.Size(243, 233);
             this.ControlBox = false;
             this.Controls.Add(this.PopupCancelButton);
             this.Controls.Add(this.OKButton);
