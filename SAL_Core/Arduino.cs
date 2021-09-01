@@ -251,27 +251,27 @@ namespace SAL_Core
         }
 
 
-        private void Send(int command, bool force = false)
+        private void Send(int command, bool startup = false)
         {
             if (command < 0 || command > 255) return;
             byte[] data = new byte[] { (byte)command };
-            Send(data, force);
+            Send(data, startup);
         }
 
-        private void Send(byte[] data, bool force = false)
+        private void Send(byte[] data, bool startup = false)
         {
-            if (!(Online || force)) return;
+            if (!(Online || startup)) return;
             if (data.Length > arduinobuffersize) return;
 
             byte[] header = { 252, (byte)(data.Length/256), (byte)(data.Length%256)}; //not pretty but endian independent
             data = header.Concat(data);
             if (Settings.ConnectionType == ConnectionType.TCP)
-                SendTCP(data);
+                SendTCP(data, startup);
             else
-                SendSerial(data);
+                SendSerial(data, startup);
         }
 
-        private void SendSerial(byte[] data)
+        private void SendSerial(byte[] data, bool startup = false)
         {
             try
             {
@@ -279,6 +279,8 @@ namespace SAL_Core
             }
             catch (TimeoutException e)
             {
+                if (startup) throw;
+
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
 
                 Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Attempting to reopen port");
@@ -297,13 +299,15 @@ namespace SAL_Core
             }
             catch (Exception e)
             {
+                if (startup) throw;
+
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
                 Online = false;
                 throw;
             }
         }
 
-        private void SendTCP(byte[] data)
+        private void SendTCP(byte[] data, bool startup = false)
         {
             if(stream == null)
             {
@@ -316,6 +320,8 @@ namespace SAL_Core
             }
             catch (Exception e)
             {
+                if (startup) throw;
+
                 Log.Write(Log.TYPE_ERROR, "Arduino :: " + Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
 
                 Log.Write(Log.TYPE_INFO, "Arduino :: " + Name + " :: Attempting to reopen connection");
