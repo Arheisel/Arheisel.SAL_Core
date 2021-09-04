@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using SAL_Core;
+using SAL_Core.Ambient;
 using Arheisel.Log;
+using SAL_Core.IO;
+using SAL_Core.Settings;
+using SAL_Core.RGB;
 
 namespace ShineALight
 {
@@ -16,16 +12,16 @@ namespace ShineALight
     {
         private readonly Effects effects;
         private readonly ArduinoCollection arduinoCollection;
-        private readonly SAL_Core.Color[] colorBuffer;
+        private readonly Color[] colorBuffer;
         public UCEffects(ArduinoCollection collection, EffectSettings settings)
         {
             InitializeComponent();
             try
             {
                 arduinoCollection = collection;
-                colorBuffer = new SAL_Core.Color[collection.ChannelCount];
+                colorBuffer = new Color[collection.ChannelCount];
                 for (int i = 0; i < collection.ChannelCount; i++){
-                    colorBuffer[i] = new SAL_Core.Color(0, 0, 0);
+                    colorBuffer[i] = new Color(0, 0, 0);
                 }
                 effects = new Effects(collection, settings);
                 effects.DataAvailable += Effects_DataAvailable;

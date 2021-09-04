@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using SAL_Core.Settings;
 using System.Timers;
 
-namespace SAL_Core
+namespace SAL_Core.Processing
 {
     public class AutoScaler
     {

@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using SAL_Core;
 using Arheisel.Log;
+using SAL_Core.IO;
+using SAL_Core.Processing;
+using SAL_Core.Settings;
 
 namespace ShineALight
 {
@@ -81,7 +77,7 @@ namespace ShineALight
             int r = (int) Math.Round(e.ChannelMagnitudes[0] * 255);
             int b = (int) Math.Round(e.ChannelMagnitudes[1] * 255);
             int g = (int) Math.Round(e.ChannelMagnitudes[2] * 255);
-            collection.SetColor(new SAL_Core.Color(r, g, b));
+            collection.SetColor(new SAL_Core.RGB.Color(r, g, b));
             UIUpdate(e);
         }
 

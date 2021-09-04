@@ -1,14 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
-using SAL_Core;
+using SAL_Core.Processing;
+using SAL_Core.IO;
 using Arheisel.Log;
+using SAL_Core.Settings;
+using SAL_Core.RGB;
 
 namespace ShineALight
 {

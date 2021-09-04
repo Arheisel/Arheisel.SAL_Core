@@ -1,22 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using SAL_Core;
+using SAL_Core.IO;
+using SAL_Core.Settings;
 using Arheisel.Log;
 using System.Threading;
+using SAL_Core.Extensions;
 
 namespace ShineALight
 {
     public partial class MainWindow : Form
     {
         private readonly ArduinoCollection arduinoCollection;
-        private readonly Settings settings;
+        private readonly ProgramSettings settings;
         private delegate void UpdateDelegate();
         private readonly BackgroundWorker background;
 

@@ -1,12 +1,9 @@
-﻿using SAL_Core;
+﻿using SAL_Core.Ambient;
+using SAL_Core.Settings;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ShineALight
@@ -14,7 +11,7 @@ namespace ShineALight
     public partial class PresetsEdit : Form
     {
         private PictureBox selectedColor = null;
-        private Dictionary<PictureBox, SAL_Core.Color> colorDict = new Dictionary<PictureBox, SAL_Core.Color>();
+        private Dictionary<PictureBox, SAL_Core.RGB.Color> colorDict = new Dictionary<PictureBox, SAL_Core.RGB.Color>();
         private int y = 5;
         public Dictionary<string, EffectPreset> PresetList { get; private set; }
         private string selectedPreset = String.Empty; 
@@ -55,7 +52,7 @@ namespace ShineALight
             }
         }
 
-        private void AddColor(SAL_Core.Color color)
+        private void AddColor(SAL_Core.RGB.Color color)
         {
             var pic = new PictureBox();
             pic.BackColor = color.ToSystemColor();
@@ -78,7 +75,7 @@ namespace ShineALight
                 if (dialog.Color == System.Drawing.Color.Black) return;
                 var pict = sender as PictureBox;
                 pict.BackColor = dialog.Color;
-                colorDict[pict] = new SAL_Core.Color(dialog.Color);
+                colorDict[pict] = new SAL_Core.RGB.Color(dialog.Color);
             }
         }
 
@@ -151,13 +148,13 @@ namespace ShineALight
             PresetList[(string)presetListBox.SelectedItem].Type = (EffectTypes)Enum.Parse(typeof(EffectTypes), typeSelect.Text);
             while(colorDict.Count < MinColors)
             {
-                AddColor(Colors.RED);
+                AddColor(SAL_Core.RGB.Colors.RED);
             }
         }
 
         private void ColorAddBtn_Click(object sender, EventArgs e)
         {
-            AddColor(Colors.RED);
+            AddColor(SAL_Core.RGB.Colors.RED);
         }
 
         private void ColorDelBtn_Click(object sender, EventArgs e)

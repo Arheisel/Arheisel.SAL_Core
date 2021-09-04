@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Windows.Forms;
-using SAL_Core;
 using Arheisel.Log;
+using SAL_Core.IO;
+using SAL_Core.Processing;
+using SAL_Core.RGB;
+using SAL_Core.Settings;
 
 namespace ShineALight
 {
@@ -18,7 +15,7 @@ namespace ShineALight
 
         private readonly ArduinoCollection arduinoCollection;
 
-        private List<SAL_Core.Color> colorList;
+        private List<Color> colorList;
         private int current = 0;
         private bool currentSet = false;
 
@@ -26,7 +23,7 @@ namespace ShineALight
         {
             InitializeComponent();
             arduinoCollection = collection;
-            colorList = new List<SAL_Core.Color> { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.GREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK };
+            colorList = new List<Color> { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.GREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK };
             try
             {
                 audio = new Audio(settings);
@@ -53,7 +50,7 @@ namespace ShineALight
             if (e.Peak < 0.90 && currentSet) currentSet = false;
 
             double div = 1.0 / (double)arduinoCollection.ChannelCount;
-            var colors = new SAL_Core.Color[arduinoCollection.ChannelCount];
+            var colors = new Color[arduinoCollection.ChannelCount];
             for (int i = 0; i < arduinoCollection.ChannelCount; i++)
             {
                 if (e.Peak > div * i) colors[i] = colorList[current] * e.Peak;

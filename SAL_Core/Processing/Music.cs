@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using Arheisel.Log;
+using SAL_Core.Settings;
 
-namespace SAL_Core
+namespace SAL_Core.Processing
 {
     public class Music : IDisposable
     {

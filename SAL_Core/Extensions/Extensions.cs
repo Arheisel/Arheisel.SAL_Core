@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SAL_Core
+namespace SAL_Core.Extensions
 {
     public static class Extensions
     {

@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using SAL_Core;
+using SAL_Core.IO;
 using Arheisel.Log;
+using SAL_Core.Settings;
 
 namespace ShineALight
 {
     static class Program
     {
-        public static Settings settings;
+        public static ProgramSettings settings;
         public static ArduinoCollection arduinoCollection;
         public static Dictionary<string, Arduino> COMArduinos = new Dictionary<string, Arduino>();
         /// <summary>
@@ -20,7 +19,7 @@ namespace ShineALight
         static void Main()
         {
             Log.Start();
-            settings = Settings.Load();
+            settings = ProgramSettings.Load();
             arduinoCollection = new ArduinoCollection();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);

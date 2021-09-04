@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using SAL_Core;
+using SAL_Core.Processing;
+using SAL_Core.Ambient;
+using SAL_Core.Settings;
+using SAL_Core.IO;
 using Arheisel.Log;
+using SAL_Core.RGB;
 
 namespace ShineALight
 {
@@ -18,14 +15,14 @@ namespace ShineALight
         private readonly Audio audio;
         private readonly Effects effects;
         private readonly ArduinoCollection collection;
-        private readonly SAL_Core.Color[] effColors;
+        private readonly Color[] effColors;
 
         public UCEffectsVisualizer(ArduinoCollection collection, AudioSettings settings, EffectSettings effectSettings)
         {
             InitializeComponent();
 
             var channels = collection.ChannelCount;
-            effColors = new SAL_Core.Color[channels];
+            effColors = new Color[channels];
 
             try
             {
@@ -82,7 +79,7 @@ namespace ShineALight
 
         private void Audio_DataAvailable(object sender, AudioDataAvailableArgs e)
         {
-            var colors = new SAL_Core.Color[collection.ChannelCount];
+            var colors = new Color[collection.ChannelCount];
             for (int i = 0; i < collection.ChannelCount; i++)
             {
                 double peak = 0;
