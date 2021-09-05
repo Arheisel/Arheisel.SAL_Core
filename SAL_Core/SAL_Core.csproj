@@ -48,10 +48,16 @@
     <Compile Include="IO\Arduino.cs" />
     <Compile Include="IO\ArduinoCollection.cs" />
     <Compile Include="IO\ArduinoExceptionArgs.cs" />
+    <Compile Include="IO\ArduinoGroup.cs" />
+    <Compile Include="IO\ArduinoGroups.cs" />
+    <Compile Include="IO\Connection\ConnectionHandler.cs" />
+    <Compile Include="IO\Connection\IConnection.cs" />
+    <Compile Include="IO\Connection\Serial.cs" />
+    <Compile Include="IO\Connection\TCP.cs" />
     <Compile Include="RGB\ChColor.cs" />
     <Compile Include="RGB\Color.cs" />
     <Compile Include="RGB\Colors.cs" />
-    <Compile Include="IO\ConnectionType.cs" />
+    <Compile Include="IO\Connection\ConnectionType.cs" />
     <Compile Include="Processing\Audio.cs" />
     <Compile Include="AForge\Complex.cs" />
     <Compile Include="AForge\FourierTransform.cs" />
@@ -86,7 +92,7 @@
     <Compile Include="Settings\EqualizerSettings.cs" />
     <Compile Include="Settings\MusicSettings.cs" />
     <Compile Include="Settings\ProgramSettings.cs" />
-    <Compile Include="IO\UDP.cs" />
+    <Compile Include="IO\Connection\UDP.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Arheisel.Log\Log\Log.csproj">

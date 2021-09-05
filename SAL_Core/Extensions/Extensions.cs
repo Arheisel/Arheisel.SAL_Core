@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+
 
 namespace SAL_Core.Extensions
 {
@@ -25,7 +23,7 @@ namespace SAL_Core.Extensions
 
         public static void Shift<T>(this IList<T> list, T item, int count)
         {
-            var len = list.Count();
+            var len = list.Count;
             if (count == 0) return;
             else if (count > 0)
             {

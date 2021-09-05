@@ -3,7 +3,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace SAL_Core.IO
+namespace SAL_Core.IO.Connection
 {
     public class UDPServer : IDisposable
     {

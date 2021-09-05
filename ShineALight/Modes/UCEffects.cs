@@ -40,19 +40,6 @@ namespace ShineALight
             {
                 arduinoCollection.SetColor(color.Channel, color.Color); //colorBuffer[color.Channel - 1] = color.Color;
             }
-
-            /*if (e.Colors.Count == 1)
-            {
-                arduinoCollection.SetColor(e.Colors[0].Channel, e.Colors[0].Color);
-            }
-            else
-            {
-                foreach (var color in e.Colors)
-                {
-                    colorBuffer[color.Channel - 1] = color.Color;
-                }
-                //arduinoCollection.SetColor(colorBuffer);
-            }*/
         }
 
         public override void DisposeDeferred()

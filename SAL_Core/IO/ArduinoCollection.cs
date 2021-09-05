@@ -97,6 +97,7 @@ namespace SAL_Core.IO
                         }
                         catch (Exception e)
                         {
+                            CalculateChannels();
                             OnError?.Invoke(this, new ArduinoExceptionArgs(arduino, e));
                             throw;
                         }
@@ -179,18 +180,11 @@ namespace SAL_Core.IO
                 if (Contains(arduino)) return;
                 collection.Add(arduino);
                 CalculateChannels();
-                arduino.OnError += Arduino_OnError;
             }
             catch (Exception e)
             {
                 Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + e.Message + Environment.NewLine + e.StackTrace);
             }
-        }
-
-        private void Arduino_OnError(object sender, ArduinoExceptionArgs e)
-        {
-            CalculateChannels();
-            OnError?.Invoke(this, new ArduinoExceptionArgs(e.Arduino, e.Exception));
         }
 
         public void Insert(int i, Arduino arduino)

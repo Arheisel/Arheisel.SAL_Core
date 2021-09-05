@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using Arheisel.Log;
 using SAL_Core.IO;
+using SAL_Core.IO.Connection;
 
 namespace SAL_Core.Settings
 {

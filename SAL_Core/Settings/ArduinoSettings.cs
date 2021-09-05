@@ -1,4 +1,4 @@
-﻿using SAL_Core.IO;
+﻿using SAL_Core.IO.Connection;
 using System;
 
 namespace SAL_Core.Settings

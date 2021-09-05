@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Threading;
-using SAL_Core.IO;
 using System.Net;
+using SAL_Core.IO.Connection;
 
 namespace ShineALight
 {

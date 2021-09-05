@@ -1,6 +1,6 @@
 ﻿
 
-namespace SAL_Core.IO
+namespace SAL_Core.IO.Connection
 {
     public enum ConnectionType
     {
