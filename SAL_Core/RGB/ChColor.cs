@@ -21,5 +21,12 @@ namespace SAL_Core.RGB
             Channel = 0;
             Colors = colors;
         }
+
+        public ChColor(Color[] colors, int start)
+        {
+            Color = RGB.Colors.NONE;
+            Channel = start;
+            Colors = colors;
+        }
     }
 }

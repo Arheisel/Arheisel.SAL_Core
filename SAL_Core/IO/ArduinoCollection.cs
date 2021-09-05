@@ -46,14 +46,34 @@ namespace SAL_Core.IO
                     {
                         if (chColor.Colors != null)
                         {
-                            int i = 0;
-                            foreach (Arduino arduino in collection)
+                            if(chColor.Channel == 0)
                             {
-                                if (arduino.Online)
+                                int i = 0;
+                                foreach (Arduino arduino in collection)
                                 {
-                                    arduino.SetColor(chColor.Colors.Splice(i, arduino.Channels));
+                                    if (arduino.Online) arduino.SetColor(chColor.Colors.Splice(i, arduino.Channels));
+                                    i += arduino.Channels;
                                 }
-                                i += arduino.Channels;
+                            }
+                            else
+                            {
+                                int channel = chColor.Channel;
+                                int i = 0;
+                                foreach (Arduino arduino in collection)
+                                {
+                                    if (channel - arduino.Channels <= 0)
+                                    {
+                                        int len = chColor.Colors.Length - i < arduino.Channels - channel + 1 ? chColor.Colors.Length - i : arduino.Channels - channel + 1;
+                                        if (arduino.Online) arduino.SetColor(chColor.Colors.Splice(i, len));
+                                        channel = 1;
+                                        i += len;
+                                        if (i >= chColor.Colors.Length) break;
+                                    }
+                                    else
+                                    {
+                                        channel -= arduino.Channels;
+                                    }
+                                }
                             }
                         }
                         else
@@ -63,10 +83,7 @@ namespace SAL_Core.IO
                             {
                                 foreach (Arduino arduino in collection)
                                 {
-                                    if (arduino.Online)
-                                    {
-                                        arduino.SetColor(chColor.Color);
-                                    }
+                                    if (arduino.Online) arduino.SetColor(chColor.Color);
                                 }
                             }
                             else
@@ -75,20 +92,15 @@ namespace SAL_Core.IO
                                 {
                                     if (channel - arduino.Channels <= 0)
                                     {
-                                        if (arduino.Online)
-                                        {
-                                            arduino.SetColor(channel, chColor.Color);
-                                        }
+                                        if (arduino.Online) arduino.SetColor(channel, chColor.Color);
                                         break;
                                     }
-                                    else
-                                    {
-                                        channel -= arduino.Channels;
-                                    }
+                                    channel -= arduino.Channels;
                                 }
                             }
                         }
                     }
+
                     Parallel.ForEach(collection, arduino =>
                     {
                         try
@@ -99,7 +111,7 @@ namespace SAL_Core.IO
                         {
                             CalculateChannels();
                             OnError?.Invoke(this, new ArduinoExceptionArgs(arduino, e));
-                            throw;
+                            Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + arduino.Name + " :: " + e.Message + Environment.NewLine + e.StackTrace);
                         }
                     });
                     Thread.Sleep(20);
@@ -146,6 +158,7 @@ namespace SAL_Core.IO
             set
             {
                 collection[index] = value;
+                CalculateChannels();
             }
         }
 
@@ -278,6 +291,13 @@ namespace SAL_Core.IO
             if (!Enabled) return;
             if (colors.Length != ChannelCount) return;
             queue.Enqueue(new ChColor(colors));
+        }
+
+        public void SetColor(Color[] colors, int start)
+        {
+            if (!Enabled) return;
+            if (start < 1 || start + colors.Length - 1 > ChannelCount) return;
+            queue.Enqueue(new ChColor(colors, start));
         }
 
         public int Multiplier

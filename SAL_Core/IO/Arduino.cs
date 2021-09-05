@@ -30,7 +30,10 @@ namespace SAL_Core.IO
         public int Channels {
             get
             {
-                return _channels;
+                if (Online)
+                    return _channels;
+                else
+                    return 0;
             }
             private set
             {
@@ -90,7 +93,7 @@ namespace SAL_Core.IO
 
         public void SetColor(int channel, Color color)
         {
-            if (channel < 0 || channel > Channels)
+            if (channel <= 0 || channel > Channels)
             {
                 return;
             }
@@ -103,6 +106,13 @@ namespace SAL_Core.IO
             if (colors.Length != Channels) return;
 
             colorCache = colors;
+        }
+
+        public void SetColor(Color[] colors, int start)
+        {
+            if (start < 1 || start + colors.Length - 1 > Channels) return;
+
+            Array.Copy(colors, 0, colorCache, start - 1, colors.Length);
         }
 
         /// <summary>

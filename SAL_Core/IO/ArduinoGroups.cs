@@ -8,12 +8,28 @@ namespace SAL_Core.IO
         private List<ArduinoGroup> groups;
         private ArduinoCollection collection;
 
+        public int Count
+        {
+            get
+            {
+                return groups.Count;
+            }
+        }
+
         public ArduinoGroups(ArduinoCollection arduinoCollection)
         {
             groups = new List<ArduinoGroup>();
             collection = arduinoCollection;
 
+            
+        }
 
+        public ArduinoGroup this[int index]
+        {
+            get
+            {
+                return groups[index];
+            }
         }
 
         IEnumerator IEnumerable.GetEnumerator()

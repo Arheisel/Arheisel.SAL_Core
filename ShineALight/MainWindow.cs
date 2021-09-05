@@ -257,7 +257,7 @@ namespace ShineALight
         {
             var list = new List<Arduino>();
             int count = 0;
-            Log.Write(Log.TYPE_INFO, "MainWindow :: Starting serial connect");
+            Log.Write(Log.TYPE_INFO, "MainWindow :: Starting initial connect");
             foreach (ArduinoSettings arduino in settings.Arduinos)
             {
                 if (worker.CancellationPending)
@@ -309,7 +309,7 @@ namespace ShineALight
                 worker.ReportProgress((++count * 100) / settings.Arduinos.Count);
             }
 
-            Log.Write(Log.TYPE_INFO, "MainWindow :: Serial connect ended");
+            Log.Write(Log.TYPE_INFO, "MainWindow :: Initial connect ended");
             return list;
         }
 
