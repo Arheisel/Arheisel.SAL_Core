@@ -3,10 +3,9 @@ using System.Collections.Generic;
 
 namespace SAL_Core.IO
 {
-    class ArduinoGroups : IEnumerable<ArduinoGroup>
+    public class ArduinoGroups : IEnumerable<ArduinoGroup>
     {
         private List<ArduinoGroup> groups;
-        private ArduinoCollection collection;
 
         public int Count
         {
@@ -18,10 +17,13 @@ namespace SAL_Core.IO
 
         public ArduinoGroups(ArduinoCollection arduinoCollection)
         {
-            groups = new List<ArduinoGroup>();
-            collection = arduinoCollection;
-
-            
+            groups = new List<ArduinoGroup>() //TODO: Implement actual logic to populate the list
+            {
+                new ArduinoGroup(arduinoCollection, 1, 10),
+                new ArduinoGroup(arduinoCollection, 11, 10),
+                new ArduinoGroup(arduinoCollection, 21, 10),
+                new ArduinoGroup(arduinoCollection, 31, 9)
+            };
         }
 
         public ArduinoGroup this[int index]

@@ -17,8 +17,8 @@ namespace SAL_Core.IO
         private readonly Thread thread;
 
         public int ChannelCount { get; private set; } = 0;
-
         public bool Enabled { get; set; } = true;
+        public ArduinoGroups Groups { get; }
 
         public event EventHandler<ArduinoExceptionArgs> OnError;
 
@@ -28,6 +28,7 @@ namespace SAL_Core.IO
             {
                 thread = new Thread(new ThreadStart(Worker));
                 queue = new ConcurrentQueue<ChColor>();
+                Groups = new ArduinoGroups(this);
                 thread.Start();
             }
             catch (Exception e)
@@ -64,7 +65,7 @@ namespace SAL_Core.IO
                                     if (channel - arduino.Channels <= 0)
                                     {
                                         int len = chColor.Colors.Length - i < arduino.Channels - channel + 1 ? chColor.Colors.Length - i : arduino.Channels - channel + 1;
-                                        if (arduino.Online) arduino.SetColor(chColor.Colors.Splice(i, len));
+                                        if (arduino.Online) arduino.SetColor(chColor.Colors.Splice(i, len), channel);
                                         channel = 1;
                                         i += len;
                                         if (i >= chColor.Colors.Length) break;

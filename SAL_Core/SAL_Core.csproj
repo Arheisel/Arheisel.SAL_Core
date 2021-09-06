@@ -58,6 +58,7 @@
     <Compile Include="Modes\EffectsVisualizerMode.cs" />
     <Compile Include="Modes\IAudioMode.cs" />
     <Compile Include="Modes\BaseMode.cs" />
+    <Compile Include="Modes\Musicbar3Mode .cs" />
     <Compile Include="Modes\Musicbar2Mode.cs" />
     <Compile Include="Modes\MusicbarMode.cs" />
     <Compile Include="Modes\MusicMode.cs" />

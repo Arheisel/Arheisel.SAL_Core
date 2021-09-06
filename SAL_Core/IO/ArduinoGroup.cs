@@ -3,7 +3,7 @@ using SAL_Core.Extensions;
 
 namespace SAL_Core.IO
 {
-    class ArduinoGroup
+    public class ArduinoGroup
     {
         private ArduinoCollection collection;
         private int Start;

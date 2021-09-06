@@ -179,6 +179,7 @@
             "Visualizer",
             "Musicbar",
             "Musicbar 2",
+            "Musicbar 3",
             "Effect Visualizer"});
             this.ModeSelect.Location = new System.Drawing.Point(55, 12);
             this.ModeSelect.Name = "ModeSelect";

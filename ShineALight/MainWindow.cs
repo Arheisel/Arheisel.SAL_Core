@@ -132,6 +132,9 @@ namespace ShineALight
                     case "Musicbar 2":
                         control = new UCAudio(new Musicbar2Mode(arduinoCollection, settings.Musicbar2));
                         break;
+                    case "Musicbar 3":
+                        control = new UCAudio(new Musicbar3Mode(arduinoCollection, settings.Musicbar2));
+                        break;
                     case "Effect Visualizer":
                         control = new UCEffectsVisualizer(new EffectsVisualizerMode(arduinoCollection, settings.EffectsVisualizer, settings.Effects));
                         break;
