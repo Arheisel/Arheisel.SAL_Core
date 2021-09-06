@@ -29,8 +29,8 @@ namespace SAL_Core.IO.Connection
                     Connection =  new TCP(Settings.IP, Settings.Port);
                 }
 
-                Send(1); //get Model
-                var data = Receive();
+                Send(1, true); //get Model
+                var data = Receive(false, true);
                 if (data.Length == 2 && data[0] == 250)
                 {
                     Channels = data[1];
@@ -51,24 +51,58 @@ namespace SAL_Core.IO.Connection
 
         public void Send(int command)
         {
+            Send(command, false);
+        }
+
+        private void Send(int command, bool startup)
+        {
             if (command < 0 || command > 255) return;
             byte[] data = new byte[] { (byte)command };
-            Send(data);
+            Send(data, startup);
         }
 
         public void Send(byte[] data)
         {
-            if (!Online) return;
+            Send(data, false);
+        }
+
+        private void Send(byte[] data, bool startup)
+        {
+            if (!(Online || startup)) return;
             if (data.Length > arduinobuffersize) return;
 
-            byte[] header = { 252, (byte)(data.Length / 256), (byte)(data.Length % 256) }; //not pretty but endian independent
-            data = header.Concat(data);
-            Connection.Send(data);
+            try
+            {
+                byte[] header = { 252, (byte)(data.Length / 256), (byte)(data.Length % 256) }; //not pretty but endian independent
+                data = header.Concat(data);
+                Connection.Send(data);
+            }
+            catch
+            {
+                Online = false;
+                throw;
+            }
+            
         }
 
         public byte[] Receive(bool wait = false)
         {
-            return Connection.Receive(wait);
+            return Receive(wait, false);
+        }
+
+        private byte[] Receive(bool wait, bool startup)
+        {
+            if (!(Online || startup)) return null;
+
+            try
+            {
+                return Connection.Receive(wait);
+            }
+            catch
+            {
+                Online = false;
+                throw;
+            }
         }
 
         public string ReceiveString(bool wait = false)

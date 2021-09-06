@@ -60,6 +60,7 @@ namespace SAL_Core.IO.Connection
         public void Close()
         {
             serial.Close();
+            serial.Dispose();
             serial = null;
         }
 

@@ -54,6 +54,15 @@
     <Compile Include="IO\Connection\IConnection.cs" />
     <Compile Include="IO\Connection\Serial.cs" />
     <Compile Include="IO\Connection\TCP.cs" />
+    <Compile Include="Modes\EffectsMode.cs" />
+    <Compile Include="Modes\EffectsVisualizerMode.cs" />
+    <Compile Include="Modes\IAudioMode.cs" />
+    <Compile Include="Modes\BaseMode.cs" />
+    <Compile Include="Modes\Musicbar2Mode.cs" />
+    <Compile Include="Modes\MusicbarMode.cs" />
+    <Compile Include="Modes\MusicMode.cs" />
+    <Compile Include="Modes\RGBVisualizerMode.cs" />
+    <Compile Include="Modes\VisualizerMode.cs" />
     <Compile Include="RGB\ChColor.cs" />
     <Compile Include="RGB\Color.cs" />
     <Compile Include="RGB\Colors.cs" />
@@ -100,5 +109,6 @@
       <Name>Log</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

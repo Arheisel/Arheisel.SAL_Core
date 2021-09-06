@@ -5,27 +5,20 @@ using Arheisel.Log;
 using SAL_Core.IO;
 using SAL_Core.Settings;
 using SAL_Core.RGB;
+using SAL_Core.Modes;
 
 namespace ShineALight
 {
     public partial class UCEffects : CustomUserControl
     {
-        private readonly Effects effects;
-        private readonly ArduinoCollection arduinoCollection;
-        private readonly Color[] colorBuffer;
-        public UCEffects(ArduinoCollection collection, EffectSettings settings)
+        private readonly EffectsMode Mode;
+        public UCEffects(EffectsMode mode)
         {
             InitializeComponent();
             try
             {
-                arduinoCollection = collection;
-                colorBuffer = new Color[collection.ChannelCount];
-                for (int i = 0; i < collection.ChannelCount; i++){
-                    colorBuffer[i] = new Color(0, 0, 0);
-                }
-                effects = new Effects(collection, settings);
-                effects.DataAvailable += Effects_DataAvailable;
-                effectsControl.Effects = effects;
+                Mode = mode;
+                effectsControl.Effects = mode.Effects;
             }
             catch (Exception ex)
             {
@@ -34,18 +27,9 @@ namespace ShineALight
             }
         }
 
-        private void Effects_DataAvailable(object sender, EffectDataAvailableArgs e)
-        {
-            foreach (var color in e.Colors)
-            {
-                arduinoCollection.SetColor(color.Channel, color.Color); //colorBuffer[color.Channel - 1] = color.Color;
-            }
-        }
-
         public override void DisposeDeferred()
         {
-            effects.Stop();
-            effects.Dispose();
+            Mode.Dispose();
             Dispose();
         }
     }

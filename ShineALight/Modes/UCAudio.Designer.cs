@@ -1,6 +1,6 @@
 ﻿namespace ShineALight
 {
-    partial class UCMusic
+    partial class UCAudio
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,24 +28,24 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.audioUI = new ShineALight.Controls.AudioUI();
+            this.audioUI1 = new ShineALight.Controls.AudioUI();
             this.SuspendLayout();
             // 
-            // audioUI
+            // audioUI1
             // 
-            this.audioUI.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.audioUI.Audio = null;
-            this.audioUI.Location = new System.Drawing.Point(0, 0);
-            this.audioUI.Name = "audioUI";
-            this.audioUI.Size = new System.Drawing.Size(534, 400);
-            this.audioUI.TabIndex = 0;
+            this.audioUI1.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.audioUI1.Audio = null;
+            this.audioUI1.Location = new System.Drawing.Point(0, 0);
+            this.audioUI1.Name = "audioUI1";
+            this.audioUI1.Size = new System.Drawing.Size(534, 400);
+            this.audioUI1.TabIndex = 0;
             // 
-            // UCMusic
+            // UCVisualizer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.audioUI);
-            this.Name = "UCMusic";
+            this.Controls.Add(this.audioUI1);
+            this.Name = "UCVisualizer";
             this.Size = new System.Drawing.Size(534, 400);
             this.ResumeLayout(false);
 
@@ -53,6 +53,6 @@
 
         #endregion
 
-        private Controls.AudioUI audioUI;
+        private Controls.AudioUI audioUI1;
     }
 }

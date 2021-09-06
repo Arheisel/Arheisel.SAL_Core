@@ -164,35 +164,17 @@
     <Compile Include="Modes\UCEffects.Designer.cs">
       <DependentUpon>UCEffects.cs</DependentUpon>
     </Compile>
-    <Compile Include="Modes\UCMusicbar2.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Modes\UCMusicbar2.Designer.cs">
-      <DependentUpon>UCMusicbar2.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Modes\UCMusicbar.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Modes\UCMusicbar.Designer.cs">
-      <DependentUpon>UCMusicbar.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Modes\UCMusic.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Modes\UCMusic.Designer.cs">
-      <DependentUpon>UCMusic.cs</DependentUpon>
-    </Compile>
     <Compile Include="Modes\UCEffectsVisualizer.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="Modes\UCEffectsVisualizer.Designer.cs">
       <DependentUpon>UCEffectsVisualizer.cs</DependentUpon>
     </Compile>
-    <Compile Include="Modes\UCVisualizer.cs">
+    <Compile Include="Modes\UCAudio.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Modes\UCVisualizer.Designer.cs">
-      <DependentUpon>UCVisualizer.cs</DependentUpon>
+    <Compile Include="Modes\UCAudio.Designer.cs">
+      <DependentUpon>UCAudio.cs</DependentUpon>
     </Compile>
     <Compile Include="Modes\UCRGBVisualizer.cs">
       <SubType>UserControl</SubType>
@@ -263,23 +245,11 @@
     <EmbeddedResource Include="Modes\UCEffects.resx">
       <DependentUpon>UCEffects.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Modes\UCMusicbar2.resx">
-      <DependentUpon>UCMusicbar2.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Modes\UCMusicbar.resx">
-      <DependentUpon>UCMusicbar.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Modes\UCMusic.resx">
-      <DependentUpon>UCMusic.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
     <EmbeddedResource Include="Modes\UCEffectsVisualizer.resx">
       <DependentUpon>UCEffectsVisualizer.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Modes\UCVisualizer.resx">
-      <DependentUpon>UCVisualizer.cs</DependentUpon>
+    <EmbeddedResource Include="Modes\UCAudio.resx">
+      <DependentUpon>UCAudio.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Modes\UCRGBVisualizer.resx">
       <DependentUpon>UCRGBVisualizer.cs</DependentUpon>

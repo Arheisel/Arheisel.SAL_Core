@@ -5,26 +5,26 @@ using Arheisel.Log;
 using SAL_Core.IO;
 using SAL_Core.Processing;
 using SAL_Core.Settings;
+using SAL_Core.Modes;
 
 namespace ShineALight
 {
 
     public partial class UCRGBVisualizer : CustomUserControl
     {
-        private readonly Audio audio;
+        private readonly RGBVisualizerMode Mode;
+        private readonly Audio Audio;
         private delegate void UpdateDelegate(AudioDataAvailableArgs e);
-        private readonly ArduinoCollection collection;
-        public UCRGBVisualizer(ArduinoCollection collection, AudioSettings settings)
+        public UCRGBVisualizer(RGBVisualizerMode mode)
         {
             InitializeComponent();
             try
             {
-                audio = new Audio(settings);
-                audio.Channels = 3;
-                autoscalerControl.AutoScaler = audio.autoScaler;
+                Mode = mode;
+                Audio = mode.Audio;
+                autoscalerControl.AutoScaler = Audio.autoScaler;
                 autoscalerControl.UpdateValues();
-                audio.DataAvailable += Audio_DataAvailable;
-                audio.StartCapture();
+                Audio.DataAvailable += Audio_DataAvailable;
             }
             catch (Exception ex)
             {
@@ -32,9 +32,7 @@ namespace ShineALight
                 MessageBox.Show("ERROR: " + ex.Message);
             }
 
-            
-            this.collection = collection;
-            chLabel.Text = audio.AudioChannels.ToString();
+            chLabel.Text = Audio.AudioChannels.ToString();
             vuMeterR.Color = Brushes.Red;
             vuMeterR.PeakColor = Brushes.Red;
             vuMeterB.Color = Brushes.Blue;
@@ -42,26 +40,23 @@ namespace ShineALight
             vuMeterG.Color = Brushes.Green;
             vuMeterG.PeakColor = Brushes.Green;
 
-            slopeTrackbar.Value = audio.Slope;
+            slopeTrackbar.Value = Audio.Slope;
             slopeLabel.Text = slopeTrackbar.Value.ToString();
 
-            minFreqTrackbar.Value = audio.MinFreq;
+            minFreqTrackbar.Value = Audio.MinFreq;
             minFreqLabel.Text = minFreqTrackbar.Value.ToString();
-            maxFreqTrackbar.Minimum = audio.MinFreq * 2;
+            maxFreqTrackbar.Minimum = Audio.MinFreq * 2;
 
-            maxFreqTrackbar.Value = audio.MaxFreq;
+            maxFreqTrackbar.Value = Audio.MaxFreq;
             maxFreqLabel.Text = maxFreqTrackbar.Value.ToString();
-            minFreqTrackbar.Maximum = audio.MaxFreq / 2;
+            minFreqTrackbar.Maximum = Audio.MaxFreq / 2;
         }
 
         public override void DisposeDeferred()
         {
             try
             {
-                audio.DataAvailable -= Audio_DataAvailable;
-                audio.StopCapture();
-                audio.autoScaler.Stop();
-                audio.Dispose();
+                Mode.Dispose();
             }
             catch (Exception ex)
             {
@@ -74,10 +69,7 @@ namespace ShineALight
 
         private void Audio_DataAvailable(object sender, AudioDataAvailableArgs e)
         {
-            int r = (int) Math.Round(e.ChannelMagnitudes[0] * 255);
-            int b = (int) Math.Round(e.ChannelMagnitudes[1] * 255);
-            int g = (int) Math.Round(e.ChannelMagnitudes[2] * 255);
-            collection.SetColor(new SAL_Core.RGB.Color(r, g, b));
+            
             UIUpdate(e);
         }
 
@@ -103,23 +95,23 @@ namespace ShineALight
 
         private void slopeTrackbar_Scroll(object sender, EventArgs e)
         {
-            audio.Slope = slopeTrackbar.Value;
+            Audio.Slope = slopeTrackbar.Value;
             slopeLabel.Text = slopeTrackbar.Value.ToString();
             //curvePlot1.Refresh();
         }
 
         private void MinFreqTrackbar_Scroll(object sender, EventArgs e)
         {
-            audio.MinFreq = minFreqTrackbar.Value;
+            Audio.MinFreq = minFreqTrackbar.Value;
             minFreqLabel.Text = minFreqTrackbar.Value.ToString();
-            maxFreqTrackbar.Minimum = audio.MinFreq * 2;
+            maxFreqTrackbar.Minimum = Audio.MinFreq * 2;
         }
 
         private void TrackBar2_Scroll(object sender, EventArgs e)
         {
-            audio.MaxFreq = maxFreqTrackbar.Value;
+            Audio.MaxFreq = maxFreqTrackbar.Value;
             maxFreqLabel.Text = maxFreqTrackbar.Value.ToString();
-            minFreqTrackbar.Maximum = audio.MaxFreq / 2;
+            minFreqTrackbar.Maximum = Audio.MaxFreq / 2;
         }
     }
 }

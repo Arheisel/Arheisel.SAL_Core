@@ -8,6 +8,7 @@ using Arheisel.Log;
 using System.Threading;
 using SAL_Core.Extensions;
 using SAL_Core.IO.Connection;
+using SAL_Core.Modes;
 
 namespace ShineALight
 {
@@ -114,48 +115,36 @@ namespace ShineALight
                 switch (ModeSelect.Text)
                 {
                     case "Effects":
-                        control = new UCEffects(arduinoCollection, settings.Effects);
-                        Main.Panel2.Controls.Add(control);
-                        control.Dock = DockStyle.Fill;
-                        control.Show();
+                        control = new UCEffects(new EffectsMode(arduinoCollection, settings.Effects));
                         break;
                     case "Music":
-                        control = new UCMusic(arduinoCollection, settings.Music);
-                        Main.Panel2.Controls.Add(control);
-                        control.Dock = DockStyle.Fill;
-                        control.Show();
+                        control = new UCAudio(new MusicMode(arduinoCollection, settings.Music));
                         break;
                     case "RGB Visualizer":
-                        control = new UCRGBVisualizer(arduinoCollection, settings.RGBVisualizer);
-                        Main.Panel2.Controls.Add(control);
-                        control.Dock = DockStyle.Fill;
-                        control.Show();
+                        control = new UCRGBVisualizer(new RGBVisualizerMode(arduinoCollection, settings.RGBVisualizer));
                         break;
                     case "Visualizer":
-                        control = new UCVisualizer(arduinoCollection, settings.Visualizer);
-                        Main.Panel2.Controls.Add(control);
-                        control.Dock = DockStyle.Fill;
-                        control.Show();
+                        control = new UCAudio(new VisualizerMode(arduinoCollection, settings.Visualizer));
                         break;
                     case "Musicbar":
-                        control = new UCMusicbar(arduinoCollection, settings.Musicbar);
-                        Main.Panel2.Controls.Add(control);
-                        control.Dock = DockStyle.Fill;
-                        control.Show();
+                        control = new UCAudio(new MusicbarMode(arduinoCollection, settings.Musicbar));
                         break;
                     case "Musicbar 2":
-                        control = new UCMusicbar2(arduinoCollection, settings.Musicbar2);
-                        Main.Panel2.Controls.Add(control);
-                        control.Dock = DockStyle.Fill;
-                        control.Show();
+                        control = new UCAudio(new Musicbar2Mode(arduinoCollection, settings.Musicbar2));
                         break;
                     case "Effect Visualizer":
-                        control = new UCEffectsVisualizer(arduinoCollection, settings.EffectsVisualizer, settings.Effects);
-                        Main.Panel2.Controls.Add(control);
-                        control.Dock = DockStyle.Fill;
-                        control.Show();
+                        control = new UCEffectsVisualizer(new EffectsVisualizerMode(arduinoCollection, settings.EffectsVisualizer, settings.Effects));
                         break;
+                    default:
+                        {
+                            var mode = new VisualizerMode(arduinoCollection, settings.Visualizer);
+                            control = new UCAudio(mode);
+                            break;
+                        }
                 }
+                Main.Panel2.Controls.Add(control);
+                control.Dock = DockStyle.Fill;
+                control.Show();
                 settings.CurrentMode = ModeSelect.SelectedIndex;
                 Design.Apply(Main.Panel2.Controls[0]);
             }

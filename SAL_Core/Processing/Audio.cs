@@ -81,11 +81,10 @@ namespace SAL_Core.Processing
         {
             get
             {
-                return Settings.MaxFreq; // * capture.WaveFormat.Channels;
+                return Settings.MaxFreq;
             }
             set
             {
-                //value = value / capture.WaveFormat.Channels; //I don't know why this works and I'm too afraid to ask
                 if (value > Settings.MinFreq && waveFormat != null && value <= waveFormat.SampleRate)
                 {
                     Settings.MaxFreq = value;
