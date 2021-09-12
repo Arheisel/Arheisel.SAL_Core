@@ -9,12 +9,17 @@ using SAL_Core.Settings;
 
 namespace SAL_Core.IO
 {
-    public class Arduino : IDisposable
+    public class Arduino : IDisposable, IEquatable<Arduino>
     {
         private Color[] colorCache;
         private readonly ConnectionHandler Connection;
 
-        public string Name { get; private set; }
+        public string Name { 
+            get
+            {
+                return Settings.Name;
+            }
+        }
 
         public bool Online { 
             get 
@@ -46,19 +51,11 @@ namespace SAL_Core.IO
             }
         }
 
-        public ArduinoSettings Settings { get; private set; } = null;
+        public ArduinoSettings Settings { get; }
 
         public Arduino(ArduinoSettings settings, bool muteExceptions = false)
         {
             Settings = settings;
-            if (settings.ConnectionType == ConnectionType.Serial)
-            {
-                Name = settings.COM;
-            }
-            else
-            {
-                Name = Settings.IP + ":" + Settings.Port;
-            }
             try
             {
                 Connection = new ConnectionHandler(settings);
@@ -195,7 +192,21 @@ namespace SAL_Core.IO
             Connection.Send(data);
         }
 
-        
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as Arduino);
+        }
+
+        public bool Equals(Arduino other)
+        {
+            return other != null &&
+                   EqualityComparer<ArduinoSettings>.Default.Equals(Settings, other.Settings);
+        }
+
+        public override int GetHashCode()
+        {
+            return -2113213080 + EqualityComparer<ArduinoSettings>.Default.GetHashCode(Settings);
+        }
 
         private bool _disposed = false;
 

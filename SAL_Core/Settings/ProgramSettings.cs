@@ -8,50 +8,25 @@ using SAL_Core.IO.Connection;
 namespace SAL_Core.Settings
 {
     [Serializable]
-    public class ProgramSettings
+    public sealed class ProgramSettings
     {
-        public List<ArduinoSettings> Arduinos { get; set; } = new List<ArduinoSettings>();
+        public ArduinoCollectionSettings ArduinoCollectionSettings { get; } = new ArduinoCollectionSettings();
         public int CurrentMode { get; set; } = 0;
-        public EffectSettings Effects { get; set; } = new EffectSettings();
+        public EffectSettings Effects { get; } = new EffectSettings();
 
-        public AudioSettings Music { get; set; } = new AudioSettings();
+        public AudioSettings Music { get; } = new AudioSettings();
 
-        public AudioSettings RGBVisualizer { get; set; } = new AudioSettings();
+        public AudioSettings RGBVisualizer { get; } = new AudioSettings();
 
-        public AudioSettings Visualizer { get; set; } = new AudioSettings();
+        public AudioSettings Visualizer { get; } = new AudioSettings();
 
-        public AudioSettings Musicbar { get; set; } = new AudioSettings();
+        public AudioSettings Musicbar { get; } = new AudioSettings();
 
-        public AudioSettings Musicbar2 { get; set; } = new AudioSettings();
+        public AudioSettings Musicbar2 { get; } = new AudioSettings();
 
-        public AudioSettings EffectsVisualizer { get; set; } = new AudioSettings();
+        public AudioSettings EffectsVisualizer { get; } = new AudioSettings();
 
-        public void AddArduino(Arduino arduino)
-        {
-            for (int i = 0; i < Arduinos.Count; i++)
-            {
-                if (Arduinos[i].ConnectionType == arduino.Settings.ConnectionType)
-                {
-                    if (arduino.Settings.ConnectionType == ConnectionType.Serial)
-                    {
-                        if (arduino.Settings.COM == Arduinos[i].COM)
-                        {
-                            Arduinos.RemoveAt(i);
-                        }
-                    }
-                    else
-                    {
-                        if (arduino.Settings.IP == Arduinos[i].IP && arduino.Settings.Port == Arduinos[i].Port)
-                        {
-                            Arduinos.RemoveAt(i);
-                        }
-                    }
-                }
-            }
-            Arduinos.Add(arduino.Settings);
-        }
-
-        public static void WriteToFile<T>(string filePath, T objectToWrite, bool append = false)
+        private static void WriteToFile<T>(string filePath, T objectToWrite, bool append = false)
         {
             using (Stream stream = File.Open(filePath, append ? FileMode.Append : FileMode.Create))
             {
@@ -60,7 +35,7 @@ namespace SAL_Core.Settings
             }
         }
 
-        public static T ReadFromFile<T>(string filePath)
+        private static T ReadFromFile<T>(string filePath)
         {
             using (Stream stream = File.Open(filePath, FileMode.Open))
             {

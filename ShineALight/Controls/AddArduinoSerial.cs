@@ -8,6 +8,7 @@ using SAL_Core.IO;
 using Arheisel.Log;
 using System.Threading;
 using SAL_Core.Settings;
+using SAL_Core;
 
 namespace ShineALight
 {
@@ -115,7 +116,7 @@ namespace ShineALight
                 {
                     taskList.Add(Task.Run(() => DiscoverPort(name)));
                 }
-                else if (!Program.arduinoCollection.Contains(name))
+                else if (!Main.ArduinoCollection.Contains(Program.COMArduinos[name]))
                 {
                     list.Add(name);
                 }
@@ -139,7 +140,7 @@ namespace ShineALight
                         else if (task.Result != null)
                         {
                             Program.COMArduinos.Add(task.Result.Settings.COM, task.Result);
-                            list.Add(task.Result.Name);
+                            list.Add(task.Result.Settings.COM);
                         }
                         completedTasks.Add(task);
                         worker.ReportProgress((++count * 100) / names.Length);

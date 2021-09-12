@@ -5,13 +5,15 @@ namespace SAL_Core.Settings
     [Serializable]
     public class AudioSettings
     {
-        public int Slope { get; set; } = 10;
+        public int Slope { get; set; } = 25;
 
-        public AutoscalerSettings Autoscaler { get; set; } = new AutoscalerSettings();
+        public AutoscalerSettings Autoscaler { get; } = new AutoscalerSettings();
 
-        public int MinFreq { get; set; } = 50;
+        public EqualizerSettings Equalizer { get; } = new EqualizerSettings();
 
-        public int MaxFreq { get; set; } = 4100;
+        public int MinFreq { get; set; } = 20;
+
+        public int MaxFreq { get; set; } = 10000;
 
     }
 }

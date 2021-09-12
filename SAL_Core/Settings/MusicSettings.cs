@@ -8,6 +8,6 @@ namespace SAL_Core.Settings
     {
         public int Slope { get; set; } = 10;
 
-        public AutoscalerSettings Autoscaler { get; set; } = new AutoscalerSettings();
+        public AutoscalerSettings Autoscaler { get; } = new AutoscalerSettings();
     }
 }

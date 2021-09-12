@@ -25,7 +25,7 @@ namespace ShineALight
         {
             if (SerialRadio.Checked)
             {
-                if (!String.IsNullOrWhiteSpace(serial.Port))
+                if (!string.IsNullOrWhiteSpace(serial.Port))
                 {
                     Arduino = Program.COMArduinos[serial.Port];
                     DialogResult = DialogResult.OK;
@@ -38,7 +38,7 @@ namespace ShineALight
             }
             else if (UDPRadio.Checked)
             {
-                if (!String.IsNullOrWhiteSpace(tcp.ip))
+                if (!string.IsNullOrWhiteSpace(tcp.ip))
                 {
                     try
                     {

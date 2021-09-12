@@ -24,20 +24,19 @@ namespace ShineALight
             InitializeComponent();
             Design.Apply(this);
 
-            arduinoCollection = Program.arduinoCollection;
+            arduinoCollection = SAL_Core.Main.ArduinoCollection;
             arduinoCollection.OnError += ArduinoCollection_OnError;
-            settings = Program.settings;
+            settings = SAL_Core.Main.Settings;
             //ModeSelect.SelectedIndex = settings.CurrentMode;
 
             FormClosed += MainWindow_FormClosed;
 
             background = new BackgroundWorker();
-            background.WorkerReportsProgress = true;
-            background.WorkerSupportsCancellation = true;
+            background.WorkerReportsProgress = false;
+            background.WorkerSupportsCancellation = false;
             background.DoWork += new DoWorkEventHandler(Background_DoWork);
             background.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Background_RunWorkerCompleted);
-            background.ProgressChanged += new ProgressChangedEventHandler(Background_ProgressChanged);
-            progressBar1.Visible = true;
+            progressBar1.Style = ProgressBarStyle.Marquee;
             Reverse.Enabled = false;
             MoveUp.Enabled = false;
             MoveDown.Enabled = false;
@@ -66,8 +65,7 @@ namespace ShineALight
             }
             else
             {
-                arduinoList.Items.Clear();
-                foreach (Arduino a in arduinoCollection) arduinoList.Items.Add(a);
+                arduinoList.DataSource = arduinoCollection.ToList();
                 ModeSelect_SelectedIndexChanged(this, new EventArgs());
             }
         }
@@ -166,8 +164,7 @@ namespace ShineALight
                 if (dialog.DialogResult == DialogResult.OK)
                 {
                     arduinoCollection.Add(dialog.Arduino);
-                    arduinoList.Items.Add(dialog.Arduino);
-                    settings.AddArduino(dialog.Arduino);
+                    arduinoList.DataSource = arduinoCollection.ToList();
                 }
             }
         }
@@ -191,27 +188,14 @@ namespace ShineALight
             }
         }
 
-        private void MainWindow_Load(object sender, EventArgs e)
-        {
-            
-        }
-
-        private void MainWindow_Shown(object sender, EventArgs e)
-        {
-
-        }
 
         private void Background_DoWork(object sender, DoWorkEventArgs e)
         {
             BackgroundWorker worker = sender as BackgroundWorker;
 
-            e.Result = ConnectToArduinos(worker, e);
+            ConnectToArduinos(worker, e);
         }
 
-        private void Background_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            progressBar1.Value = e.ProgressPercentage;
-        }
 
         private void Background_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -231,78 +215,23 @@ namespace ShineALight
             else
             {
                 arduinoList.Items.Clear();
-                var result = (List<Arduino>)e.Result;
-                foreach (Arduino arduino in result)
-                {
-                    arduinoList.Items.Add(arduino);
-                }
+                arduinoList.DataSource = arduinoCollection.ToList();
                 Reverse.Enabled = true;
                 MoveUp.Enabled = true;
                 MoveDown.Enabled = true;
                 RemoveArduino.Enabled = true;
                 AddArduino.Enabled = true;
+                progressBar1.Style = ProgressBarStyle.Continuous;
+                progressBar1.Value = 100;
             }
             ModeSelect.SelectedIndex = settings.CurrentMode;
         }
 
-        private List<Arduino> ConnectToArduinos(BackgroundWorker worker, DoWorkEventArgs e)
+        private void ConnectToArduinos(BackgroundWorker worker, DoWorkEventArgs e)
         {
-            var list = new List<Arduino>();
-            int count = 0;
             Log.Write(Log.TYPE_INFO, "MainWindow :: Starting initial connect");
-            foreach (ArduinoSettings arduino in settings.Arduinos)
-            {
-                if (worker.CancellationPending)
-                {
-                    e.Cancel = true;
-                    break;
-                }
-                if (arduino.ConnectionType == ConnectionType.TCP)
-                {
-                    try
-                    {
-                        var dev = new Arduino(arduino, true);
-                        if (dev.Online)
-                        {
-                            arduinoCollection.Add(dev);
-                        }
-                        list.Add(dev);
-                    }
-                    catch (Exception ex)
-                    {
-                        Log.Write(Log.TYPE_ERROR, "MainWindow :: " + ex.Message + Environment.NewLine + ex.StackTrace);
-                    }
-                }
-                else
-                {
-                    if (!Program.COMArduinos.ContainsKey(arduino.COM))
-                    {
-                        try
-                        {
-                            var dev = new Arduino(arduino, true);
-                            if (dev.Online)
-                            {
-                                Program.COMArduinos.Add(dev.Name, dev);
-                                arduinoCollection.Add(dev);
-                            }
-                            list.Add(dev);
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.Write(Log.TYPE_ERROR, "MainWindow :: " + ex.Message + Environment.NewLine + ex.StackTrace);
-                        }
-                    }
-                    else if (!Program.arduinoCollection.Contains(arduino.COM))
-                    {
-                        arduinoCollection.Add(Program.COMArduinos[arduino.COM]);
-                    }
-                }
-                
-                worker.ReportProgress((++count * 100) / settings.Arduinos.Count);
-            }
-
+            arduinoCollection.InitializeArduinos();
             Log.Write(Log.TYPE_INFO, "MainWindow :: Initial connect ended");
-            return list;
         }
 
         private void Reverse_Click(object sender, EventArgs e)
@@ -310,8 +239,7 @@ namespace ShineALight
             if (arduinoList.SelectedItem == null) return;
             Arduino arduino = arduinoList.SelectedItem as Arduino;
             arduino.Settings.Reverse = !arduino.Settings.Reverse;
-            arduinoList.Items.Clear();
-            foreach (Arduino a in arduinoCollection) arduinoList.Items.Add(a);
+            arduinoList.DataSource = arduinoCollection.ToList();
             arduinoList.SelectedItem = arduino;
             settings.Save();
         }
@@ -328,7 +256,7 @@ namespace ShineALight
                 arduinoList.Items.Remove(arduino);
                 if (arduino.Settings.ConnectionType == ConnectionType.Serial) Program.COMArduinos.Remove(arduino.Settings.COM);
                 arduinoCollection.Remove(arduino);
-                settings.Arduinos.Remove(arduino.Settings);
+                arduinoList.DataSource = arduinoCollection.ToList();
                 settings.Save();
             }
             
@@ -339,9 +267,7 @@ namespace ShineALight
             if (arduinoList.SelectedItem == null) return;
             Arduino arduino = arduinoList.SelectedItem as Arduino;
             arduinoCollection.ShiftUp(arduino);
-            settings.Arduinos.Shift(arduino.Settings, -1);
-            arduinoList.Items.Clear();
-            foreach(Arduino a in arduinoCollection) arduinoList.Items.Add(a);
+            arduinoList.DataSource = arduinoCollection.ToList();
             arduinoList.SelectedItem = arduino;
             settings.Save();
         }
@@ -351,9 +277,7 @@ namespace ShineALight
             if (arduinoList.SelectedItem == null) return;
             Arduino arduino = arduinoList.SelectedItem as Arduino;
             arduinoCollection.ShiftDown(arduino);
-            settings.Arduinos.Shift(arduino.Settings, 1);
-            arduinoList.Items.Clear();
-            foreach (Arduino a in arduinoCollection) arduinoList.Items.Add(a);
+            arduinoList.DataSource = arduinoCollection.ToList();
             arduinoList.SelectedItem = arduino;
             settings.Save();
         }

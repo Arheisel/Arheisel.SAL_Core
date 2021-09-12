@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Arheisel.Log;
 using SAL_Core.Extensions;
 using SAL_Core.RGB;
+using SAL_Core.Settings;
 
 namespace SAL_Core.IO
 {
@@ -16,16 +17,19 @@ namespace SAL_Core.IO
         private readonly ConcurrentQueue<ChColor> queue;
         private readonly Thread thread;
 
+        public readonly ArduinoCollectionSettings Settings;
         public int ChannelCount { get; private set; } = 0;
-        public bool Enabled { get; set; } = true;
+        public bool Enabled { get; private set; } = false;
         public ArduinoGroups Groups { get; }
 
         public event EventHandler<ArduinoExceptionArgs> OnError;
+        public event EventHandler OnChannelCountChange;
 
-        public ArduinoCollection()
+        public ArduinoCollection(ArduinoCollectionSettings settings)
         {
             try
             {
+                Settings = settings;
                 thread = new Thread(new ThreadStart(Worker));
                 queue = new ConcurrentQueue<ChColor>();
                 Groups = new ArduinoGroups(this);
@@ -35,6 +39,20 @@ namespace SAL_Core.IO
             {
                 Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + e.Message + Environment.NewLine + e.StackTrace);
             }
+        }
+
+        public void InitializeArduinos()
+        {
+            foreach(var settings in Settings.Arduinos)
+            {
+                var arduino = new Arduino(settings, true);
+                if (Contains(arduino))
+                    Settings.Arduinos.Remove(settings);
+                else
+                    collection.Add(arduino);
+            }
+            CalculateChannels();
+            Enabled = true;
         }
 
         private void Worker()
@@ -150,127 +168,6 @@ namespace SAL_Core.IO
             Enabled = true;
         }
 
-        public Arduino this[int index]
-        {
-            get
-            {
-                return collection[index];
-            }
-            set
-            {
-                collection[index] = value;
-                CalculateChannels();
-            }
-        }
-
-        public Arduino IndexOf(string name)
-        {
-            for (int i = 0; i < collection.Count; i++)
-            {
-                if (collection[i].Name == name) return collection[i];
-            }
-            return null;
-        }
-
-        public int IndexOf(Arduino arduino)
-        {
-            return collection.IndexOf(arduino);
-        }
-
-        public bool Contains(string name)
-        {
-            return IndexOf(name) != null;
-        }
-
-        public bool Contains(Arduino arduino)
-        {
-            return collection.Contains(arduino);
-        }
-
-        public void Add(Arduino arduino)
-        {
-            try
-            {
-                if (Contains(arduino)) return;
-                collection.Add(arduino);
-                CalculateChannels();
-            }
-            catch (Exception e)
-            {
-                Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + e.Message + Environment.NewLine + e.StackTrace);
-            }
-        }
-
-        public void Insert(int i, Arduino arduino)
-        {
-            try
-            {
-                if (Contains(arduino)) return;
-                collection.Insert(i, arduino);
-                ChannelCount += arduino.Channels;
-            }
-            catch (Exception e)
-            {
-                Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + e.Message + Environment.NewLine + e.StackTrace);
-            }
-        }
-
-        public void ShiftUp(Arduino arduino)
-        {
-            collection.Shift(arduino, -1);
-        }
-
-        public void ShiftDown(Arduino arduino)
-        {
-            collection.Shift(arduino, 1);
-        }
-
-        public bool Remove(Arduino arduino)
-        {
-            if (Contains(arduino))
-            {
-                collection.Remove(arduino);
-                arduino.Dispose();
-                CalculateChannels();
-                return true;
-            }
-            return false;
-        }
-
-        public void RemoveAt(int i)
-        {
-            if (i < collection.Count)
-            {
-                var arduino = collection[i];
-                collection.RemoveAt(i);
-                arduino.Dispose();
-                CalculateChannels();
-            }
-        }
-
-        public void Clear()
-        {
-            foreach (Arduino arduino in collection) Remove(arduino);
-        }
-
-        private void CalculateChannels()
-        {
-            var count = 0;
-            foreach (var arduino in collection)
-            {
-                if (arduino.Online) count += arduino.Channels;
-            }
-            ChannelCount = count;
-        }
-
-        public int Count
-        {
-            get
-            {
-                return collection.Count;
-            }
-        }
-
         public void SetColor(Color color)
         {
             if (!Enabled) return;
@@ -314,6 +211,126 @@ namespace SAL_Core.IO
             }
         }
 
+        public void Add(Arduino arduino)
+        {
+            try
+            {
+                if (Contains(arduino)) return;
+                collection.Add(arduino);
+                Settings.Arduinos.Add(arduino.Settings);
+                CalculateChannels();
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + e.Message + Environment.NewLine + e.StackTrace);
+            }
+        }
+
+        public Arduino this[int index]
+        {
+            get
+            {
+                return collection[index];
+            }
+            set
+            {
+                collection[index] = value;
+                CalculateChannels();
+            }
+        }
+
+        public int IndexOf(Arduino arduino)
+        {
+            return collection.IndexOf(arduino);
+        }
+
+        public bool Contains(Arduino arduino)
+        {
+            return collection.Contains(arduino);
+        }
+
+        public void Insert(int i, Arduino arduino)
+        {
+            try
+            {
+                if (Contains(arduino)) return;
+                collection.Insert(i, arduino);
+                Settings.Arduinos.Insert(i, arduino.Settings);
+                ChannelCount += arduino.Channels;
+            }
+            catch (Exception e)
+            {
+                Log.Write(Log.TYPE_ERROR, "ArduinoCollection :: " + e.Message + Environment.NewLine + e.StackTrace);
+            }
+        }
+
+        public void ShiftUp(Arduino arduino)
+        {
+            collection.Shift(arduino, -1);
+            Settings.Arduinos.Shift(arduino.Settings, -1);
+        }
+
+        public void ShiftDown(Arduino arduino)
+        {
+            collection.Shift(arduino, 1);
+            Settings.Arduinos.Shift(arduino.Settings, 1);
+        }
+
+        public bool Remove(Arduino arduino)
+        {
+            if (Contains(arduino))
+            {
+                collection.Remove(arduino);
+                Settings.Arduinos.Remove(arduino.Settings);
+                arduino.Dispose();
+                CalculateChannels();
+                return true;
+            }
+            return false;
+        }
+
+        public void RemoveAt(int i)
+        {
+            if (i < collection.Count)
+            {
+                var arduino = collection[i];
+                Remove(arduino);
+                Settings.Arduinos.Remove(arduino.Settings);
+                arduino.Dispose();
+                CalculateChannels();
+            }
+        }
+
+        public void Clear()
+        {
+            foreach (Arduino arduino in collection)
+            {
+                arduino.Dispose();
+                Remove(arduino);
+            }
+            Settings.Arduinos.Clear();
+            ChannelCount = 0;
+        }
+
+        private void CalculateChannels()
+        {
+            var count = 0;
+            foreach (var arduino in collection)
+            {
+                if (arduino.Online) count += arduino.Channels;
+            }
+            ChannelCount = count;
+            OnChannelCountChange?.Invoke(this, EventArgs.Empty);
+        }
+
+        public int Count
+        {
+            get
+            {
+                return collection.Count;
+            }
+        }
+
         IEnumerator IEnumerable.GetEnumerator()
         {
             return this.GetEnumerator();
@@ -322,6 +339,11 @@ namespace SAL_Core.IO
         public IEnumerator<Arduino> GetEnumerator()
         {
             return collection.GetEnumerator();
+        }
+
+        public List<Arduino> ToList()
+        {
+            return new List<Arduino>(collection);
         }
 
         public void CopyTo(Arduino[] array)
@@ -365,6 +387,8 @@ namespace SAL_Core.IO
 
             _disposed = true;
         }
+
+
 
     }
 }

@@ -78,7 +78,7 @@ namespace ShineALight.Controls
                     UpdateScrollbars();
                     try
                     {
-                        Program.settings.Save();
+                        SAL_Core.Main.Settings.Save();
                     }
                     catch (Exception ex)
                     {

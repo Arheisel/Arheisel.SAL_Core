@@ -54,10 +54,13 @@
     <Compile Include="IO\Connection\IConnection.cs" />
     <Compile Include="IO\Connection\Serial.cs" />
     <Compile Include="IO\Connection\TCP.cs" />
+    <Compile Include="Main.cs" />
     <Compile Include="Modes\EffectsMode.cs" />
     <Compile Include="Modes\EffectsVisualizerMode.cs" />
     <Compile Include="Modes\IAudioMode.cs" />
     <Compile Include="Modes\BaseMode.cs" />
+    <Compile Include="Modes\ModeEnum.cs" />
+    <Compile Include="Modes\ModeListItem.cs" />
     <Compile Include="Modes\Musicbar3Mode .cs" />
     <Compile Include="Modes\Musicbar2Mode.cs" />
     <Compile Include="Modes\MusicbarMode.cs" />
@@ -93,6 +96,8 @@
     <Compile Include="Processing\Music.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AForge\Tools.cs" />
+    <Compile Include="Settings\ArduinoCollectionSettings.cs" />
+    <Compile Include="Settings\ArduinoGroupSettings.cs" />
     <Compile Include="Settings\ArduinoSettings.cs" />
     <Compile Include="Settings\AudioSettings.cs" />
     <Compile Include="Settings\AutoscalerSettings.cs" />

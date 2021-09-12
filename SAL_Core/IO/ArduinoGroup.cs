@@ -7,7 +7,6 @@ namespace SAL_Core.IO
     {
         private ArduinoCollection collection;
         private int Start;
-        
         public int Length { get; private set; }
 
         public ArduinoGroup(ArduinoCollection arduinoCollection, int start, int length)
@@ -34,7 +33,7 @@ namespace SAL_Core.IO
         {
             var colors = new Color[Length];
             colors.Populate(color);
-            SetColor(color);
+            SetColor(colors);
         }
 
         public void SetColor(Color[] colors)

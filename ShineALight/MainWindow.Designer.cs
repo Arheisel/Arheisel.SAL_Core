@@ -246,8 +246,6 @@
             this.MaximizeBox = false;
             this.Name = "MainWindow";
             this.Text = "Shine a Light";
-            this.Load += new System.EventHandler(this.MainWindow_Load);
-            this.Shown += new System.EventHandler(this.MainWindow_Shown);
             this.Main.Panel1.ResumeLayout(false);
             this.Main.Panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.Main)).EndInit();

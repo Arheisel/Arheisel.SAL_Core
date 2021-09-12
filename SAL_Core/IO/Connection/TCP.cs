@@ -103,14 +103,14 @@ namespace SAL_Core.IO.Connection
         {
             try
             {
-                if (ReceiveByte(wait) == 252)
+                DelayTimeout(tcp, 1, wait);
+                if (stream.ReadByte() == 252)
                 {
-                    var len = ReceiveByte(wait);
+                    DelayTimeout(tcp, 1);
+                    var len = stream.ReadByte();
                     byte[] data = new byte[len];
-                    for (int i = 0; i < len; i++)
-                    {
-                        data[i] = ReceiveByte(wait);
-                    }
+                    DelayTimeout(tcp, len);
+                    stream.Read(data, 0, len);
                     return data;
                 }
                 else
@@ -130,12 +130,11 @@ namespace SAL_Core.IO.Connection
             }
         }
 
-        private byte ReceiveByte(bool wait = false)
+        private void DelayTimeout(TcpClient client, int length, bool wait = false)
         {
-            /// Getto timeout
             var time = DateTime.Now;
             var diff = new TimeSpan(0, 0, 10);
-            while (!stream.DataAvailable)
+            while (client.Available < length)
             {
                 if ((DateTime.Now - time) > diff && !wait)
                 {
@@ -143,10 +142,6 @@ namespace SAL_Core.IO.Connection
                 }
                 Thread.Sleep(20);
             }
-
-            var msg = new byte[1];
-            stream.Read(msg, 0, 1);
-            return msg[0];
         }
     }
 }
