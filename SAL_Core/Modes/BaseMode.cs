@@ -6,30 +6,30 @@ namespace SAL_Core.Modes
 {
     public abstract class BaseMode : IAudioMode
     {
-        protected readonly ArduinoCollection Collection;
+        protected readonly IChannelGroup Group;
 
         public string Name { get { return GetType().Name; } }
         public Audio Audio { get; }
 
-        public BaseMode(ArduinoCollection collection, AudioSettings settings)
+        public BaseMode(IChannelGroup group, AudioSettings settings)
         {
-            Collection = collection;
+            Group = group;
             Audio = new Audio(settings);
-            Audio.Channels = collection.ChannelCount * collection.Multiplier;
+            Audio.Channels = group.ChannelCount * group.Multiplier;
             Audio.DataAvailable += Audio_DataAvailable; ;
             Audio.StartCapture();
         }
 
         protected virtual void Audio_DataAvailable(object sender, AudioDataAvailableArgs e)
         {
-            double[] magnitudes = new double[Collection.ChannelCount];
+            double[] magnitudes = new double[Group.ChannelCount];
 
             for(int i = 0; i < magnitudes.Length; i++)
             {
                 double max = 0;
-                for (int j = 0; j < Collection.Multiplier; j++)
+                for (int j = 0; j < Group.Multiplier; j++)
                 {
-                    if (e.ChannelMagnitudes[i * Collection.Multiplier + j] > max) max = e.ChannelMagnitudes[i * Collection.Multiplier + j];
+                    if (e.ChannelMagnitudes[i * Group.Multiplier + j] > max) max = e.ChannelMagnitudes[i * Group.Multiplier + j];
                 }
                 magnitudes[i] = max;
             }

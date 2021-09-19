@@ -11,17 +11,15 @@ namespace SAL_Core.Ambient.Types
         private int channels = 0;
         private int currentChannel = 1;
         private Transition transition;
-        public Load(ArduinoCollection collection, EffectPreset settings) : base(collection, settings)
-        {
-        }
+        public Load(IChannelGroup group, EffectPreset settings) : base(group, settings) { }
 
         public override List<ChColor> Step()
         {
             colors.Clear();
-            if (arduino.ChannelCount == 0) return colors;
+            if (Group.ChannelCount == 0) return colors;
             if (step == 0)
             {
-                channels = arduino.ChannelCount;
+                channels = Group.ChannelCount;
                 if (currentChannel == 1)
                 {
                     transition = new Transition(Colors.OFF, Preset.ColorList[count], Preset.TotalSteps);

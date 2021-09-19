@@ -11,10 +11,10 @@ namespace SAL_Core.Modes
     {
         private readonly Color[] EffColors;
         public Effects Effects { get; }
-        public EffectsVisualizerMode(ArduinoCollection collection, AudioSettings settings, EffectSettings effectSettings) : base(collection, settings)
+        public EffectsVisualizerMode(IChannelGroup group, AudioSettings settings, EffectSettings effectSettings) : base(group, settings)
         {
-            EffColors = new Color[collection.ChannelCount];
-            Effects = new Effects(collection, effectSettings);
+            EffColors = new Color[group.ChannelCount];
+            Effects = new Effects(group, effectSettings);
             Effects.DataAvailable += Effects_DataAvailable;
         }
 
@@ -40,7 +40,7 @@ namespace SAL_Core.Modes
             {
                 colors[i] = EffColors[i] * e.ChannelMagnitudes[i];
             }
-            Collection.SetColor(colors);
+            Group.SetColor(colors);
         }
         public override void Dispose()
         {

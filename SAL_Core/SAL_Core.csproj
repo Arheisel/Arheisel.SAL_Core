@@ -54,6 +54,7 @@
     <Compile Include="IO\Connection\IConnection.cs" />
     <Compile Include="IO\Connection\Serial.cs" />
     <Compile Include="IO\Connection\TCP.cs" />
+    <Compile Include="IO\IChannelGroup.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Modes\EffectsMode.cs" />
     <Compile Include="Modes\EffectsVisualizerMode.cs" />

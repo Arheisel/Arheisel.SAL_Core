@@ -13,18 +13,16 @@ namespace SAL_Core.Ambient.Types
         private readonly Transition[] transitions = new Transition[100];
         private int stage = 0;
         private int startPoint = 0;
-        public Rainbow(ArduinoCollection collection, EffectPreset settings) : base(collection, settings)
-        {
-        }
+        public Rainbow(IChannelGroup group, EffectPreset settings) : base(group, settings) { }
 
         public override List<ChColor> Step()
         {
             colors.Clear();
-            if (arduino.ChannelCount == 0) return colors;
+            if (Group.ChannelCount == 0) return colors;
 
             if (step == 0)
             {
-                channels = arduino.ChannelCount;
+                channels = Group.ChannelCount;
                 count = startPoint;
                 for (int i = 0; i < channels; i++)
                 {

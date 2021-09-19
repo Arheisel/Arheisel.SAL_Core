@@ -11,7 +11,7 @@ using SAL_Core.Settings;
 
 namespace SAL_Core.IO
 {
-    public class ArduinoCollection : IDisposable, IList<Arduino>
+    public class ArduinoCollection : IDisposable, IList<Arduino>, IChannelGroup
     {
         private readonly List<Arduino> collection = new List<Arduino>();
         private readonly ConcurrentQueue<ChColor> queue;
@@ -19,6 +19,7 @@ namespace SAL_Core.IO
 
         public readonly ArduinoCollectionSettings Settings;
         public int ChannelCount { get; private set; } = 0;
+        public int Multiplier { get; private set; } = 1;
         public bool Enabled { get; private set; } = false;
         public ArduinoGroups Groups { get; }
 
@@ -198,19 +199,6 @@ namespace SAL_Core.IO
             queue.Enqueue(new ChColor(colors, start));
         }
 
-        public int Multiplier
-        {
-            get
-            {
-                if (ChannelCount <= 1) return 12;
-                else if (ChannelCount == 2) return 6;
-                else if (ChannelCount == 3) return 4;
-                else if (ChannelCount == 4) return 3;
-                else if (ChannelCount >= 5 && ChannelCount <= 8) return 2;
-                else return 1;
-            }
-        }
-
         public void Add(Arduino arduino)
         {
             try
@@ -320,6 +308,14 @@ namespace SAL_Core.IO
                 if (arduino.Online) count += arduino.Channels;
             }
             ChannelCount = count;
+
+            if (ChannelCount <= 1) Multiplier = 12;
+            else if (ChannelCount == 2) Multiplier = 6;
+            else if (ChannelCount == 3) Multiplier = 4;
+            else if (ChannelCount == 4) Multiplier = 3;
+            else if (ChannelCount >= 5 && ChannelCount <= 8) Multiplier = 2;
+            else Multiplier = 1;
+
             OnChannelCountChange?.Invoke(this, EventArgs.Empty);
         }
 

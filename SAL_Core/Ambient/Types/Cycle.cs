@@ -10,14 +10,12 @@ namespace SAL_Core.Ambient.Types
     class Cycle : Effect
     {
         private Transition transition;
-        public Cycle(ArduinoCollection collection, EffectPreset settings) : base(collection, settings)
-        {
-        }
+        public Cycle(IChannelGroup group, EffectPreset settings) : base(group, settings) { }
 
         public override List<ChColor> Step()
         {
             colors.Clear();
-            if (arduino.ChannelCount == 0) return colors;
+            if (Group.ChannelCount == 0) return colors;
             if (step == 0)
             {
                 transition = new Transition(Preset.ColorList[count], Preset.ColorList[(count + 1).Mod(Preset.ColorList.Count)], Preset.TotalSteps);

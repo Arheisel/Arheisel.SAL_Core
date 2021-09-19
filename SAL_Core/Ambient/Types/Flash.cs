@@ -9,14 +9,12 @@ namespace SAL_Core.Ambient.Types
     class Flash : Effect
     {
         private Color color;
-        public Flash(ArduinoCollection collection, EffectPreset settings) : base(collection, settings)
-        {
-        }
+        public Flash(IChannelGroup group, EffectPreset settings) : base(group, settings) { }
 
         public override List<ChColor> Step()
         {
             colors.Clear();
-            if (arduino.ChannelCount == 0) return colors;
+            if (Group.ChannelCount == 0) return colors;
             if (step == 0)
             {
                 color = Preset.ColorList[count];

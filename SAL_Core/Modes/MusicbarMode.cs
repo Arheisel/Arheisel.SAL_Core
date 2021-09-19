@@ -12,7 +12,7 @@ namespace SAL_Core.Modes
         private int current = 0;
         private bool currentSet = false;
 
-        public MusicbarMode(ArduinoCollection collection, AudioSettings settings) : base(collection, settings)
+        public MusicbarMode(IChannelGroup group, AudioSettings settings) : base(group, settings)
         {
             ColorList = new List<Color> { Colors.RED, Colors.ORANGE, Colors.YELLOW, Colors.GREEN, Colors.CYAN, Colors.EBLUE, Colors.BLUE, Colors.PURPLE, Colors.MAGENTA, Colors.PINK };
         }
@@ -27,14 +27,14 @@ namespace SAL_Core.Modes
             }
             if (e.Peak < 0.90 && currentSet) currentSet = false;
 
-            double div = 1.0 / (double)Collection.ChannelCount;
-            var colors = new Color[Collection.ChannelCount];
-            for (int i = 0; i < Collection.ChannelCount; i++)
+            double div = 1.0 / (double)Group.ChannelCount;
+            var colors = new Color[Group.ChannelCount];
+            for (int i = 0; i < Group.ChannelCount; i++)
             {
                 if (e.Peak > div * i) colors[i] = ColorList[current] * e.Peak;
                 else colors[i] = Colors.OFF;
             }
-            Collection.SetColor(colors);
+            Group.SetColor(colors);
         }
     }
 }

@@ -7,7 +7,7 @@ namespace SAL_Core.Modes
 {
     public class VisualizerMode : BaseMode
     {
-        public VisualizerMode(ArduinoCollection collection, AudioSettings settings) : base(collection, settings) { }
+        public VisualizerMode(IChannelGroup group, AudioSettings settings) : base(group, settings) { }
 
         protected override void OnDataAvailable(AudioDataAvailableArgs e)
         {
@@ -16,7 +16,7 @@ namespace SAL_Core.Modes
             {
                 colors[i] = Maps.EncodeRGB(e.ChannelMagnitudes[i]);
             }
-            Collection.SetColor(colors);
+            Group.SetColor(colors);
         }
     }
 }

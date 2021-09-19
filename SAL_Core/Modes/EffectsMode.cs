@@ -6,15 +6,15 @@ namespace SAL_Core.Modes
 {
     public class EffectsMode
     {
-        protected readonly ArduinoCollection Collection;
+        protected readonly IChannelGroup Group;
 
         public string Name { get { return GetType().Name; } }
         public Effects Effects { get; }
 
-        public EffectsMode(ArduinoCollection collection, EffectSettings settings)
+        public EffectsMode(IChannelGroup group, EffectSettings settings)
         {
-            Collection = collection;
-            Effects = new Effects(collection, settings);
+            Group = group;
+            Effects = new Effects(group, settings);
             Effects.DataAvailable += Effects_DataAvailable;
         }
 
@@ -27,7 +27,7 @@ namespace SAL_Core.Modes
         {
             foreach (var color in e.Colors)
             {
-                Collection.SetColor(color.Channel, color.Color);
+                Group.SetColor(color.Channel, color.Color);
             }
         }
         public void Dispose()

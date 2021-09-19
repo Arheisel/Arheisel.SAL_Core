@@ -9,17 +9,17 @@ namespace SAL_Core.Ambient
 {
     class Effect : IDisposable
     {
-        protected readonly ArduinoCollection arduino;
+        protected readonly IChannelGroup Group;
         public EffectPreset Preset { get; set; }
         protected int step = 0;
         protected int count = 0;
         protected readonly List<ChColor> colors = new List<ChColor>();
 
-        public Effect(ArduinoCollection collection, EffectPreset settings)
+        public Effect(IChannelGroup group, EffectPreset settings)
         {
             Preset = settings;
-            arduino = collection;
-            arduino.SetColor(Colors.OFF);
+            Group = group;
+            Group.SetColor(Colors.OFF);
         }
 
         public virtual List<ChColor> Step()

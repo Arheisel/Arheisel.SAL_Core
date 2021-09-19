@@ -8,15 +8,12 @@ namespace SAL_Core.Ambient.Types
 {
     class Static : Effect
     {
-        public Static(ArduinoCollection collection, EffectPreset settings) : base(collection, settings)
-        {
-
-        }
+        public Static(IChannelGroup group, EffectPreset settings) : base(group, settings) { }
 
         public override List<ChColor> Step()
         {
             colors.Clear();
-            if (arduino.ChannelCount == 0) return colors;
+            if (Group.ChannelCount == 0) return colors;
             if (step == 0)
             {
                 colors.Add(new ChColor(0, Preset.ColorList[count]));

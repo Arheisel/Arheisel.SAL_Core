@@ -12,7 +12,7 @@ namespace SAL_Core.Ambient
     {
         public event EventHandler<EffectDataAvailableArgs> DataAvailable;
         private Timer timer;
-        private ArduinoCollection arduinoCollection;
+        private IChannelGroup channelGroup;
 
         private Effect effect;
 
@@ -56,11 +56,6 @@ namespace SAL_Core.Ambient
             }
         }
 
-        public void Stop()
-        {
-            timer.Enabled = false;
-        }
-
         public int Steps
         {
             get
@@ -95,8 +90,7 @@ namespace SAL_Core.Ambient
 
         public int Time { get; private set; } = 100;
 
-
-        public Effects(ArduinoCollection arduino, EffectSettings settings)
+        public Effects(IChannelGroup group, EffectSettings settings)
         {
             Settings = settings;
             timer = new Timer()
@@ -106,7 +100,7 @@ namespace SAL_Core.Ambient
                 AutoReset = true
             };
             timer.Elapsed += Timer_Elapsed;
-            arduinoCollection = arduino;
+            channelGroup = group;
 
             InitializeEffect();
         }
@@ -120,31 +114,31 @@ namespace SAL_Core.Ambient
                 switch (preset.Type)
                 {
                     case EffectTypes.Rainbow:
-                        effect = new Rainbow(arduinoCollection, preset);
+                        effect = new Rainbow(channelGroup, preset);
                         break;
                     case EffectTypes.Cycle:
-                        effect = new Cycle(arduinoCollection, preset);
+                        effect = new Cycle(channelGroup, preset);
                         break;
                     case EffectTypes.Breathing:
-                        effect = new Breathing(arduinoCollection, preset);
+                        effect = new Breathing(channelGroup, preset);
                         break;
                     case EffectTypes.Flash:
-                        effect = new Flash(arduinoCollection, preset);
+                        effect = new Flash(channelGroup, preset);
                         break;
                     case EffectTypes.Fire:
-                        effect = new Fire(arduinoCollection, preset);
+                        effect = new Fire(channelGroup, preset);
                         break;
                     case EffectTypes.Static:
-                        effect = new Static(arduinoCollection, preset);
+                        effect = new Static(channelGroup, preset);
                         break;
                     case EffectTypes.Sweep:
-                        effect = new Sweep(arduinoCollection, preset);
+                        effect = new Sweep(channelGroup, preset);
                         break;
                     case EffectTypes.Load:
-                        effect = new Load(arduinoCollection, preset);
+                        effect = new Load(channelGroup, preset);
                         break;
                     case EffectTypes.Beam:
-                        effect = new Beam(arduinoCollection, preset);
+                        effect = new Beam(channelGroup, preset);
                         break;
                 }
             }
@@ -167,6 +161,11 @@ namespace SAL_Core.Ambient
             {
                 Log.Write(Log.TYPE_ERROR, "Effects :: " + Current +  " :: " + ex.Message + Environment.NewLine + ex.StackTrace);
             }  
+        }
+
+        public void Stop()
+        {
+            timer.Enabled = false;
         }
 
         private bool _disposed = false;

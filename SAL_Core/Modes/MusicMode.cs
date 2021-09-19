@@ -7,11 +7,11 @@ namespace SAL_Core.Modes
 {
     public class MusicMode : BaseMode
     {
-        public MusicMode(ArduinoCollection collection, AudioSettings settings) : base(collection, settings) { }
+        public MusicMode(IChannelGroup group, AudioSettings settings) : base(group, settings) { }
 
         protected override void OnDataAvailable(AudioDataAvailableArgs e)
         {
-            Collection.SetColor(Maps.EncodeRGB(e.Peak));
+            Group.SetColor(Maps.EncodeRGB(e.Peak));
         }
     }
 }
