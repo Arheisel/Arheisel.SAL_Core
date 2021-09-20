@@ -129,7 +129,6 @@ namespace SAL_Core.Ambient
             {
                 timer.Stop();
                 var preset = Settings.CurrentPreset;
-                Speed = preset.Speed;
                 switch (preset.Type)
                 {
                     case EffectTypes.Rainbow:
@@ -161,7 +160,7 @@ namespace SAL_Core.Ambient
                         break;
                 }
                 DataAvailable?.Invoke(this, new EffectDataAvailableArgs(new List<ChColor>() { new ChColor(0, Colors.OFF) }));
-                timer.Start();
+                Speed = preset.Speed;
             }
             catch (Exception e)
             {
@@ -188,7 +187,7 @@ namespace SAL_Core.Ambient
 
         public void Stop()
         {
-            timer.Enabled = false;
+            timer.Stop();
         }
 
         private bool _disposed = false;
