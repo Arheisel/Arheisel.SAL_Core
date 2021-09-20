@@ -10,7 +10,7 @@ namespace SAL_Core.Modes
     {
         public RGBVisualizerMode(IChannelGroup group, AudioSettings settings) : base(group, settings)
         {
-            Audio.Channels = 3;
+            Audio.ChannelCount = 3;
         }
 
         protected override void Audio_DataAvailable(object sender, AudioDataAvailableArgs e)

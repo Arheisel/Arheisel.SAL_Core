@@ -26,7 +26,7 @@ namespace ShineALight.Controls
                 autoscalerControl.AutoScaler = _audio.autoScaler;
                 autoscalerControl.UpdateValues();
                 audioControls.Audio = _audio;
-                vuPanel.Channels = _audio.Channels;
+                vuPanel.Channels = _audio.ChannelCount;
                 _audio.DataAvailable += _audio_DataAvailable;
             }
         }

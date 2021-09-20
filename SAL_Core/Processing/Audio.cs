@@ -35,7 +35,7 @@ namespace SAL_Core.Processing
 
         private double _curve_cutoff;
 
-        public int Channels
+        public int ChannelCount
         {
             get
             {

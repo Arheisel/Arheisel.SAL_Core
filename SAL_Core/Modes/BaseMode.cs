@@ -15,7 +15,7 @@ namespace SAL_Core.Modes
         {
             Group = group;
             Audio = new Audio(settings);
-            Audio.Channels = group.ChannelCount * group.Multiplier;
+            Audio.ChannelCount = group.ChannelCount * group.Multiplier;
             Audio.DataAvailable += Audio_DataAvailable; ;
             Audio.StartCapture();
         }
