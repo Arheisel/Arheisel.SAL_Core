@@ -87,7 +87,7 @@
             this.detectedList.Name = "detectedList";
             this.detectedList.Size = new System.Drawing.Size(179, 56);
             this.detectedList.TabIndex = 4;
-            this.detectedList.SelectedIndexChanged += new System.EventHandler(this.detectedList_SelectedIndexChanged);
+            this.detectedList.SelectedIndexChanged += new System.EventHandler(this.DetectedList_SelectedIndexChanged);
             // 
             // statusLabel
             // 

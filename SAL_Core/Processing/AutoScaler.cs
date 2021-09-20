@@ -1,9 +1,10 @@
 ﻿using SAL_Core.Settings;
+using System;
 using System.Timers;
 
 namespace SAL_Core.Processing
 {
-    public class AutoScaler
+    public class AutoScaler : IDisposable
     {
         private readonly Timer timer;
 
@@ -22,14 +23,7 @@ namespace SAL_Core.Processing
             set
             {
                 Settings.Enabled = value;
-                if (value)
-                {
-                    timer.Start();
-                }
-                else
-                {
-                    timer.Stop();
-                }
+                timer.Enabled = value;
             }
         }
 
@@ -102,6 +96,30 @@ namespace SAL_Core.Processing
                 Peak = 0.85;
             }
             Peak -= 0.01;
+        }
+
+        private bool _disposed = false;
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            if (disposing)
+            {
+                timer.Stop();
+                timer.Dispose();
+            }
+
+            _disposed = true;
         }
     }
 }

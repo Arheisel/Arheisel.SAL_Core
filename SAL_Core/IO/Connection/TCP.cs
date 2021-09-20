@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net.Sockets;
 using System.Threading;
+using System.Threading.Tasks;
 using Arheisel.Log;
 
 namespace SAL_Core.IO.Connection
@@ -24,10 +25,12 @@ namespace SAL_Core.IO.Connection
         {
             try
             {
-                tcp = new TcpClient(IP, Port);
-                tcp.NoDelay = true;
-                tcp.SendTimeout = 500;
-                tcp.ReceiveTimeout = 500;
+                tcp = new TcpClient(IP, Port)
+                {
+                    NoDelay = true,
+                    SendTimeout = 500,
+                    ReceiveTimeout = 500
+                };
                 if (tcp.Connected)
                 {
                     stream = tcp.GetStream();
@@ -140,7 +143,7 @@ namespace SAL_Core.IO.Connection
                 {
                     throw new Exception("E_TCP_TIMEOUT: La conexion TCP excedio el tiempo de espera.");
                 }
-                Thread.Sleep(20);
+                Task.Delay(20).Wait();
             }
         }
     }

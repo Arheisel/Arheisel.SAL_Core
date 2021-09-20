@@ -112,6 +112,8 @@ namespace SAL_Core.IO
         /// </summary>
         public void Show()
         {
+            if (!Online) return;
+
             byte[] data = new byte[Channels * 3 + 1];
             data[0] = 99;
 

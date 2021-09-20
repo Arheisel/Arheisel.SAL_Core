@@ -2,14 +2,18 @@
 using SAL_Core.Settings;
 using SAL_Core.IO;
 using System.Collections.ObjectModel;
+using SAL_Core.IO.Connection;
 
 namespace SAL_Core
 {
     public static class Main
     {
+        private const int UDPPORT = 7990;
         public static ReadOnlyCollection<ModeListItem> Modes { get; }
         public static ProgramSettings Settings { get; }
         public static ArduinoCollection ArduinoCollection { get; }
+
+        public static UDPServer UDPServer { get; }
 
         static Main()
         {
@@ -25,7 +29,16 @@ namespace SAL_Core
             });
 
             Settings = ProgramSettings.Load();
+            UDPServer = new UDPServer(UDPPORT);
             ArduinoCollection = new ArduinoCollection(Settings.ArduinoCollectionSettings);
+        }
+
+        public static void Dispose()
+        {
+            Settings.Save();
+            ArduinoCollection.TurnOff();
+            ArduinoCollection.Dispose();
+            UDPServer.Dispose();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace SAL_Core.Processing
             {
                 Settings = settings;
                 AutoScaler = new AutoScaler(settings.Autoscaler);
-                thread = new Thread(new ThreadStart(ProcessAudioData));
+                thread = new Thread(new ThreadStart(ProcessAudioData)) { IsBackground = true };
             }
             catch (Exception e)
             {

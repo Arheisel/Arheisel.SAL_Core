@@ -3,6 +3,8 @@ using System.Windows.Forms;
 using System.Threading;
 using System.Net;
 using SAL_Core.IO.Connection;
+using System.Linq;
+using SAL_Core;
 
 namespace ShineALight
 {
@@ -12,16 +14,20 @@ namespace ShineALight
         public string ip = "";
         public int port = 7990;
 
-        private delegate void UpdateDelegate(ArduinoDetectedArgs e);
-        private Thread thread;
-        private UDPServer udpServer;
+        private delegate void UpdateDelegate();
         public AddArduinoTCP()
         {
             InitializeComponent();
             Design.Apply(this);
-            udpServer = new UDPServer(port);
-            thread = new Thread(new ThreadStart(Worker));
-            thread.Start();
+            Main.UDPServer.OnNewArduinoDetected += UdpServer_OnNewArduinoDetected;
+            var ipList = Main.UDPServer.DetectedArduinos.Values.Select(p => p.Address.ToString()).ToList();
+            detectedList.DataSource = ipList;
+            Main.UDPServer.Start();
+        }
+
+        private void UdpServer_OnNewArduinoDetected(object sender, EventArgs e)
+        {
+            UIUpdate();
         }
 
         private void TextBox1_TextChanged(object sender, EventArgs e)
@@ -34,51 +40,39 @@ namespace ShineALight
             port = (int)numericUpDown1.Value;
         }
 
-        private void detectedList_SelectedIndexChanged(object sender, EventArgs e)
+        private void DetectedList_SelectedIndexChanged(object sender, EventArgs e)
         {
             textBox1.Text = (string)detectedList.SelectedItem;
         }
 
-        private void UIUpdate(ArduinoDetectedArgs e)
+        private void UIUpdate()
         {
             if (InvokeRequired)
             {
                 var d = new UpdateDelegate(UIUpdate);
                 try
                 {
-                    Invoke(d, new object[] { e });
+                    Invoke(d, new object[] { });
                 }
                 catch { }; //Raises an exception when I close the program because *of course* the target doesn't fucking exist anymore.
             }
             else
             {
-                detectedList.Items.Add(e.IP);
-            }
-        }
-
-        private void Worker()
-        {
-            var data = udpServer.Receive(out IPEndPoint endPoint, true);
-            if(data.Length == 2 && data[0] == 252)
-            {
-                if(data[1] == 0xFA)
-                {
-                    UIUpdate(new ArduinoDetectedArgs(endPoint.Address.ToString()));
-                }
+                var ipList = Main.UDPServer.DetectedArduinos.Values.Select(p => p.Address.ToString()).ToList();
+                detectedList.DataSource = ipList;
             }
         }
 
         protected override void Dispose(bool disposing)
         {
-            
             if (disposing)
             {
-                if(components != null) components.Dispose();
-                thread.Abort();
-                udpServer.Dispose();
+                Main.UDPServer.Stop();
+                components?.Dispose();
             }
             base.Dispose(disposing);
         }
+
     }
 
     public class ArduinoDetectedArgs : EventArgs

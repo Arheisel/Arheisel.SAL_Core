@@ -373,9 +373,10 @@ namespace SAL_Core.Processing
 
             if (disposing)
             {
-                if (enumerator != null) enumerator.Dispose();
-                if (device != null) device.Dispose();
-                if (capture != null) capture.Dispose();
+                enumerator?.Dispose();
+                device?.Dispose();
+                capture?.Dispose();
+                autoScaler?.Dispose();
             }
 
             _disposed = true;

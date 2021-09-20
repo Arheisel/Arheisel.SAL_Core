@@ -2,6 +2,7 @@
 using System;
 using System.IO.Ports;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace SAL_Core.IO.Connection
 {
@@ -43,7 +44,7 @@ namespace SAL_Core.IO.Connection
                 if (retryCount < 10 && retry)
                 {
                     serial.Close();
-                    Thread.Sleep(250);
+                    Task.Delay(250).Wait();
                     StartSerial(true, ++retryCount);
                 }
                 else
@@ -78,7 +79,7 @@ namespace SAL_Core.IO.Connection
                 try
                 {
                     Close();
-                    Thread.Sleep(250);
+                    Task.Delay(250).Wait();
                     StartSerial(true);
                 }
                 catch
@@ -98,7 +99,7 @@ namespace SAL_Core.IO.Connection
             {
                 if (wait)
                 {
-                    while (serial.BytesToRead == 0) Thread.Sleep(10);
+                    while (serial.BytesToRead == 0) Task.Delay(10).Wait();
                 }
 
                 if (serial.ReadByte() == 252)

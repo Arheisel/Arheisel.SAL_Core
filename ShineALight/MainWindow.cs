@@ -9,6 +9,7 @@ using System.Threading;
 using SAL_Core.Extensions;
 using SAL_Core.IO.Connection;
 using SAL_Core.Modes;
+using System.Threading.Tasks;
 
 namespace ShineALight
 {
@@ -26,14 +27,17 @@ namespace ShineALight
 
             arduinoCollection = SAL_Core.Main.ArduinoCollection;
             arduinoCollection.OnError += ArduinoCollection_OnError;
+            arduinoCollection.OnChannelCountChange += ArduinoCollection_OnChannelCountChange;
             settings = SAL_Core.Main.Settings;
             //ModeSelect.SelectedIndex = settings.CurrentMode;
 
             FormClosed += MainWindow_FormClosed;
 
-            background = new BackgroundWorker();
-            background.WorkerReportsProgress = false;
-            background.WorkerSupportsCancellation = false;
+            background = new BackgroundWorker
+            {
+                WorkerReportsProgress = false,
+                WorkerSupportsCancellation = false
+            };
             background.DoWork += new DoWorkEventHandler(Background_DoWork);
             background.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Background_RunWorkerCompleted);
             progressBar1.Style = ProgressBarStyle.Marquee;
@@ -46,10 +50,14 @@ namespace ShineALight
             background.RunWorkerAsync();
         }
 
+        private void ArduinoCollection_OnChannelCountChange(object sender, EventArgs e)
+        {
+            UIUpdate();
+        }
+
         private void ArduinoCollection_OnError(object sender, ArduinoExceptionArgs e)
         {
             MessageBox.Show("Connection lost with " + e.Arduino.Name + ": " + e.Exception.Message, "COM ERROR");
-            UIUpdate();
         }
 
         private void UIUpdate()
@@ -66,7 +74,7 @@ namespace ShineALight
             else
             {
                 arduinoList.DataSource = arduinoCollection.ToList();
-                ModeSelect_SelectedIndexChanged(this, new EventArgs());
+                ModeSelect.SelectedIndex = settings.CurrentMode;
             }
         }
 
@@ -77,18 +85,17 @@ namespace ShineALight
                 if (background.IsBusy)
                 {
                     background.CancelAsync();
-                    while (background.IsBusy) Thread.Sleep(1);
+                    while (background.IsBusy) Task.Delay(10).Wait();
                 }
 
-                settings.Save();
                 if (Main.Panel2.Controls.Count > 0)
                 {
                     CustomUserControl cuc = (CustomUserControl)Main.Panel2.Controls[0];
                     cuc.DisposeDeferred();
                 }
                 Main.Panel2.Controls.Clear();
-                arduinoCollection.TurnOff();
-                arduinoCollection.Dispose();
+
+                SAL_Core.Main.Dispose();
             }
             catch (Exception ex)
             {
@@ -137,11 +144,8 @@ namespace ShineALight
                         control = new UCEffectsVisualizer(new EffectsVisualizerMode(arduinoCollection, settings.EffectsVisualizer, settings.Effects));
                         break;
                     default:
-                        {
-                            var mode = new VisualizerMode(arduinoCollection, settings.Visualizer);
-                            control = new UCAudio(mode);
-                            break;
-                        }
+                        control = new UCAudio(new VisualizerMode(arduinoCollection, settings.Visualizer));
+                        break;
                 }
                 Main.Panel2.Controls.Add(control);
                 control.Dock = DockStyle.Fill;
@@ -188,14 +192,17 @@ namespace ShineALight
             }
         }
 
-
         private void Background_DoWork(object sender, DoWorkEventArgs e)
         {
-            BackgroundWorker worker = sender as BackgroundWorker;
-
-            ConnectToArduinos(worker, e);
+            ConnectToArduinos();
         }
 
+        private void ConnectToArduinos()
+        {
+            Log.Write(Log.TYPE_INFO, "MainWindow :: Starting initial connect");
+            arduinoCollection.InitializeArduinos();
+            Log.Write(Log.TYPE_INFO, "MainWindow :: Initial connect ended");
+        }
 
         private void Background_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
@@ -214,7 +221,7 @@ namespace ShineALight
             }
             else
             {
-                arduinoList.Items.Clear();
+                //arduinoList.Items.Clear();
                 arduinoList.DataSource = arduinoCollection.ToList();
                 Reverse.Enabled = true;
                 MoveUp.Enabled = true;
@@ -224,14 +231,7 @@ namespace ShineALight
                 progressBar1.Style = ProgressBarStyle.Continuous;
                 progressBar1.Value = 100;
             }
-            ModeSelect.SelectedIndex = settings.CurrentMode;
-        }
-
-        private void ConnectToArduinos(BackgroundWorker worker, DoWorkEventArgs e)
-        {
-            Log.Write(Log.TYPE_INFO, "MainWindow :: Starting initial connect");
-            arduinoCollection.InitializeArduinos();
-            Log.Write(Log.TYPE_INFO, "MainWindow :: Initial connect ended");
+            //ModeSelect.SelectedIndex = settings.CurrentMode;
         }
 
         private void Reverse_Click(object sender, EventArgs e)

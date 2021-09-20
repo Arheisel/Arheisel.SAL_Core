@@ -21,9 +21,11 @@ namespace ShineALight
         {
             InitializeComponent();
             Design.Apply(this);
-            background = new BackgroundWorker();
-            background.WorkerReportsProgress = true;
-            background.WorkerSupportsCancellation = true;
+            background = new BackgroundWorker
+            {
+                WorkerReportsProgress = true,
+                WorkerSupportsCancellation = true
+            };
             background.DoWork += new DoWorkEventHandler(Background_DoWork);
             background.RunWorkerCompleted += new RunWorkerCompletedEventHandler(Background_RunWorkerCompleted);
             background.ProgressChanged += new ProgressChangedEventHandler(Background_ProgressChanged);
@@ -44,7 +46,7 @@ namespace ShineALight
             {
                 background.CancelAsync();
                 statusLabel.Text = "Stopping...";
-                while (background.IsBusy) Thread.Sleep(1);
+                while (background.IsBusy) Task.Delay(1).Wait();
             }
         }
 
@@ -152,7 +154,7 @@ namespace ShineALight
                 }
                 completedTasks.Clear();
                 if (taskList.Count == 0) break;
-                Thread.Sleep(10);
+                Task.Delay(10).Wait();
             }
 
             Log.Write(Log.TYPE_INFO, "AddArduinoSerial :: Serial discovery ended");

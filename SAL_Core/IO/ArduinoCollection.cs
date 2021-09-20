@@ -31,7 +31,7 @@ namespace SAL_Core.IO
             try
             {
                 Settings = settings;
-                thread = new Thread(new ThreadStart(Worker));
+                thread = new Thread(new ThreadStart(Worker)) { IsBackground = true };
                 queue = new ConcurrentQueue<ChColor>();
                 Groups = new ArduinoGroups(this);
                 thread.Start();
@@ -165,7 +165,7 @@ namespace SAL_Core.IO
                 }
             }
 
-            Thread.Sleep(50);
+            Task.Delay(50).Wait();
             Enabled = true;
         }
 
