@@ -42,7 +42,7 @@ namespace SAL_Core.IO.Connection
         {
             if(Interlocked.Decrement(ref consumers) == 0)
             {
-                thread.Abort();
+                thread?.Abort();
                 sock?.Dispose();
             }
         }
@@ -105,7 +105,7 @@ namespace SAL_Core.IO.Connection
 
             if (disposing)
             {
-                thread.Abort();
+                thread?.Abort();
                 sock?.Dispose();
             }
 

@@ -253,7 +253,6 @@ namespace ShineALight
 
             if(dialog == DialogResult.Yes)
             {
-                arduinoList.Items.Remove(arduino);
                 if (arduino.Settings.ConnectionType == ConnectionType.Serial) Program.COMArduinos.Remove(arduino.Settings.COM);
                 arduinoCollection.Remove(arduino);
                 arduinoList.DataSource = arduinoCollection.ToList();
