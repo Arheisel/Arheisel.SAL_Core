@@ -9,27 +9,25 @@ namespace SAL_Core.Ambient.Types
 {
     class Rainbow : Effect
     {
-        private int channels = 0;
         private readonly Transition[] transitions = new Transition[100];
         private int stage = 0;
         private int startPoint = 0;
-        public Rainbow(IChannelGroup group, EffectPreset settings) : base(group, settings) { }
+        public Rainbow(EffectPreset settings, int channelCount) : base(settings, channelCount) { }
 
         public override List<ChColor> Step()
         {
             colors.Clear();
-            if (Group.ChannelCount == 0) return colors;
+            if (ChannelCount == 0) return colors;
 
             if (step == 0)
             {
-                channels = Group.ChannelCount;
                 count = startPoint;
-                for (int i = 0; i < channels; i++)
+                for (int i = 0; i < ChannelCount; i++)
                 {
                     if ((i.Even() && stage == 0) || (i.Odd() && stage == 1))
                     {
                         if (Preset.Reverse)
-                            colors.Add(new ChColor(channels - i, Preset.ColorList[count.Mod(Preset.ColorList.Count)]));
+                            colors.Add(new ChColor(ChannelCount - i, Preset.ColorList[count.Mod(Preset.ColorList.Count)]));
                         else
                             colors.Add(new ChColor(i + 1, Preset.ColorList[count.Mod(Preset.ColorList.Count)]));
                     }
@@ -37,7 +35,7 @@ namespace SAL_Core.Ambient.Types
                     {
                         transitions[i] = new Transition(Preset.ColorList[(count + 1).Mod(Preset.ColorList.Count)], Preset.ColorList[count.Mod(Preset.ColorList.Count)], Preset.TotalSteps);
                         if (Preset.Reverse)
-                            colors.Add(new ChColor(channels - i, Preset.ColorList[(count + 1).Mod(Preset.ColorList.Count)]));
+                            colors.Add(new ChColor(ChannelCount - i, Preset.ColorList[(count + 1).Mod(Preset.ColorList.Count)]));
                         else
                             colors.Add(new ChColor(i + 1, Preset.ColorList[(count + 1).Mod(Preset.ColorList.Count)]));
                         if (count >= Preset.ColorList.Count - 1) count = 0;
@@ -63,12 +61,12 @@ namespace SAL_Core.Ambient.Types
 
                 if (step < Preset.TotalSteps)
                 {
-                    for (int i = 0; i < channels; i++)
+                    for (int i = 0; i < ChannelCount; i++)
                     {
                         if ((i.Even() && stage == 1) || (i.Odd() && stage == 0))
                         {
                             if (Preset.Reverse)
-                                colors.Add(new ChColor(channels - i, transitions[i].getColor(step)));
+                                colors.Add(new ChColor(ChannelCount - i, transitions[i].getColor(step)));
                             else
                                 colors.Add(new ChColor(i + 1, transitions[i].getColor(step)));
                         }

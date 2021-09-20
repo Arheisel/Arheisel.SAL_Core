@@ -114,31 +114,31 @@ namespace SAL_Core.Ambient
                 switch (preset.Type)
                 {
                     case EffectTypes.Rainbow:
-                        effect = new Rainbow(channelGroup, preset);
+                        effect = new Rainbow(preset, channelGroup.ChannelCount);
                         break;
                     case EffectTypes.Cycle:
-                        effect = new Cycle(channelGroup, preset);
+                        effect = new Cycle(preset, channelGroup.ChannelCount);
                         break;
                     case EffectTypes.Breathing:
-                        effect = new Breathing(channelGroup, preset);
+                        effect = new Breathing(preset, channelGroup.ChannelCount);
                         break;
                     case EffectTypes.Flash:
-                        effect = new Flash(channelGroup, preset);
+                        effect = new Flash(preset, channelGroup.ChannelCount);
                         break;
                     case EffectTypes.Fire:
-                        effect = new Fire(channelGroup, preset);
+                        effect = new Fire(preset, channelGroup.ChannelCount);
                         break;
                     case EffectTypes.Static:
-                        effect = new Static(channelGroup, preset);
+                        effect = new Static(preset, channelGroup.ChannelCount);
                         break;
                     case EffectTypes.Sweep:
-                        effect = new Sweep(channelGroup, preset);
+                        effect = new Sweep(preset, channelGroup.ChannelCount);
                         break;
                     case EffectTypes.Load:
-                        effect = new Load(channelGroup, preset);
+                        effect = new Load(preset, channelGroup.ChannelCount);
                         break;
                     case EffectTypes.Beam:
-                        effect = new Beam(channelGroup, preset);
+                        effect = new Beam(preset, channelGroup.ChannelCount);
                         break;
                 }
             }

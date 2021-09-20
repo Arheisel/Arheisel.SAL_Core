@@ -8,18 +8,16 @@ namespace SAL_Core.Ambient.Types
 {
     class Load : Effect
     {
-        private int channels = 0;
         private int currentChannel = 1;
         private Transition transition;
-        public Load(IChannelGroup group, EffectPreset settings) : base(group, settings) { }
+        public Load(EffectPreset settings, int channelCount) : base(settings, channelCount) { }
 
         public override List<ChColor> Step()
         {
             colors.Clear();
-            if (Group.ChannelCount == 0) return colors;
+            if (ChannelCount == 0) return colors;
             if (step == 0)
             {
-                channels = Group.ChannelCount;
                 if (currentChannel == 1)
                 {
                     transition = new Transition(Colors.OFF, Preset.ColorList[count], Preset.TotalSteps);
@@ -32,7 +30,7 @@ namespace SAL_Core.Ambient.Types
             }
             else
             {
-                if (currentChannel >= channels)
+                if (currentChannel >= ChannelCount)
                 {
                     if (step >= Preset.TotalSteps + Preset.HoldingSteps)
                     {
@@ -53,7 +51,7 @@ namespace SAL_Core.Ambient.Types
 
                 if (step < Preset.TotalSteps)
                     if (Preset.Reverse)
-                        colors.Add(new ChColor((channels + 1) - currentChannel, transition.getColor(step)));
+                        colors.Add(new ChColor((ChannelCount + 1) - currentChannel, transition.getColor(step)));
                     else
                         colors.Add(new ChColor(currentChannel, transition.getColor(step)));
 

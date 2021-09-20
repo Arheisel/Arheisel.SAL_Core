@@ -8,12 +8,12 @@ namespace SAL_Core.Ambient.Types
 {
     class Static : Effect
     {
-        public Static(IChannelGroup group, EffectPreset settings) : base(group, settings) { }
+        public Static(EffectPreset settings, int channelCount) : base(settings, channelCount) { }
 
         public override List<ChColor> Step()
         {
             colors.Clear();
-            if (Group.ChannelCount == 0) return colors;
+            if (ChannelCount == 0) return colors;
             if (step == 0)
             {
                 colors.Add(new ChColor(0, Preset.ColorList[count]));

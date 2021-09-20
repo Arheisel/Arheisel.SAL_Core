@@ -7,19 +7,17 @@ namespace SAL_Core.Ambient.Types
 {
     class Beam : Effect
     {
-        private int channels = 0;
         private int currentChannel = 1;
         private Transition transition;
         private Transition transitionOff;
-        public Beam(IChannelGroup group, EffectPreset settings) : base(group, settings) { }
+        public Beam(EffectPreset settings, int channelCount) : base(settings, channelCount) { }
 
         public override List<ChColor> Step()
         {
             colors.Clear();
-            if (Group.ChannelCount == 0) return colors;
+            if (ChannelCount == 0) return colors;
             if (step == 0)
             {
-                channels = Group.ChannelCount;
                 if (currentChannel == 1)
                 {
                     transition = new Transition(Colors.OFF, Preset.ColorList[count], Preset.TotalSteps);
@@ -33,7 +31,7 @@ namespace SAL_Core.Ambient.Types
             }
             else
             {
-                if (currentChannel >= channels + 1)
+                if (currentChannel >= ChannelCount + 1)
                 {
                     if (step >= Preset.TotalSteps + Preset.HoldingSteps)
                     {
@@ -56,14 +54,14 @@ namespace SAL_Core.Ambient.Types
                 {
                     if (Preset.Reverse)
                     {
-                        if (currentChannel <= channels)
-                            colors.Add(new ChColor((channels + 1) - currentChannel, transition.getColor(step)));
+                        if (currentChannel <= ChannelCount)
+                            colors.Add(new ChColor((ChannelCount + 1) - currentChannel, transition.getColor(step)));
                         if (currentChannel > 1)
-                            colors.Add(new ChColor((channels + 2) - currentChannel, transitionOff.getColor(step)));
+                            colors.Add(new ChColor((ChannelCount + 2) - currentChannel, transitionOff.getColor(step)));
                     }
                     else
                     {
-                        if (currentChannel <= channels)
+                        if (currentChannel <= ChannelCount)
                             colors.Add(new ChColor(currentChannel, transition.getColor(step)));
                         if (currentChannel > 1)
                             colors.Add(new ChColor(currentChannel - 1, transitionOff.getColor(step)));

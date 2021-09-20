@@ -10,12 +10,12 @@ namespace SAL_Core.Ambient.Types
     class Cycle : Effect
     {
         private Transition transition;
-        public Cycle(IChannelGroup group, EffectPreset settings) : base(group, settings) { }
+        public Cycle(EffectPreset settings, int channelCount) : base(settings, channelCount) { }
 
         public override List<ChColor> Step()
         {
             colors.Clear();
-            if (Group.ChannelCount == 0) return colors;
+            if (ChannelCount == 0) return colors;
             if (step == 0)
             {
                 transition = new Transition(Preset.ColorList[count], Preset.ColorList[(count + 1).Mod(Preset.ColorList.Count)], Preset.TotalSteps);

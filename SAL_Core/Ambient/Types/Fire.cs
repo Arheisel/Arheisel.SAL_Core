@@ -10,7 +10,7 @@ namespace SAL_Core.Ambient.Types
     {
         private Transition transition;
         private Random random;
-        public Fire(IChannelGroup group, EffectPreset settings) : base(group, settings)
+        public Fire(EffectPreset settings, int channelCount) : base(settings, channelCount)
         {
             random = new Random();
         }
@@ -18,7 +18,7 @@ namespace SAL_Core.Ambient.Types
         public override List<ChColor> Step()
         {
             colors.Clear();
-            if (Group.ChannelCount == 0) return colors;
+            if (ChannelCount == 0) return colors;
             if (step == 0)
             {
                 transition = new Transition(Preset.ColorList[0], Preset.ColorList[1], Preset.TotalSteps); ;

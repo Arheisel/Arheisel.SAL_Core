@@ -9,17 +9,17 @@ namespace SAL_Core.Ambient
 {
     class Effect : IDisposable
     {
-        protected readonly IChannelGroup Group;
         public EffectPreset Preset { get; set; }
+        protected int ChannelCount { get; }
         protected int step = 0;
         protected int count = 0;
         protected readonly List<ChColor> colors = new List<ChColor>();
 
-        public Effect(IChannelGroup group, EffectPreset settings)
+        public Effect(EffectPreset settings, int channelCount)
         {
             Preset = settings;
-            Group = group;
-            Group.SetColor(Colors.OFF);
+            ChannelCount = channelCount;
+            colors.Add(new ChColor(0, Colors.OFF));
         }
 
         public virtual List<ChColor> Step()
