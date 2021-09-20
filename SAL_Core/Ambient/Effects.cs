@@ -11,8 +11,8 @@ namespace SAL_Core.Ambient
     public class Effects : IDisposable
     {
         public event EventHandler<EffectDataAvailableArgs> DataAvailable;
-        private Timer timer;
-        private IChannelGroup channelGroup;
+        private readonly Timer timer;
+        private readonly IChannelGroup channelGroup;
 
         private Effect effect;
 
