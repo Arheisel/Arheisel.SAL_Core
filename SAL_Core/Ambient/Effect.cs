@@ -7,7 +7,7 @@ using System.Collections.Generic;
 
 namespace SAL_Core.Ambient
 {
-    class Effect : IDisposable
+    class Effect
     {
         public EffectPreset Preset { get; set; }
         protected int ChannelCount { get; }
@@ -19,7 +19,6 @@ namespace SAL_Core.Ambient
         {
             Preset = settings;
             ChannelCount = channelCount;
-            colors.Add(new ChColor(0, Colors.OFF));
         }
 
         public virtual List<ChColor> Step()
@@ -32,24 +31,6 @@ namespace SAL_Core.Ambient
             count = 0;
             step = 0;
             colors.Clear();
-        }
-
-        private bool _disposed = false;
-
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (_disposed)
-            {
-                return;
-            }
-
-            _disposed = true;
         }
     }
 }

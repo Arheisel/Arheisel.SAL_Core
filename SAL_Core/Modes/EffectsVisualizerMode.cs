@@ -14,7 +14,7 @@ namespace SAL_Core.Modes
         public EffectsVisualizerMode(IChannelGroup group, AudioSettings settings, EffectSettings effectSettings) : base(group, settings)
         {
             EffColors = new Color[group.ChannelCount];
-            Effects = new Effects(group, effectSettings);
+            Effects = new Effects(effectSettings, group.ChannelCount);
             Effects.DataAvailable += Effects_DataAvailable;
         }
 

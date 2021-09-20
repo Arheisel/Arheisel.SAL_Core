@@ -14,12 +14,7 @@ namespace SAL_Core.IO
         private Color[] colorCache;
         private readonly ConnectionHandler Connection;
 
-        public string Name { 
-            get
-            {
-                return Settings.Name;
-            }
-        }
+        public string Name => Settings.Name;
 
         public bool Online { 
             get 

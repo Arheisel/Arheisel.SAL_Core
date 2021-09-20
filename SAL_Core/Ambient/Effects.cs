@@ -2,21 +2,40 @@
 using System.Linq;
 using System.Timers;
 using Arheisel.Log;
-using SAL_Core.IO;
 using SAL_Core.Settings;
 using SAL_Core.Ambient.Types;
+using System.Collections.Generic;
+using SAL_Core.RGB;
 
 namespace SAL_Core.Ambient
 {
     public class Effects : IDisposable
     {
-        public event EventHandler<EffectDataAvailableArgs> DataAvailable;
-        private readonly Timer timer;
-        private readonly IChannelGroup channelGroup;
-
-        private Effect effect;
-
         public readonly EffectSettings Settings;
+
+        public event EventHandler<EffectDataAvailableArgs> DataAvailable;
+
+
+        private readonly Timer timer;
+        private Effect effect;
+        private int _channels = 0;
+        
+        public int ChannelCount
+        {
+            get
+            {
+                return _channels;
+            }
+            set
+            {
+                if(value >= 0)
+                {
+                    _channels = value;
+                    InitializeEffect();
+                }
+            }
+        }
+
 
         public string Current
         {
@@ -49,7 +68,7 @@ namespace SAL_Core.Ambient
                 if (value >= 0 && value <= 100)
                 {
                     Settings.CurrentPreset.Speed = value;
-                    Time = 101 - value;
+                    Time = 10.1 - value/10.0;
                     timer.Enabled = value != 0;
                     timer.Interval = Time;
                 }
@@ -88,9 +107,9 @@ namespace SAL_Core.Ambient
             }
         }
 
-        public int Time { get; private set; } = 100;
+        public double Time { get; private set; } = 100;
 
-        public Effects(IChannelGroup group, EffectSettings settings)
+        public Effects(EffectSettings settings, int channelCount)
         {
             Settings = settings;
             timer = new Timer()
@@ -100,47 +119,49 @@ namespace SAL_Core.Ambient
                 AutoReset = true
             };
             timer.Elapsed += Timer_Elapsed;
-            channelGroup = group;
 
-            InitializeEffect();
+            ChannelCount = channelCount;
         }
 
         public void InitializeEffect()
         {
             try
             {
+                timer.Stop();
                 var preset = Settings.CurrentPreset;
                 Speed = preset.Speed;
                 switch (preset.Type)
                 {
                     case EffectTypes.Rainbow:
-                        effect = new Rainbow(preset, channelGroup.ChannelCount);
+                        effect = new Rainbow(preset, _channels);
                         break;
                     case EffectTypes.Cycle:
-                        effect = new Cycle(preset, channelGroup.ChannelCount);
+                        effect = new Cycle(preset, _channels);
                         break;
                     case EffectTypes.Breathing:
-                        effect = new Breathing(preset, channelGroup.ChannelCount);
+                        effect = new Breathing(preset, _channels);
                         break;
                     case EffectTypes.Flash:
-                        effect = new Flash(preset, channelGroup.ChannelCount);
+                        effect = new Flash(preset, _channels);
                         break;
                     case EffectTypes.Fire:
-                        effect = new Fire(preset, channelGroup.ChannelCount);
+                        effect = new Fire(preset, _channels);
                         break;
                     case EffectTypes.Static:
-                        effect = new Static(preset, channelGroup.ChannelCount);
+                        effect = new Static(preset, _channels);
                         break;
                     case EffectTypes.Sweep:
-                        effect = new Sweep(preset, channelGroup.ChannelCount);
+                        effect = new Sweep(preset, _channels);
                         break;
                     case EffectTypes.Load:
-                        effect = new Load(preset, channelGroup.ChannelCount);
+                        effect = new Load(preset, _channels);
                         break;
                     case EffectTypes.Beam:
-                        effect = new Beam(preset, channelGroup.ChannelCount);
+                        effect = new Beam(preset, _channels);
                         break;
                 }
+                DataAvailable?.Invoke(this, new EffectDataAvailableArgs(new List<ChColor>() { new ChColor(0, Colors.OFF) }));
+                timer.Start();
             }
             catch (Exception e)
             {
@@ -153,6 +174,8 @@ namespace SAL_Core.Ambient
         {
             try
             {
+                if (_channels == 0) return;
+
                 var colors = effect.Step();
                 if(colors.Count > 0)
                     DataAvailable?.Invoke(this, new EffectDataAvailableArgs(colors));
@@ -185,8 +208,8 @@ namespace SAL_Core.Ambient
 
             if (disposing)
             {
-                effect.Dispose();
                 timer.Stop();
+                timer.Close();
                 timer.Dispose();
             }
 

@@ -14,8 +14,7 @@ namespace SAL_Core.Modes
         public BaseMode(IChannelGroup group, AudioSettings settings)
         {
             Group = group;
-            Audio = new Audio(settings);
-            Audio.ChannelCount = group.ChannelCount * group.Multiplier;
+            Audio = new Audio(settings, group.ChannelCount * group.Multiplier);
             Audio.DataAvailable += Audio_DataAvailable; ;
             Audio.StartCapture();
         }

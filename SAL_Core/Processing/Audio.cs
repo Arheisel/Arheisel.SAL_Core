@@ -139,12 +139,13 @@ namespace SAL_Core.Processing
             }
         }
 
-        public Audio(AudioSettings settings)
+        public Audio(AudioSettings settings, int channelCount)
         {
             try
             {
                 Settings = settings;
                 Slope = settings.Slope; //calculate curve variables
+                ChannelCount = channelCount;
                 autoScaler = new AutoScaler(settings.Autoscaler);
             }
             catch (Exception e)

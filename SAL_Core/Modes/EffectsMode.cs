@@ -14,7 +14,7 @@ namespace SAL_Core.Modes
         public EffectsMode(IChannelGroup group, EffectSettings settings)
         {
             Group = group;
-            Effects = new Effects(group, settings);
+            Effects = new Effects(settings, group.ChannelCount);
             Effects.DataAvailable += Effects_DataAvailable;
         }
 
