@@ -18,7 +18,7 @@ namespace SAL_Core.Settings
 
         public ModeSettings GetModeSettings(int index)
         {
-            if (index < 0) throw new ArgumentOutOfRangeException("Must be greater than 0");
+            if (index < 0) throw new ArgumentOutOfRangeException("index Must be greater than 0");
 
             if(index > modes.Count - 1)
             {

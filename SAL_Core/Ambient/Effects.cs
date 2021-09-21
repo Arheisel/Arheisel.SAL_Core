@@ -110,6 +110,8 @@ namespace SAL_Core.Ambient
 
         public Effects(EffectSettings settings, int channelCount)
         {
+            if (channelCount < 0) throw new ArgumentOutOfRangeException("channelCount Must be greater than 0");
+
             Settings = settings;
             timer = new Timer()
             {
@@ -119,7 +121,8 @@ namespace SAL_Core.Ambient
             };
             timer.Elapsed += Timer_Elapsed;
 
-            ChannelCount = channelCount;
+            _channels = channelCount;
+            InitializeEffect();
         }
 
         public void InitializeEffect()
