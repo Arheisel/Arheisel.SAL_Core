@@ -84,6 +84,12 @@
     <Compile Include="AddArduino.Designer.cs">
       <DependentUpon>AddArduino.cs</DependentUpon>
     </Compile>
+    <Compile Include="ArduinoConfig.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="ArduinoConfig.Designer.cs">
+      <DependentUpon>ArduinoConfig.cs</DependentUpon>
+    </Compile>
     <Compile Include="Controls\AddArduinoSerial.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -197,6 +203,9 @@
     </Compile>
     <EmbeddedResource Include="AddArduino.resx">
       <DependentUpon>AddArduino.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ArduinoConfig.resx">
+      <DependentUpon>ArduinoConfig.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Controls\AddArduinoSerial.resx">
       <DependentUpon>AddArduinoSerial.cs</DependentUpon>
