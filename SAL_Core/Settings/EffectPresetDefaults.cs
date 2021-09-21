@@ -7,6 +7,9 @@ namespace SAL_Core.Settings
 {
     public static class EffectPresetDefaults
     {
+        public const string DEFAULTPRESET = "Rainbow";
+
+
         public static EffectPreset Rainbow
         {
             get

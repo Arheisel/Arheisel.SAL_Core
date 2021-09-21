@@ -8,7 +8,7 @@ namespace SAL_Core.Settings
     [Serializable]
     public class EffectSettings
     {
-        public string Current { get; set; } = "Rainbow";
+        public string Current { get; set; } = EffectPresetDefaults.DEFAULTPRESET;
 
         public Dictionary<string, EffectPreset> PresetList { get; set; } = new Dictionary<string, EffectPreset>()
         {
