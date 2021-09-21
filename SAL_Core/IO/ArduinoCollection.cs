@@ -16,8 +16,8 @@ namespace SAL_Core.IO
         private readonly List<Arduino> collection = new List<Arduino>();
         private readonly ConcurrentQueue<ChColor> queue;
         private readonly Thread thread;
+        private readonly ArduinoCollectionSettings Settings;
 
-        public readonly ArduinoCollectionSettings Settings;
         public int ChannelCount { get; private set; } = 0;
         public int Multiplier { get; private set; } = 1;
         public bool Enabled { get; private set; } = false;

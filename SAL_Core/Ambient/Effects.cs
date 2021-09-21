@@ -11,15 +11,14 @@ namespace SAL_Core.Ambient
 {
     public class Effects : IDisposable
     {
-        public readonly EffectSettings Settings;
-
-        public event EventHandler<EffectDataAvailableArgs> DataAvailable;
-
-
         private readonly Timer timer;
         private Effect effect;
-        private int _channels = 0;
         
+
+        public event EventHandler<EffectDataAvailableArgs> DataAvailable;
+        public EffectSettings Settings { get; }
+
+        private int _channels = 0;
         public int ChannelCount
         {
             get

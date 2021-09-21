@@ -9,7 +9,7 @@ namespace SAL_Core.Settings
     [Serializable]
     public class Profile
     {
-        private List<ModeSettings> modes;
+        private readonly List<ModeSettings> modes;
 
         public Profile()
         {

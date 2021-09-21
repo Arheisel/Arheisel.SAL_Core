@@ -107,7 +107,9 @@
     <Compile Include="Settings\EffectPresetDefaults.cs" />
     <Compile Include="Settings\EffectSettings.cs" />
     <Compile Include="Settings\EqualizerSettings.cs" />
+    <Compile Include="Settings\ModeSettings.cs" />
     <Compile Include="Settings\MusicSettings.cs" />
+    <Compile Include="Settings\Profile.cs" />
     <Compile Include="Settings\ProgramSettings.cs" />
     <Compile Include="IO\Connection\UDP.cs" />
   </ItemGroup>
